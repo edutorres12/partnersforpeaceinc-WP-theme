@@ -8,11 +8,16 @@ that first for project philosophy and architecture. This file captures the
 ## TL;DR
 
 - WordPress theme, Tailwind 3 + Gutenberg server-side blocks. PHP 8.0+.
+- It is an **unstyled template**: neutral grayscale palette, system font stack,
+  wireframe placeholder images. Structure and spacing are final; the design
+  layer is deliberately absent. Don't reintroduce brand color, webfonts or
+  page-specific one-off CSS unless a site actually asks for it.
 - Every block renders from `src/blocks/<slug>/render.php` — there is NO `save.js`.
 - Use the helpers in `inc/block-helpers.php` for attribute access and image
   rendering. Don't inline `isset() ? sanitize_x() : ''` patterns.
-- Brand tokens live in **two** files that MUST stay in sync: `theme.json` and
-  `tailwind.config.js`. `npm run check:tokens` enforces this.
+- Design tokens live in **two** files that MUST stay in sync: `theme.json` and
+  `tailwind.config.js`. `npm run check:tokens` enforces this. Note the alias:
+  theme.json's `base` slug is `canvas` in Tailwind (`text-base` is taken).
 - `build/` is currently committed. Don't forget `npm run build` before pushing
   to `main` (CI catches this).
 
@@ -27,6 +32,7 @@ npm run lint:php                    # PHPCS (WordPress-Extra ruleset)
 npm run lint:php:fix                # PHPCBF auto-fix
 npm run check:tokens                # theme.json ↔ tailwind.config drift check
 npm run format                      # Prettier (JS/JSON) — runs the WP scripts formatter
+npm run gen:placeholders            # regenerate the neutral placeholder images
 npm run optimize:images             # regenerate .webp from JPG/PNG (sharp)
 ```
 
@@ -36,9 +42,10 @@ explicitly asks.
 
 ## Coding conventions
 
-- **Prefixes**: `soywd_` for PHP functions / globals, `soywd-` for CSS
-  classes, `soywd/` for block names, `SOYWD_` for PHP constants.
-- **Text domain**: `'soywd'` — always wrap user-visible strings with
+- **Prefixes**: `wptpl_` for PHP functions / globals, `wptpl-` for CSS
+  classes, `wptpl/` for block names, `WPTPL_` for PHP constants. WPCS rejects
+  prefixes shorter than 4 characters, so don't shorten it.
+- **Text domain**: `'wptpl'` — always wrap user-visible strings with
   `__()` / `_e()` even if we're English-only today.
 - **Indentation**: tabs (PHP, JS, CSS, JSON). PHPCS + Prettier enforce.
 - **PHP**: strict typing where possible (function signatures use scalar
@@ -128,18 +135,18 @@ Rules:
 |---|---|
 | Theme bootstrap | `functions.php` → loads `inc/*.php` in a specific order |
 | WP cleanup (emoji, oEmbed, generator) | `inc/cleanup.php` |
-| Asset enqueue + Google Fonts preload | `inc/enqueue.php` |
+| Asset enqueue + motion bootstrap (no webfonts) | `inc/enqueue.php` |
 | Baseline SEO (Yoast-aware bail-out) | `inc/seo.php` |
-| Block attribute helpers + `soywd_render_picture` | `inc/block-helpers.php` |
+| Block attribute helpers + `wptpl_render_picture` | `inc/block-helpers.php` |
 | Block auto-discovery from `build/blocks/` | `inc/blocks.php` |
 | Customizer fields (CTA + footer info) | `inc/customizer.php` |
-| Brand palette + fonts | `theme.json` + `tailwind.config.js` (BOTH) |
+| Palette + fonts | `theme.json` + `tailwind.config.js` (BOTH) |
 | Reusable component styles (buttons, container, eyebrow) | `src/tailwind.css` inside `@layer components` |
 | `register_block_style()` rules | `src/tailwind.css` OUTSIDE `@layer` (uses `var(--wp--preset--color--*)`) |
 | `has-*-color` hardcoded fallbacks | `src/tailwind.css` `@layer utilities` block |
 | Custom block source | `src/blocks/<slug>/` |
 | Compiled blocks (registered from here) | `build/blocks/<slug>/` |
-| Image scripts | `scripts/optimize-images.mjs`, `scripts/check-tokens.mjs` |
+| Image scripts | `scripts/gen-placeholders.mjs`, `scripts/optimize-images.mjs`, `scripts/check-tokens.mjs` |
 | Design wireframes | `docs/wireframes/` (NOT in repo root) |
 
 ## Common tasks
@@ -148,7 +155,7 @@ Rules:
 
 1. Create `src/blocks/<slug>/` with `block.json`, `index.js`, `edit.js`,
    `render.php`, `style.css`.
-2. Set `name`: `"soywd/<slug>"`, `category`: `"soywd"`, `textdomain`: `"soywd"`.
+2. Set `name`: `"wptpl/<slug>"`, `category`: `"wptpl"`, `textdomain`: `"wptpl"`.
 3. In `render.php`, use the helpers from `inc/block-helpers.php` — never
    inline `isset() ? sanitize_x() : ''`.
 4. For number attributes, declare `minimum` + `maximum` in `block.json`.
@@ -157,7 +164,7 @@ Rules:
 5. Run `npm run build` so it lands in `build/blocks/<slug>/` and gets
    auto-registered by `inc/blocks.php`.
 
-### Adding or changing a brand color
+### Adding or changing a palette color
 
 1. Edit `theme.json` `settings.color.palette` (add a slug + name + hex).
 2. Edit `tailwind.config.js` `theme.extend.colors` — same slug, same hex.
@@ -171,10 +178,12 @@ Rules:
 
 ### Adding an image to a block
 
-- Place the file in `assets/placeholders/<name>.jpg` (or `.png`).
+- Place the file in `assets/placeholders/<name>.jpg` (or `.png`). To regenerate
+  the neutral wireframe boxes instead, edit the `FILES` list in
+  `scripts/gen-placeholders.mjs` and run `npm run gen:placeholders`.
 - Run `npm run optimize:images` to generate the `.webp` sibling and commit
   both files.
-- In `render.php`, use `soywd_render_picture( [ 'src' => ..., 'alt' => ...,
+- In `render.php`, use `wptpl_render_picture( [ 'src' => ..., 'alt' => ...,
   'class' => ..., 'loading' => 'lazy' ] )`. The helper auto-detects the
   `.webp` and emits a `<picture>` with a WebP `<source>`. Use
   `loading => 'eager'` and `fetchpriority => 'high'` only for above-the-fold
@@ -185,17 +194,19 @@ Rules:
 - Don't add meta tags to `header.php` directly. `inc/seo.php` owns the
   baseline tags and ALREADY detects Yoast / Rank Math / SEOPress / AIOSEO
   and bails out so plugins can take over. If you need conditional behavior,
-  filter `soywd_seo_plugin_active`.
+  filter `wptpl_seo_plugin_active`.
 
 ## Don't do
 
-- ❌ Inline `isset( $attributes['x'] ) ? sanitize_text_field( $attributes['x'] ) : ''` in `render.php`. Use `soywd_attr_text( $attributes, 'x' )`.
-- ❌ Hardcode hex inside `@layer components`. Use `@apply text-primary` or `text-cream-light` etc.
+- ❌ Inline `isset( $attributes['x'] ) ? sanitize_text_field( $attributes['x'] ) : ''` in `render.php`. Use `wptpl_attr_text( $attributes, 'x' )`.
+- ❌ Hardcode hex inside `@layer components`. Use `@apply text-primary` or `text-on-dark` etc.
 - ❌ Add `<meta description>` or OG tags to `header.php` directly. They go in `inc/seo.php`.
 - ❌ Add a color to `theme.json` without also adding it to `tailwind.config.js` AND the fallback block. CI will fail.
+- ❌ Reintroduce a brand color, a webfont, or a page-specific one-off CSS rule
+  into the template itself. Those belong to a site built on it, not here.
 - ❌ `git push --force` to `main`. `deploy` branch is force-pushed BY CI; manual force-pushes anywhere else need explicit user permission.
 - ❌ Run `git rebase --amend` or `git commit --amend` on commits that are already pushed unless the user explicitly asks.
-- ❌ Add WebP via raw `<img src="...webp">`. Use `soywd_render_picture()` so the JPG fallback is preserved.
+- ❌ Add WebP via raw `<img src="...webp">`. Use `wptpl_render_picture()` so the JPG fallback is preserved.
 - ❌ Forget `npm run build` before committing changes that touch `src/`. The CI workflow's "Verify build/ is up to date" step will fail the PR.
 - ❌ Bypass the pre-commit hook with `--no-verify`. If it fails, fix the underlying issue.
 

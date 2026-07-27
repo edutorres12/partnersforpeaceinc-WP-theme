@@ -2,25 +2,25 @@
 /**
  * Fallback template.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
 get_header(); ?>
 
-<div class="soywd-container py-12">
+<div class="wptpl-container py-12">
 	<h1 class="text-3xl font-bold mb-8">
 		<?php
 		if ( is_search() ) {
 			/* translators: %s: search query. */
-			printf( esc_html__( 'Search results for: %s', 'soywd' ), esc_html( get_search_query() ) );
+			printf( esc_html__( 'Search results for: %s', 'wptpl' ), esc_html( get_search_query() ) );
 		} elseif ( is_archive() ) {
 			the_archive_title();
 		} elseif ( is_home() && get_option( 'page_for_posts' ) ) {
 			echo esc_html( get_the_title( (int) get_option( 'page_for_posts' ) ) );
 		} else {
-			esc_html_e( 'Blog', 'soywd' );
+			esc_html_e( 'Blog', 'wptpl' );
 		}
 		?>
 	</h1>
@@ -40,7 +40,7 @@ get_header(); ?>
 
 		<?php the_posts_pagination(); ?>
 	<?php else : ?>
-		<p><?php esc_html_e( 'No content to show yet.', 'soywd' ); ?></p>
+		<p><?php esc_html_e( 'No content to show yet.', 'wptpl' ); ?></p>
 	<?php endif; ?>
 </div>
 

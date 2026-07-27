@@ -23,13 +23,13 @@ export default function Edit( { attributes, setAttributes } ) {
 		} );
 
 	const blockProps = useBlockProps( {
-		className: 'soywd-faq soywd-container-narrow',
+		className: 'wptpl-faq wptpl-container-narrow',
 	} );
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'FAQ items', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'FAQ items', 'wptpl' ) } initialOpen>
 					{ items.map( ( item, i ) => (
 						<div
 							key={ i }
@@ -40,14 +40,14 @@ export default function Edit( { attributes, setAttributes } ) {
 							} }
 						>
 							<TextControl
-								label={ `${ __( 'Question', 'soywd' ) } ${
+								label={ `${ __( 'Question', 'wptpl' ) } ${
 									i + 1
 								}` }
 								value={ item.question }
 								onChange={ ( v ) => update( i, 'question', v ) }
 							/>
 							<TextareaControl
-								label={ __( 'Answer', 'soywd' ) }
+								label={ __( 'Answer', 'wptpl' ) }
 								value={ item.answer }
 								onChange={ ( v ) => update( i, 'answer', v ) }
 							/>
@@ -56,12 +56,12 @@ export default function Edit( { attributes, setAttributes } ) {
 								isSmall
 								onClick={ () => remove( i ) }
 							>
-								{ __( 'Remove', 'soywd' ) }
+								{ __( 'Remove', 'wptpl' ) }
 							</Button>
 						</div>
 					) ) }
 					<Button variant="primary" onClick={ add }>
-						{ __( 'Add question', 'soywd' ) }
+						{ __( 'Add question', 'wptpl' ) }
 					</Button>
 				</PanelBody>
 			</InspectorControls>

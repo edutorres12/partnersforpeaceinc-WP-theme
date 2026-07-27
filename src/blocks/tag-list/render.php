@@ -1,43 +1,43 @@
 <?php
 /**
- * Server-side render for soywd/tag-list.
+ * Server-side render for wptpl/tag-list.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$soywd_items     = soywd_attr_array( $attributes, 'items' );
-$soywd_alignment = soywd_attr_enum( $attributes, 'alignment', array( 'left', 'center', 'right' ), 'center' );
-$soywd_variant   = soywd_attr_enum( $attributes, 'variant', array( 'outline', 'filled' ), 'outline' );
-$soywd_border    = soywd_attr_color( $attributes, 'pillBorderColor' );
+$wptpl_items     = wptpl_attr_array( $attributes, 'items' );
+$wptpl_alignment = wptpl_attr_enum( $attributes, 'alignment', array( 'left', 'center', 'right' ), 'center' );
+$wptpl_variant   = wptpl_attr_enum( $attributes, 'variant', array( 'outline', 'filled' ), 'outline' );
+$wptpl_border    = wptpl_attr_color( $attributes, 'pillBorderColor' );
 
-$soywd_justify = 'center' === $soywd_alignment
+$wptpl_justify = 'center' === $wptpl_alignment
 	? 'justify-center'
-	: ( 'right' === $soywd_alignment ? 'justify-end' : 'justify-start' );
+	: ( 'right' === $wptpl_alignment ? 'justify-end' : 'justify-start' );
 
 // Outline pills default to a translucent currentColor border. A custom
 // pillBorderColor (outline only) swaps that for a solid color via inline style.
-$soywd_outline_border = ( 'outline' === $soywd_variant && '' !== $soywd_border ) ? 'border' : 'border border-current/60';
+$wptpl_outline_border = ( 'outline' === $wptpl_variant && '' !== $wptpl_border ) ? 'border' : 'border border-current/60';
 
-$soywd_tag_class = 'filled' === $soywd_variant
+$wptpl_tag_class = 'filled' === $wptpl_variant
 	? 'inline-block bg-secondary text-white px-4 py-1.5 rounded-2xl text-xs border border-secondary'
-	: 'inline-block ' . $soywd_outline_border . ' px-4 py-1.5 rounded-2xl text-xs';
+	: 'inline-block ' . $wptpl_outline_border . ' px-4 py-1.5 rounded-2xl text-xs';
 
-$soywd_tag_style = ( 'outline' === $soywd_variant && '' !== $soywd_border )
-	? ' style="border-color:' . esc_attr( $soywd_border ) . '"'
+$wptpl_tag_style = ( 'outline' === $wptpl_variant && '' !== $wptpl_border )
+	? ' style="border-color:' . esc_attr( $wptpl_border ) . '"'
 	: '';
 
-$soywd_wrapper = get_block_wrapper_attributes(
-	array( 'class' => 'soywd-tag-list' )
+$wptpl_wrapper = get_block_wrapper_attributes(
+	array( 'class' => 'wptpl-tag-list' )
 );
 
 // Items that will actually render (non-empty label).
-$soywd_visible = array_values(
+$wptpl_visible = array_values(
 	array_filter(
-		$soywd_items,
-		function ( $soywd_item ) {
-			return '' !== soywd_attr_text( $soywd_item, 'label' );
+		$wptpl_items,
+		function ( $wptpl_item ) {
+			return '' !== wptpl_attr_text( $wptpl_item, 'label' );
 		}
 	)
 );
@@ -48,30 +48,30 @@ $soywd_visible = array_values(
 // `rowBreak` is 0 (default), fall back to auto-splitting long lists into two
 // balanced rows once there are enough of them (e.g. 14 → 7 + 7). The spacer is
 // hidden below `lg` so narrow screens keep wrapping naturally.
-$soywd_row_break = soywd_attr_int( $attributes, 'rowBreak', 0, 99, 0 );
-if ( 0 === $soywd_row_break && count( $soywd_visible ) >= 8 ) {
-	$soywd_row_break = (int) ceil( count( $soywd_visible ) / 2 );
+$wptpl_row_break = wptpl_attr_int( $attributes, 'rowBreak', 0, 99, 0 );
+if ( 0 === $wptpl_row_break && count( $wptpl_visible ) >= 8 ) {
+	$wptpl_row_break = (int) ceil( count( $wptpl_visible ) / 2 );
 }
 ?>
-<div <?php echo $soywd_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<ul class="flex flex-wrap gap-2 <?php echo esc_attr( $soywd_justify ); ?>">
-		<?php foreach ( $soywd_visible as $soywd_index => $soywd_item ) : ?>
+<div <?php echo $wptpl_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+	<ul class="flex flex-wrap gap-2 <?php echo esc_attr( $wptpl_justify ); ?>">
+		<?php foreach ( $wptpl_visible as $wptpl_index => $wptpl_item ) : ?>
 			<?php
-			$soywd_label = soywd_attr_text( $soywd_item, 'label' );
-			$soywd_url   = soywd_attr_url( $soywd_item, 'url' );
+			$wptpl_label = wptpl_attr_text( $wptpl_item, 'label' );
+			$wptpl_url   = wptpl_attr_url( $wptpl_item, 'url' );
 			?>
 			<li>
-				<?php if ( '' !== $soywd_url ) : ?>
-					<a href="<?php echo esc_url( $soywd_url ); ?>" class="<?php echo esc_attr( $soywd_tag_class ); ?>"<?php echo $soywd_tag_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php echo esc_html( $soywd_label ); ?>
+				<?php if ( '' !== $wptpl_url ) : ?>
+					<a href="<?php echo esc_url( $wptpl_url ); ?>" class="<?php echo esc_attr( $wptpl_tag_class ); ?>"<?php echo $wptpl_tag_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php echo esc_html( $wptpl_label ); ?>
 					</a>
 				<?php else : ?>
-					<span class="<?php echo esc_attr( $soywd_tag_class ); ?>"<?php echo $soywd_tag_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php echo esc_html( $soywd_label ); ?>
+					<span class="<?php echo esc_attr( $wptpl_tag_class ); ?>"<?php echo $wptpl_tag_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<?php echo esc_html( $wptpl_label ); ?>
 					</span>
 				<?php endif; ?>
 			</li>
-			<?php if ( 0 !== $soywd_row_break && $soywd_index + 1 === $soywd_row_break ) : ?>
+			<?php if ( 0 !== $wptpl_row_break && $wptpl_index + 1 === $wptpl_row_break ) : ?>
 				<li class="hidden lg:block basis-full" aria-hidden="true"></li>
 			<?php endif; ?>
 		<?php endforeach; ?>

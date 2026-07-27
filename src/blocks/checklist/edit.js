@@ -26,7 +26,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	const isDark = theme === 'dark';
 
 	const wrapperClasses = [
-		'soywd-checklist',
+		'wptpl-checklist',
 		isDark ? 'bg-secondary text-white' : '',
 		isDark ? 'py-4 px-6' : '',
 	]
@@ -42,17 +42,17 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Layout', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Layout', 'wptpl' ) } initialOpen>
 					<SelectControl
-						label={ __( 'Direction', 'soywd' ) }
+						label={ __( 'Direction', 'wptpl' ) }
 						value={ direction }
 						options={ [
 							{
-								label: __( 'Vertical (grid)', 'soywd' ),
+								label: __( 'Vertical (grid)', 'wptpl' ),
 								value: 'vertical',
 							},
 							{
-								label: __( 'Horizontal (inline)', 'soywd' ),
+								label: __( 'Horizontal (inline)', 'wptpl' ),
 								value: 'horizontal',
 							},
 						] }
@@ -60,7 +60,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					{ direction === 'vertical' && (
 						<RangeControl
-							label={ __( 'Columns', 'soywd' ) }
+							label={ __( 'Columns', 'wptpl' ) }
 							value={ columns }
 							onChange={ ( v ) =>
 								setAttributes( { columns: v } )
@@ -70,37 +70,37 @@ export default function Edit( { attributes, setAttributes } ) {
 						/>
 					) }
 					<SelectControl
-						label={ __( 'Theme', 'soywd' ) }
+						label={ __( 'Theme', 'wptpl' ) }
 						value={ theme }
 						options={ [
-							{ label: __( 'Light', 'soywd' ), value: 'light' },
+							{ label: __( 'Light', 'wptpl' ), value: 'light' },
 							{
-								label: __( 'Dark (trust bar)', 'soywd' ),
+								label: __( 'Dark (trust bar)', 'wptpl' ),
 								value: 'dark',
 							},
 						] }
 						onChange={ ( v ) => setAttributes( { theme: v } ) }
 					/>
 					<SelectControl
-						label={ __( 'Icon style', 'soywd' ) }
+						label={ __( 'Icon style', 'wptpl' ) }
 						value={ iconStyle }
 						options={ [
 							{
-								label: __( 'Check (✓)', 'soywd' ),
+								label: __( 'Check (✓)', 'wptpl' ),
 								value: 'check',
 							},
-							{ label: __( 'Plus (+)', 'soywd' ), value: 'plus' },
-							{ label: __( 'Dot (•)', 'soywd' ), value: 'dot' },
-							{ label: __( 'None', 'soywd' ), value: 'none' },
+							{ label: __( 'Plus (+)', 'wptpl' ), value: 'plus' },
+							{ label: __( 'Dot (•)', 'wptpl' ), value: 'dot' },
+							{ label: __( 'None', 'wptpl' ), value: 'none' },
 						] }
 						onChange={ ( v ) => setAttributes( { iconStyle: v } ) }
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Items', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Items', 'wptpl' ) } initialOpen>
 					{ items.map( ( item, i ) => (
 						<div key={ i } style={ { marginBottom: 8 } }>
 							<TextControl
-								label={ `${ __( 'Item', 'soywd' ) } ${
+								label={ `${ __( 'Item', 'wptpl' ) } ${
 									i + 1
 								}` }
 								value={ item.text }
@@ -111,12 +111,12 @@ export default function Edit( { attributes, setAttributes } ) {
 								isSmall
 								onClick={ () => remove( i ) }
 							>
-								{ __( 'Remove', 'soywd' ) }
+								{ __( 'Remove', 'wptpl' ) }
 							</Button>
 						</div>
 					) ) }
 					<Button variant="primary" onClick={ add }>
-						{ __( 'Add item', 'soywd' ) }
+						{ __( 'Add item', 'wptpl' ) }
 					</Button>
 				</PanelBody>
 			</InspectorControls>
@@ -138,7 +138,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								}
 								dangerouslySetInnerHTML={ {
 									__html:
-										item.text || __( '(empty)', 'soywd' ),
+										item.text || __( '(empty)', 'wptpl' ),
 								} }
 							/>
 						</li>

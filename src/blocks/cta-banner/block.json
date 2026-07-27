@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "soywd/cta-banner",
+	"name": "wptpl/cta-banner",
 	"title": "CTA banner",
-	"category": "soywd",
+	"category": "wptpl",
 	"icon": "megaphone",
 	"description": "Closing banner with headline + text + primary and optional secondary button. Dark (default) or light theme, per-button color.",
 	"keywords": [ "cta", "banner", "closing" ],
 	"version": "0.1.0",
-	"textdomain": "soywd",
+	"textdomain": "wptpl",
 	"supports": {
 		"html": false,
 		"anchor": true,
@@ -28,14 +28,14 @@
 		"ctaStyle": {
 			"type": "string",
 			"default": "auto",
-			"enum": [ "auto", "accent", "sage", "cream", "primary", "outline" ]
+			"enum": [ "auto", "accent", "soft", "canvas", "primary", "outline" ]
 		},
 		"secondaryCtaText": { "type": "string", "default": "" },
 		"secondaryCtaUrl": { "type": "string", "default": "" },
 		"secondaryCtaStyle": {
 			"type": "string",
-			"default": "sage",
-			"enum": [ "auto", "accent", "sage", "cream", "primary", "outline" ]
+			"default": "soft",
+			"enum": [ "auto", "accent", "soft", "canvas", "primary", "outline" ]
 		},
 		"secondaryCtaTextColor": { "type": "string", "default": "" },
 		"buttonLayout": {

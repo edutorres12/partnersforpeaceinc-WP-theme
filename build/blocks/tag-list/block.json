@@ -1,9 +1,9 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "soywd/tag-list",
+  "name": "wptpl/tag-list",
   "title": "Tag list",
-  "category": "soywd",
+  "category": "wptpl",
   "icon": "tag",
   "description": "List of pills/tags. Each one accepts an optional URL.",
   "keywords": [
@@ -13,7 +13,7 @@
     "specialties"
   ],
   "version": "0.1.0",
-  "textdomain": "soywd",
+  "textdomain": "wptpl",
   "supports": {
     "html": false,
     "anchor": true,

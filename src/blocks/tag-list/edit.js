@@ -32,7 +32,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		justify = 'justify-end';
 	}
 
-	const blockProps = useBlockProps( { className: 'soywd-tag-list' } );
+	const blockProps = useBlockProps( { className: 'wptpl-tag-list' } );
 
 	const tagClass =
 		variant === 'filled'
@@ -51,11 +51,11 @@ export default function Edit( { attributes, setAttributes } ) {
 			</BlockControls>
 
 			<InspectorControls>
-				<PanelBody title={ __( 'Style', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Style', 'wptpl' ) } initialOpen>
 					<TextControl
 						label={ __(
 							'Border color (hex, outline only)',
-							'soywd'
+							'wptpl'
 						) }
 						value={ pillBorderColor }
 						onChange={ ( v ) =>
@@ -63,19 +63,19 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 					<SelectControl
-						label={ __( 'Variant', 'soywd' ) }
+						label={ __( 'Variant', 'wptpl' ) }
 						value={ variant }
 						options={ [
 							{
-								label: __( 'Outline', 'soywd' ),
+								label: __( 'Outline', 'wptpl' ),
 								value: 'outline',
 							},
-							{ label: __( 'Filled', 'soywd' ), value: 'filled' },
+							{ label: __( 'Filled', 'wptpl' ), value: 'filled' },
 						] }
 						onChange={ ( v ) => setAttributes( { variant: v } ) }
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Tags', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Tags', 'wptpl' ) } initialOpen>
 					{ items.map( ( item, i ) => (
 						<div
 							key={ i }
@@ -86,14 +86,14 @@ export default function Edit( { attributes, setAttributes } ) {
 							} }
 						>
 							<TextControl
-								label={ `${ __( 'Label', 'soywd' ) } ${
+								label={ `${ __( 'Label', 'wptpl' ) } ${
 									i + 1
 								}` }
 								value={ item.label }
 								onChange={ ( v ) => update( i, 'label', v ) }
 							/>
 							<TextControl
-								label={ __( 'URL (optional)', 'soywd' ) }
+								label={ __( 'URL (optional)', 'wptpl' ) }
 								value={ item.url }
 								onChange={ ( v ) => update( i, 'url', v ) }
 							/>
@@ -102,12 +102,12 @@ export default function Edit( { attributes, setAttributes } ) {
 								isSmall
 								onClick={ () => remove( i ) }
 							>
-								{ __( 'Remove', 'soywd' ) }
+								{ __( 'Remove', 'wptpl' ) }
 							</Button>
 						</div>
 					) ) }
 					<Button variant="primary" onClick={ add }>
-						{ __( 'Add tag', 'soywd' ) }
+						{ __( 'Add tag', 'wptpl' ) }
 					</Button>
 				</PanelBody>
 			</InspectorControls>
@@ -124,7 +124,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									: undefined
 							}
 						>
-							{ item.label || __( '(empty)', 'soywd' ) }
+							{ item.label || __( '(empty)', 'wptpl' ) }
 						</span>
 					) ) }
 				</div>

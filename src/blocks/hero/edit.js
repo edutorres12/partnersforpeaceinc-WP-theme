@@ -42,7 +42,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	const isSplit = layout === 'split';
 	const hasBg = !! backgroundImageUrl;
 	const blockProps = useBlockProps( {
-		className: `soywd-hero text-${ alignment }`,
+		className: `wptpl-hero text-${ alignment }`,
 	} );
 
 	let btnAlignClass = 'justify-start';
@@ -59,7 +59,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				className="text-sm uppercase tracking-widest text-muted mb-2"
 				value={ eyebrow }
 				onChange={ ( v ) => setAttributes( { eyebrow: v } ) }
-				placeholder={ __( 'Eyebrow (optional)', 'soywd' ) }
+				placeholder={ __( 'Eyebrow (optional)', 'wptpl' ) }
 			/>
 			<RichText
 				tagName="h1"
@@ -67,7 +67,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				style={ titleColor ? { color: titleColor } : undefined }
 				value={ title }
 				onChange={ ( v ) => setAttributes( { title: v } ) }
-				placeholder={ __( 'Hero title…', 'soywd' ) }
+				placeholder={ __( 'Hero title…', 'wptpl' ) }
 			/>
 			<RichText
 				tagName="p"
@@ -77,13 +77,13 @@ export default function Edit( { attributes, setAttributes } ) {
 				style={ subtitleColor ? { color: subtitleColor } : undefined }
 				value={ subtitle }
 				onChange={ ( v ) => setAttributes( { subtitle: v } ) }
-				placeholder={ __( 'Subtitle…', 'soywd' ) }
+				placeholder={ __( 'Subtitle…', 'wptpl' ) }
 			/>
 			<div className="flex gap-2 flex-wrap">
 				{ ctaText && (
 					<a
 						href={ ctaUrl }
-						className="soywd-btn-accent"
+						className="wptpl-btn-accent"
 						onClick={ ( e ) => e.preventDefault() }
 					>
 						{ ctaText }
@@ -139,7 +139,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							</button>
 						) : (
 							<Button variant="secondary" onClick={ open }>
-								{ __( 'Select hero image', 'soywd' ) }
+								{ __( 'Select hero image', 'wptpl' ) }
 							</Button>
 						)
 					}
@@ -150,7 +150,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const overlayPreview = (
 		<div
-			className={ `soywd-hero relative overflow-hidden text-${ alignment }` }
+			className={ `wptpl-hero relative overflow-hidden text-${ alignment }` }
 			style={ {
 				backgroundImage: `url(${ backgroundImageUrl })`,
 				backgroundSize: 'cover',
@@ -172,33 +172,35 @@ export default function Edit( { attributes, setAttributes } ) {
 				aria-hidden="true"
 			/>
 			<div className="relative z-10 flex items-center min-h-[60vh] py-[6.25rem]">
-				<div className="soywd-container">
+				<div className="wptpl-container">
 					<RichText
 						tagName="p"
-						className="soywd-eyebrow text-cream/80 mb-3"
+						className="wptpl-eyebrow text-canvas/80 mb-3"
 						value={ eyebrow }
 						onChange={ ( v ) => setAttributes( { eyebrow: v } ) }
-						placeholder={ __( 'Eyebrow (optional)', 'soywd' ) }
+						placeholder={ __( 'Eyebrow (optional)', 'wptpl' ) }
 					/>
 					<RichText
 						tagName="h1"
-						className={ `mb-6 ${ titleColor ? '' : 'text-cream' }` }
+						className={ `mb-6 ${
+							titleColor ? '' : 'text-canvas'
+						}` }
 						style={ titleColor ? { color: titleColor } : undefined }
 						value={ title }
 						onChange={ ( v ) => setAttributes( { title: v } ) }
-						placeholder={ __( 'Hero title…', 'soywd' ) }
+						placeholder={ __( 'Hero title…', 'wptpl' ) }
 					/>
 					<RichText
 						tagName="p"
 						className={ `mb-8 max-w-xl ${
 							alignment === 'center' ? 'mx-auto' : ''
-						} ${ subtitleColor ? '' : 'text-cream/85' }` }
+						} ${ subtitleColor ? '' : 'text-canvas/85' }` }
 						style={
 							subtitleColor ? { color: subtitleColor } : undefined
 						}
 						value={ subtitle }
 						onChange={ ( v ) => setAttributes( { subtitle: v } ) }
-						placeholder={ __( 'Subtitle…', 'soywd' ) }
+						placeholder={ __( 'Subtitle…', 'wptpl' ) }
 					/>
 					<div
 						className={ `flex gap-3 flex-wrap ${ btnAlignClass }` }
@@ -206,7 +208,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						{ ctaText && (
 							<a
 								href={ ctaUrl }
-								className="soywd-btn-accent"
+								className="wptpl-btn-accent"
 								onClick={ ( e ) => e.preventDefault() }
 							>
 								{ ctaText }
@@ -215,7 +217,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						{ secondaryCtaText && (
 							<a
 								href={ secondaryCtaUrl || '#' }
-								className="soywd-btn-outline"
+								className="wptpl-btn-outline"
 								onClick={ ( e ) => e.preventDefault() }
 							>
 								{ secondaryCtaText }
@@ -223,7 +225,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						) }
 					</div>
 					{ microcopy && (
-						<p className="mt-4 text-sm text-cream/70">
+						<p className="mt-4 text-sm text-canvas/70">
 							{ microcopy }
 						</p>
 					) }
@@ -244,28 +246,28 @@ export default function Edit( { attributes, setAttributes } ) {
 			</BlockControls>
 
 			<InspectorControls>
-				<PanelBody title={ __( 'Layout', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Layout', 'wptpl' ) } initialOpen>
 					<SelectControl
-						label={ __( 'Layout', 'soywd' ) }
+						label={ __( 'Layout', 'wptpl' ) }
 						value={ layout }
 						options={ [
 							{
-								label: __( 'Split (text + image)', 'soywd' ),
+								label: __( 'Split (text + image)', 'wptpl' ),
 								value: 'split',
 							},
 							{
-								label: __( 'Centered (text only)', 'soywd' ),
+								label: __( 'Centered (text only)', 'wptpl' ),
 								value: 'centered',
 							},
 						] }
 						onChange={ ( v ) => setAttributes( { layout: v } ) }
 						help={ __(
 							'Add a background image below to use the full-bleed overlay hero instead.',
-							'soywd'
+							'wptpl'
 						) }
 					/>
 					<SelectControl
-						label={ __( 'Heading level', 'soywd' ) }
+						label={ __( 'Heading level', 'wptpl' ) }
 						value={ String( headingLevel ) }
 						options={ [
 							{ label: 'H1', value: '1' },
@@ -276,12 +278,12 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						help={ __(
 							'Use H1 once per page. Set H2 when the page already has another H1.',
-							'soywd'
+							'wptpl'
 						) }
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Background image + overlay', 'soywd' ) }
+					title={ __( 'Background image + overlay', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<MediaUploadCheck>
@@ -300,8 +302,8 @@ export default function Edit( { attributes, setAttributes } ) {
 									style={ { marginBottom: '8px' } }
 								>
 									{ backgroundImageUrl
-										? __( 'Replace background', 'soywd' )
-										: __( 'Select background', 'soywd' ) }
+										? __( 'Replace background', 'wptpl' )
+										: __( 'Select background', 'wptpl' ) }
 								</Button>
 							) }
 						/>
@@ -318,10 +320,10 @@ export default function Edit( { attributes, setAttributes } ) {
 									} )
 								}
 							>
-								{ __( 'Remove background', 'soywd' ) }
+								{ __( 'Remove background', 'wptpl' ) }
 							</Button>
 							<RangeControl
-								label={ __( 'Overlay opacity', 'soywd' ) }
+								label={ __( 'Overlay opacity', 'wptpl' ) }
 								value={ overlayOpacity }
 								onChange={ ( v ) =>
 									setAttributes( {
@@ -336,31 +338,31 @@ export default function Edit( { attributes, setAttributes } ) {
 						</>
 					) }
 				</PanelBody>
-				<PanelBody title={ __( 'Primary CTA', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Primary CTA', 'wptpl' ) } initialOpen>
 					<TextControl
-						label={ __( 'Text', 'soywd' ) }
+						label={ __( 'Text', 'wptpl' ) }
 						value={ ctaText }
 						onChange={ ( v ) => setAttributes( { ctaText: v } ) }
 					/>
 					<TextControl
-						label={ __( 'URL', 'soywd' ) }
+						label={ __( 'URL', 'wptpl' ) }
 						value={ ctaUrl }
 						onChange={ ( v ) => setAttributes( { ctaUrl: v } ) }
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Secondary CTA', 'soywd' ) }
+					title={ __( 'Secondary CTA', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<TextControl
-						label={ __( 'Text', 'soywd' ) }
+						label={ __( 'Text', 'wptpl' ) }
 						value={ secondaryCtaText }
 						onChange={ ( v ) =>
 							setAttributes( { secondaryCtaText: v } )
 						}
 					/>
 					<TextControl
-						label={ __( 'URL', 'soywd' ) }
+						label={ __( 'URL', 'wptpl' ) }
 						value={ secondaryCtaUrl }
 						onChange={ ( v ) =>
 							setAttributes( { secondaryCtaUrl: v } )
@@ -368,36 +370,36 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Microcopy', 'soywd' ) }
+					title={ __( 'Microcopy', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<TextControl
-						label={ __( 'Below buttons', 'soywd' ) }
+						label={ __( 'Below buttons', 'wptpl' ) }
 						value={ microcopy }
 						onChange={ ( v ) => setAttributes( { microcopy: v } ) }
 					/>
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Colors', 'soywd' ) }
+					title={ __( 'Colors', 'wptpl' ) }
 					initialOpen={ false }
 					colorSettings={ [
 						{
 							value: overlayColor,
 							onChange: ( v ) =>
 								setAttributes( { overlayColor: v || '' } ),
-							label: __( 'Overlay color', 'soywd' ),
+							label: __( 'Overlay color', 'wptpl' ),
 						},
 						{
 							value: titleColor,
 							onChange: ( v ) =>
 								setAttributes( { titleColor: v || '' } ),
-							label: __( 'Title color', 'soywd' ),
+							label: __( 'Title color', 'wptpl' ),
 						},
 						{
 							value: subtitleColor,
 							onChange: ( v ) =>
 								setAttributes( { subtitleColor: v || '' } ),
-							label: __( 'Subtitle color', 'soywd' ),
+							label: __( 'Subtitle color', 'wptpl' ),
 						},
 					] }
 				/>

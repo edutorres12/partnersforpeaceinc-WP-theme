@@ -5,7 +5,7 @@
  * Cada bloque vive en src/blocks/<slug>/ con su block.json. Tras `npm run build`
  * se copia a build/blocks/<slug>/ desde donde lo registramos.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 add_action(
 	'init',
 	function () {
-		$blocks_dir = SOYWD_THEME_DIR . '/build/blocks';
+		$blocks_dir = WPTPL_THEME_DIR . '/build/blocks';
 
 		if ( ! is_dir( $blocks_dir ) ) {
 			return;
@@ -36,8 +36,8 @@ add_filter(
 		return array_merge(
 			array(
 				array(
-					'slug'  => 'soywd',
-					'title' => __( 'Soy Web Development', 'soywd' ),
+					'slug'  => 'wptpl',
+					'title' => __( 'Theme Blocks', 'wptpl' ),
 					'icon'  => null,
 				),
 			),

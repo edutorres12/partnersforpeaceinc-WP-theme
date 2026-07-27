@@ -1,47 +1,47 @@
 <?php
 /**
- * Server-side render for soywd/feature-card.
+ * Server-side render for wptpl/feature-card.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$soywd_icon          = soywd_attr_text( $attributes, 'icon' );
-$soywd_icon_image    = soywd_attr_url( $attributes, 'iconImageUrl' );
-$soywd_eyebrow       = soywd_attr_html( $attributes, 'eyebrow' );
-$soywd_title         = soywd_attr_html( $attributes, 'title' );
-$soywd_text          = soywd_attr_html( $attributes, 'text' );
-$soywd_title_right   = soywd_attr_html( $attributes, 'titleRight' );
-$soywd_text_right    = soywd_attr_html( $attributes, 'textRight' );
-$soywd_image_url     = soywd_attr_url( $attributes, 'imageUrl' );
-$soywd_image_alt     = soywd_attr_text( $attributes, 'imageAlt' );
-$soywd_show_image    = soywd_attr_bool( $attributes, 'showImage', true );
-$soywd_tags          = soywd_attr_array( $attributes, 'tags' );
-$soywd_cta_text      = soywd_attr_text( $attributes, 'ctaText' );
-$soywd_cta_url       = soywd_attr_url( $attributes, 'ctaUrl' );
-$soywd_cta_style     = soywd_attr_enum( $attributes, 'ctaStyle', array( 'button', 'arrow' ), 'button' );
+$wptpl_icon          = wptpl_attr_text( $attributes, 'icon' );
+$wptpl_icon_image    = wptpl_attr_url( $attributes, 'iconImageUrl' );
+$wptpl_eyebrow       = wptpl_attr_html( $attributes, 'eyebrow' );
+$wptpl_title         = wptpl_attr_html( $attributes, 'title' );
+$wptpl_text          = wptpl_attr_html( $attributes, 'text' );
+$wptpl_title_right   = wptpl_attr_html( $attributes, 'titleRight' );
+$wptpl_text_right    = wptpl_attr_html( $attributes, 'textRight' );
+$wptpl_image_url     = wptpl_attr_url( $attributes, 'imageUrl' );
+$wptpl_image_alt     = wptpl_attr_text( $attributes, 'imageAlt' );
+$wptpl_show_image    = wptpl_attr_bool( $attributes, 'showImage', true );
+$wptpl_tags          = wptpl_attr_array( $attributes, 'tags' );
+$wptpl_cta_text      = wptpl_attr_text( $attributes, 'ctaText' );
+$wptpl_cta_url       = wptpl_attr_url( $attributes, 'ctaUrl' );
+$wptpl_cta_style     = wptpl_attr_enum( $attributes, 'ctaStyle', array( 'button', 'arrow' ), 'button' );
 // Split off the CTA's last word so the arrow CTA can keep it glued to the arrow
 // (in a nowrap span) — otherwise a long label wraps and strands the arrow alone
 // on its own line.
-$soywd_cta_trim      = trim( $soywd_cta_text );
-$soywd_cta_gap       = strrpos( $soywd_cta_trim, ' ' );
-$soywd_cta_head      = false === $soywd_cta_gap ? '' : substr( $soywd_cta_trim, 0, $soywd_cta_gap );
-$soywd_cta_last      = false === $soywd_cta_gap ? $soywd_cta_trim : substr( $soywd_cta_trim, $soywd_cta_gap + 1 );
-$soywd_centered      = soywd_attr_bool( $attributes, 'centered' );
-$soywd_layout        = soywd_attr_enum( $attributes, 'layout', array( 'vertical', 'horizontal-header', 'bilingual' ), 'vertical' );
-$soywd_is_bilingual  = 'bilingual' === $soywd_layout;
-$soywd_bordered      = soywd_attr_bool( $attributes, 'bordered', true );
-$soywd_transparent   = soywd_attr_bool( $attributes, 'transparent' );
-$soywd_half_width    = soywd_attr_bool( $attributes, 'halfWidthCentered' );
-$soywd_overlay_color = isset( $attributes['imageOverlayColor'] ) ? sanitize_key( (string) $attributes['imageOverlayColor'] ) : '';
-$soywd_overlay_op    = soywd_attr_float( $attributes, 'imageOverlayOpacity', 0.0, 0.7, 0.25 );
-$soywd_bg_image_url  = soywd_attr_url( $attributes, 'backgroundImageUrl' );
-$soywd_title_color   = soywd_attr_color( $attributes, 'titleColor' );
-$soywd_htag          = 'h' . soywd_attr_int( $attributes, 'headingLevel', 2, 4, 3 );
+$wptpl_cta_trim      = trim( $wptpl_cta_text );
+$wptpl_cta_gap       = strrpos( $wptpl_cta_trim, ' ' );
+$wptpl_cta_head      = false === $wptpl_cta_gap ? '' : substr( $wptpl_cta_trim, 0, $wptpl_cta_gap );
+$wptpl_cta_last      = false === $wptpl_cta_gap ? $wptpl_cta_trim : substr( $wptpl_cta_trim, $wptpl_cta_gap + 1 );
+$wptpl_centered      = wptpl_attr_bool( $attributes, 'centered' );
+$wptpl_layout        = wptpl_attr_enum( $attributes, 'layout', array( 'vertical', 'horizontal-header', 'bilingual' ), 'vertical' );
+$wptpl_is_bilingual  = 'bilingual' === $wptpl_layout;
+$wptpl_bordered      = wptpl_attr_bool( $attributes, 'bordered', true );
+$wptpl_transparent   = wptpl_attr_bool( $attributes, 'transparent' );
+$wptpl_half_width    = wptpl_attr_bool( $attributes, 'halfWidthCentered' );
+$wptpl_overlay_color = isset( $attributes['imageOverlayColor'] ) ? sanitize_key( (string) $attributes['imageOverlayColor'] ) : '';
+$wptpl_overlay_op    = wptpl_attr_float( $attributes, 'imageOverlayOpacity', 0.0, 0.7, 0.25 );
+$wptpl_bg_image_url  = wptpl_attr_url( $attributes, 'backgroundImageUrl' );
+$wptpl_title_color   = wptpl_attr_color( $attributes, 'titleColor' );
+$wptpl_htag          = 'h' . wptpl_attr_int( $attributes, 'headingLevel', 2, 4, 3 );
 
 // Detect a user-set background (Gutenberg color picker or inline style).
-$soywd_has_user_bg = ! empty( $attributes['backgroundColor'] )
+$wptpl_has_user_bg = ! empty( $attributes['backgroundColor'] )
 	|| ! empty( $attributes['gradient'] )
 	|| ! empty( $attributes['style']['color']['background'] )
 	|| ! empty( $attributes['style']['color']['gradient'] );
@@ -51,169 +51,169 @@ $soywd_has_user_bg = ! empty( $attributes['backgroundColor'] )
 // so we drop it and let the body inherit. Transparent cards also drop it so
 // the body inherits the parent section's text color (otherwise a transparent
 // card sitting on a `muted` section would render invisible muted-on-muted body
-// copy). The arrow CTA gets the light (cream) treatment only on a genuinely
+// copy). The arrow CTA gets the light (canvas) treatment only on a genuinely
 // dark custom bg; on a light custom bg it inherits the card's (dark) text
 // color so it stays legible. A named-color bg we can't measure here falls back
 // to the legacy "light" treatment.
-$soywd_has_user_text = ! empty( $attributes['textColor'] ) || ! empty( $attributes['style']['color']['text'] );
-$soywd_body_color    = ( $soywd_has_user_text || $soywd_transparent ) ? '' : 'text-muted';
+$wptpl_has_user_text = ! empty( $attributes['textColor'] ) || ! empty( $attributes['style']['color']['text'] );
+$wptpl_body_color    = ( $wptpl_has_user_text || $wptpl_transparent ) ? '' : 'text-muted';
 
-$soywd_bg_is_dark = $soywd_has_user_bg;
-if ( $soywd_has_user_bg && ! empty( $attributes['style']['color']['background'] ) ) {
-	$soywd_bg_hex = ltrim( (string) $attributes['style']['color']['background'], '#' );
-	if ( 1 === preg_match( '/^[0-9a-fA-F]{6}$/', $soywd_bg_hex ) ) {
-		$soywd_bg_lum = ( 0.299 * hexdec( substr( $soywd_bg_hex, 0, 2 ) ) )
-			+ ( 0.587 * hexdec( substr( $soywd_bg_hex, 2, 2 ) ) )
-			+ ( 0.114 * hexdec( substr( $soywd_bg_hex, 4, 2 ) ) );
-		$soywd_bg_is_dark = $soywd_bg_lum < 150;
+$wptpl_bg_is_dark = $wptpl_has_user_bg;
+if ( $wptpl_has_user_bg && ! empty( $attributes['style']['color']['background'] ) ) {
+	$wptpl_bg_hex = ltrim( (string) $attributes['style']['color']['background'], '#' );
+	if ( 1 === preg_match( '/^[0-9a-fA-F]{6}$/', $wptpl_bg_hex ) ) {
+		$wptpl_bg_lum = ( 0.299 * hexdec( substr( $wptpl_bg_hex, 0, 2 ) ) )
+			+ ( 0.587 * hexdec( substr( $wptpl_bg_hex, 2, 2 ) ) )
+			+ ( 0.114 * hexdec( substr( $wptpl_bg_hex, 4, 2 ) ) );
+		$wptpl_bg_is_dark = $wptpl_bg_lum < 150;
 	}
 }
 
-$soywd_cta_arrow_cls = 'soywd-cta-arrow text-xs uppercase tracking-widest font-semibold';
-if ( $soywd_bg_is_dark ) {
-	$soywd_cta_arrow_cls .= ' soywd-cta-arrow-light';
+$wptpl_cta_arrow_cls = 'wptpl-cta-arrow text-xs uppercase tracking-widest font-semibold';
+if ( $wptpl_bg_is_dark ) {
+	$wptpl_cta_arrow_cls .= ' wptpl-cta-arrow-light';
 }
 
 // Auto-fill placeholder for service/guide-style cards (has CTA, no image, no icon).
 // Skipped entirely when the card opts out of imagery via showImage = false.
-$soywd_use_placeholder = $soywd_show_image
-	&& '' === $soywd_image_url
-	&& '' === $soywd_icon_image
-	&& '' === $soywd_icon
-	&& '' !== $soywd_cta_text
-	&& ! $soywd_transparent
-	&& ! $soywd_has_user_bg;
+$wptpl_use_placeholder = $wptpl_show_image
+	&& '' === $wptpl_image_url
+	&& '' === $wptpl_icon_image
+	&& '' === $wptpl_icon
+	&& '' !== $wptpl_cta_text
+	&& ! $wptpl_transparent
+	&& ! $wptpl_has_user_bg;
 
-if ( $soywd_use_placeholder ) {
-	$soywd_image_url = SOYWD_THEME_URI . '/assets/placeholders/service-card.jpg';
-	$soywd_image_alt = '';
+if ( $wptpl_use_placeholder ) {
+	$wptpl_image_url = WPTPL_THEME_URI . '/assets/placeholders/service-card.jpg';
+	$wptpl_image_alt = '';
 }
 
 // Whether a main image is actually rendered (an explicit imageUrl is hidden too
 // when showImage is off).
-$soywd_render_image = $soywd_show_image && '' !== $soywd_image_url;
+$wptpl_render_image = $wptpl_show_image && '' !== $wptpl_image_url;
 
-// Default card: surface (sand) bg + soft shadow gives the card a visible
-// boundary when it sits on a same-toned section (e.g. ivory body). When
+// Default card: surface (surface) bg + soft shadow gives the card a visible
+// boundary when it sits on a same-toned section (e.g. base body). When
 // the user sets a custom Gutenberg background or marks the card
 // transparent, both are skipped so the wrapper bg shows through.
-$soywd_card_classes = array( 'soywd-feature-card', 'rounded-[14px]', 'overflow-hidden', 'h-full', 'flex', 'flex-col' );
-if ( $soywd_bordered ) {
-	$soywd_card_classes[] = 'border border-muted/25';
+$wptpl_card_classes = array( 'wptpl-feature-card', 'rounded-[14px]', 'overflow-hidden', 'h-full', 'flex', 'flex-col' );
+if ( $wptpl_bordered ) {
+	$wptpl_card_classes[] = 'border border-muted/25';
 }
-if ( ! $soywd_transparent && ! $soywd_has_user_bg && '' === $soywd_bg_image_url ) {
-	$soywd_card_classes[] = 'bg-surface';
-	// Rest + hover shadow handled in src/tailwind.css (.soywd-feature-card).
+if ( ! $wptpl_transparent && ! $wptpl_has_user_bg && '' === $wptpl_bg_image_url ) {
+	$wptpl_card_classes[] = 'bg-surface';
+	// Rest + hover shadow handled in src/tailwind.css (.wptpl-feature-card).
 }
-if ( $soywd_centered ) {
-	$soywd_card_classes[] = 'text-center';
+if ( $wptpl_centered ) {
+	$wptpl_card_classes[] = 'text-center';
 }
 // Match the rendered width of a card in a 2-column row and center it, so a
 // lone "odd" card can stand on its own line instead of stretching full width.
 // A bilingual card needs more room for its two language columns, so it centers
 // at a wider reading width instead of the 50% half-card width.
-if ( $soywd_half_width ) {
-	$soywd_card_classes[] = $soywd_is_bilingual ? 'soywd-card-bilingual-centered' : 'soywd-card-half-centered';
+if ( $wptpl_half_width ) {
+	$wptpl_card_classes[] = $wptpl_is_bilingual ? 'wptpl-card-bilingual-centered' : 'wptpl-card-half-centered';
 }
 
-$soywd_wrapper_args = array( 'class' => implode( ' ', $soywd_card_classes ) );
-if ( '' !== $soywd_bg_image_url ) {
-	$soywd_wrapper_args['style'] = sprintf(
+$wptpl_wrapper_args = array( 'class' => implode( ' ', $wptpl_card_classes ) );
+if ( '' !== $wptpl_bg_image_url ) {
+	$wptpl_wrapper_args['style'] = sprintf(
 		'background-image:url(%s);background-size:cover;background-position:center;background-repeat:no-repeat;',
-		esc_url( $soywd_bg_image_url )
+		esc_url( $wptpl_bg_image_url )
 	);
 }
-$soywd_wrapper = get_block_wrapper_attributes( $soywd_wrapper_args );
+$wptpl_wrapper = get_block_wrapper_attributes( $wptpl_wrapper_args );
 ?>
-<div <?php echo $soywd_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<?php if ( $soywd_render_image ) : ?>
+<div <?php echo $wptpl_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+	<?php if ( $wptpl_render_image ) : ?>
 		<div class="p-3 pb-0">
 			<div class="relative overflow-hidden rounded-[14px]">
 				<?php
-				echo soywd_render_picture( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo wptpl_render_picture( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					array(
-						'src'   => $soywd_image_url,
-						'alt'   => $soywd_image_alt,
+						'src'   => $wptpl_image_url,
+						'alt'   => $wptpl_image_alt,
 						'class' => 'w-full h-48 object-cover',
 					)
 				);
 				?>
-				<?php if ( '' !== $soywd_overlay_color ) : ?>
-					<div class="absolute inset-0 has-<?php echo esc_attr( $soywd_overlay_color ); ?>-background-color has-background" style="opacity:<?php echo esc_attr( (string) $soywd_overlay_op ); ?>" aria-hidden="true"></div>
+				<?php if ( '' !== $wptpl_overlay_color ) : ?>
+					<div class="absolute inset-0 has-<?php echo esc_attr( $wptpl_overlay_color ); ?>-background-color has-background" style="opacity:<?php echo esc_attr( (string) $wptpl_overlay_op ); ?>" aria-hidden="true"></div>
 				<?php endif; ?>
 			</div>
 		</div>
 	<?php endif; ?>
 	<div class="p-6 flex-1 flex flex-col">
-		<?php if ( $soywd_is_bilingual ) : ?>
+		<?php if ( $wptpl_is_bilingual ) : ?>
 			<div class="grid md:grid-cols-2">
 				<div class="text-left md:pr-8">
-					<<?php echo esc_attr( $soywd_htag ); ?> class="mb-2"<?php echo $soywd_title_color ? ' style="color:' . esc_attr( $soywd_title_color ) . '"' : ''; ?>><?php echo $soywd_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $soywd_htag ); ?>>
-					<p class="<?php echo esc_attr( $soywd_body_color ); ?>"><?php echo $soywd_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+					<<?php echo esc_attr( $wptpl_htag ); ?> class="mb-2"<?php echo $wptpl_title_color ? ' style="color:' . esc_attr( $wptpl_title_color ) . '"' : ''; ?>><?php echo $wptpl_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $wptpl_htag ); ?>>
+					<p class="<?php echo esc_attr( $wptpl_body_color ); ?>"><?php echo $wptpl_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 				</div>
 				<div dir="rtl" lang="fa" class="text-left mt-6 pt-6 border-t border-current md:mt-0 md:pt-0 md:border-t-0 md:border-l md:pl-8">
-					<<?php echo esc_attr( $soywd_htag ); ?> class="mb-2"<?php echo $soywd_title_color ? ' style="color:' . esc_attr( $soywd_title_color ) . '"' : ''; ?>><?php echo $soywd_title_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $soywd_htag ); ?>>
-					<p class="<?php echo esc_attr( $soywd_body_color ); ?>"><?php echo $soywd_text_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+					<<?php echo esc_attr( $wptpl_htag ); ?> class="mb-2"<?php echo $wptpl_title_color ? ' style="color:' . esc_attr( $wptpl_title_color ) . '"' : ''; ?>><?php echo $wptpl_title_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $wptpl_htag ); ?>>
+					<p class="<?php echo esc_attr( $wptpl_body_color ); ?>"><?php echo $wptpl_text_right; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 				</div>
 			</div>
 		<?php else : ?>
 			<?php
-			$soywd_has_icon   = ( '' !== $soywd_icon_image || '' !== $soywd_icon ) && ! $soywd_render_image;
-			$soywd_horizontal = 'horizontal-header' === $soywd_layout && $soywd_has_icon;
+			$wptpl_has_icon   = ( '' !== $wptpl_icon_image || '' !== $wptpl_icon ) && ! $wptpl_render_image;
+			$wptpl_horizontal = 'horizontal-header' === $wptpl_layout && $wptpl_has_icon;
 			?>
-			<?php if ( $soywd_horizontal ) : ?>
+			<?php if ( $wptpl_horizontal ) : ?>
 				<div class="flex gap-3 items-start mb-2">
-					<?php if ( '' !== $soywd_icon_image ) : ?>
+					<?php if ( '' !== $wptpl_icon_image ) : ?>
 						<div class="text-accent shrink-0" aria-hidden="true">
-							<img src="<?php echo esc_url( $soywd_icon_image ); ?>" alt="" class="w-12 h-12" loading="lazy" decoding="async" />
+							<img src="<?php echo esc_url( $wptpl_icon_image ); ?>" alt="" class="w-12 h-12" loading="lazy" decoding="async" />
 						</div>
-					<?php elseif ( '' !== $soywd_icon ) : ?>
-						<div class="text-3xl shrink-0" aria-hidden="true"><?php echo esc_html( $soywd_icon ); ?></div>
+					<?php elseif ( '' !== $wptpl_icon ) : ?>
+						<div class="text-3xl shrink-0" aria-hidden="true"><?php echo esc_html( $wptpl_icon ); ?></div>
 					<?php endif; ?>
-					<<?php echo esc_attr( $soywd_htag ); ?> class="flex-1 mb-0"<?php echo $soywd_title_color ? ' style="color:' . esc_attr( $soywd_title_color ) . '"' : ''; ?>><?php echo $soywd_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $soywd_htag ); ?>>
+					<<?php echo esc_attr( $wptpl_htag ); ?> class="flex-1 mb-0"<?php echo $wptpl_title_color ? ' style="color:' . esc_attr( $wptpl_title_color ) . '"' : ''; ?>><?php echo $wptpl_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $wptpl_htag ); ?>>
 				</div>
-				<?php if ( '' !== $soywd_eyebrow ) : ?>
-					<p class="soywd-eyebrow mb-2"><?php echo $soywd_eyebrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+				<?php if ( '' !== $wptpl_eyebrow ) : ?>
+					<p class="wptpl-eyebrow mb-2"><?php echo $wptpl_eyebrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 				<?php endif; ?>
 			<?php else : ?>
-				<?php if ( '' !== $soywd_icon_image && ! $soywd_render_image ) : ?>
-					<div class="text-accent mb-4 <?php echo $soywd_centered ? 'flex justify-center' : ''; ?>" aria-hidden="true">
-						<img src="<?php echo esc_url( $soywd_icon_image ); ?>" alt="" class="w-12 h-12" loading="lazy" decoding="async" />
+				<?php if ( '' !== $wptpl_icon_image && ! $wptpl_render_image ) : ?>
+					<div class="text-accent mb-4 <?php echo $wptpl_centered ? 'flex justify-center' : ''; ?>" aria-hidden="true">
+						<img src="<?php echo esc_url( $wptpl_icon_image ); ?>" alt="" class="w-12 h-12" loading="lazy" decoding="async" />
 					</div>
-				<?php elseif ( '' !== $soywd_icon && ! $soywd_render_image ) : ?>
-					<div class="text-3xl mb-3" aria-hidden="true"><?php echo esc_html( $soywd_icon ); ?></div>
+				<?php elseif ( '' !== $wptpl_icon && ! $wptpl_render_image ) : ?>
+					<div class="text-3xl mb-3" aria-hidden="true"><?php echo esc_html( $wptpl_icon ); ?></div>
 				<?php endif; ?>
-				<?php if ( '' !== $soywd_eyebrow ) : ?>
-					<p class="soywd-eyebrow mb-2"><?php echo $soywd_eyebrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+				<?php if ( '' !== $wptpl_eyebrow ) : ?>
+					<p class="wptpl-eyebrow mb-2"><?php echo $wptpl_eyebrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 				<?php endif; ?>
-				<<?php echo esc_attr( $soywd_htag ); ?> class="mb-2"<?php echo $soywd_title_color ? ' style="color:' . esc_attr( $soywd_title_color ) . '"' : ''; ?>><?php echo $soywd_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $soywd_htag ); ?>>
+				<<?php echo esc_attr( $wptpl_htag ); ?> class="mb-2"<?php echo $wptpl_title_color ? ' style="color:' . esc_attr( $wptpl_title_color ) . '"' : ''; ?>><?php echo $wptpl_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></<?php echo esc_attr( $wptpl_htag ); ?>>
 			<?php endif; ?>
-			<p class="<?php echo esc_attr( $soywd_body_color ); ?>"><?php echo $soywd_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+			<p class="<?php echo esc_attr( $wptpl_body_color ); ?>"><?php echo $wptpl_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 		<?php endif; ?>
-		<?php if ( ! empty( $soywd_tags ) ) : ?>
-			<ul class="flex flex-wrap gap-2 mt-4 <?php echo ( $soywd_centered || $soywd_is_bilingual ) ? 'justify-center' : 'justify-start'; ?>">
+		<?php if ( ! empty( $wptpl_tags ) ) : ?>
+			<ul class="flex flex-wrap gap-2 mt-4 <?php echo ( $wptpl_centered || $wptpl_is_bilingual ) ? 'justify-center' : 'justify-start'; ?>">
 				<?php
-				foreach ( $soywd_tags as $soywd_tag ) :
-					$soywd_tag_label = is_array( $soywd_tag )
-						? soywd_attr_text( $soywd_tag, 'label' )
-						: sanitize_text_field( (string) $soywd_tag );
-					if ( '' === $soywd_tag_label ) {
+				foreach ( $wptpl_tags as $wptpl_tag ) :
+					$wptpl_tag_label = is_array( $wptpl_tag )
+						? wptpl_attr_text( $wptpl_tag, 'label' )
+						: sanitize_text_field( (string) $wptpl_tag );
+					if ( '' === $wptpl_tag_label ) {
 						continue;
 					}
 					?>
-					<li class="inline-block border border-current px-4 py-1.5 rounded-full text-xs tracking-normal"><?php echo esc_html( $soywd_tag_label ); ?></li>
+					<li class="inline-block border border-current px-4 py-1.5 rounded-full text-xs tracking-normal"><?php echo esc_html( $wptpl_tag_label ); ?></li>
 				<?php endforeach; ?>
 			</ul>
 		<?php endif; ?>
-		<?php if ( '' !== $soywd_cta_text ) : ?>
-			<div class="mt-auto pt-4 <?php echo $soywd_is_bilingual ? 'text-left lg:text-center' : ''; ?>">
-				<?php if ( 'button' === $soywd_cta_style ) : ?>
-					<a href="<?php echo esc_url( $soywd_cta_url ? $soywd_cta_url : '#' ); ?>" class="soywd-btn-primary">
-						<?php echo esc_html( $soywd_cta_text ); ?>
+		<?php if ( '' !== $wptpl_cta_text ) : ?>
+			<div class="mt-auto pt-4 <?php echo $wptpl_is_bilingual ? 'text-left lg:text-center' : ''; ?>">
+				<?php if ( 'button' === $wptpl_cta_style ) : ?>
+					<a href="<?php echo esc_url( $wptpl_cta_url ? $wptpl_cta_url : '#' ); ?>" class="wptpl-btn-primary">
+						<?php echo esc_html( $wptpl_cta_text ); ?>
 					</a>
 				<?php else : ?>
-					<a href="<?php echo esc_url( $soywd_cta_url ? $soywd_cta_url : '#' ); ?>" class="<?php echo esc_attr( $soywd_cta_arrow_cls ); ?>">
-						<?php echo esc_html( $soywd_cta_head ); ?> <span class="whitespace-nowrap"><?php echo esc_html( $soywd_cta_last ); ?> <span class="soywd-cta-arrow-icon" aria-hidden="true">&rarr;</span></span>
+					<a href="<?php echo esc_url( $wptpl_cta_url ? $wptpl_cta_url : '#' ); ?>" class="<?php echo esc_attr( $wptpl_cta_arrow_cls ); ?>">
+						<?php echo esc_html( $wptpl_cta_head ); ?> <span class="whitespace-nowrap"><?php echo esc_html( $wptpl_cta_last ); ?> <span class="wptpl-cta-arrow-icon" aria-hidden="true">&rarr;</span></span>
 					</a>
 				<?php endif; ?>
 			</div>

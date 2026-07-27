@@ -1,9 +1,9 @@
 /* Hide native marker and use our + indicator. */
-.soywd-faq__item summary::-webkit-details-marker {
+.wptpl-faq__item summary::-webkit-details-marker {
 	display: none;
 }
 
-.soywd-faq__item summary::marker {
+.wptpl-faq__item summary::marker {
 	content: "";
 }
 

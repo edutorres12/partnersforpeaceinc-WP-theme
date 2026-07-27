@@ -2,7 +2,7 @@
 /**
  * Customizer fields: header CTA + footer practice info.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,41 +11,41 @@ add_action(
 	'customize_register',
 	function ( $wp_customize ) {
 		$wp_customize->add_panel(
-			'soywd_global',
+			'wptpl_global',
 			array(
-				'title'    => __( 'Soy Web Development', 'soywd' ),
+				'title'    => __( 'Theme Settings', 'wptpl' ),
 				'priority' => 30,
 			)
 		);
 
 		// Header & CTA section.
 		$wp_customize->add_section(
-			'soywd_header',
+			'wptpl_header',
 			array(
-				'title' => __( 'Header & CTA', 'soywd' ),
-				'panel' => 'soywd_global',
+				'title' => __( 'Header & CTA', 'wptpl' ),
+				'panel' => 'wptpl_global',
 			)
 		);
 
 		$wp_customize->add_setting(
-			'soywd_primary_cta_text',
+			'wptpl_primary_cta_text',
 			array(
-				'default'           => __( 'Book a free consultation', 'soywd' ),
+				'default'           => __( 'Book a free consultation', 'wptpl' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'transport'         => 'refresh',
 			)
 		);
 		$wp_customize->add_control(
-			'soywd_primary_cta_text',
+			'wptpl_primary_cta_text',
 			array(
-				'label'   => __( 'Primary CTA text', 'soywd' ),
-				'section' => 'soywd_header',
+				'label'   => __( 'Primary CTA text', 'wptpl' ),
+				'section' => 'wptpl_header',
 				'type'    => 'text',
 			)
 		);
 
 		$wp_customize->add_setting(
-			'soywd_primary_cta_url',
+			'wptpl_primary_cta_url',
 			array(
 				'default'           => '#book',
 				'sanitize_callback' => 'esc_url_raw',
@@ -53,63 +53,68 @@ add_action(
 			)
 		);
 		$wp_customize->add_control(
-			'soywd_primary_cta_url',
+			'wptpl_primary_cta_url',
 			array(
-				'label'   => __( 'Primary CTA URL', 'soywd' ),
-				'section' => 'soywd_header',
+				'label'   => __( 'Primary CTA URL', 'wptpl' ),
+				'section' => 'wptpl_header',
 				'type'    => 'url',
 			)
 		);
 
 		// Footer / practice info section.
 		$wp_customize->add_section(
-			'soywd_footer',
+			'wptpl_footer',
 			array(
-				'title' => __( 'Footer / Practice info', 'soywd' ),
-				'panel' => 'soywd_global',
+				'title' => __( 'Footer / Practice info', 'wptpl' ),
+				'panel' => 'wptpl_global',
 			)
 		);
 
+		/*
+		 * Defaults are neutral placeholders, not real copy. Every field is
+		 * rendered by footer.php only when it holds a value, so the ones left
+		 * empty here simply don't appear until a site fills them in.
+		 */
 		$footer_fields = array(
-			'practice_name'      => array(
-				'label'   => __( 'Practice name', 'soywd' ),
-				'default' => __( 'Seasons of You Therapy', 'soywd' ),
+			'practice_name' => array(
+				'label'   => __( 'Practice name', 'wptpl' ),
+				'default' => __( 'Practice Name', 'wptpl' ),
 				'type'    => 'text',
 			),
-			'practitioner'       => array(
-				'label'   => __( 'Practitioner + credentials', 'soywd' ),
-				'default' => __( 'Helia Ziaee, LMFT', 'soywd' ),
+			'practitioner'  => array(
+				'label'   => __( 'Practitioner + credentials', 'wptpl' ),
+				'default' => __( 'Practitioner Name', 'wptpl' ),
 				'type'    => 'text',
 			),
-			'license'            => array(
-				'label'   => __( 'License number', 'soywd' ),
-				'default' => __( 'LMFT #103036', 'soywd' ),
+			'license'       => array(
+				'label'   => __( 'License number', 'wptpl' ),
+				'default' => '',
 				'type'    => 'text',
 			),
-			'hours'              => array(
-				'label'   => __( 'Hours', 'soywd' ),
-				'default' => __( 'Monday – Friday', 'soywd' ),
+			'hours'         => array(
+				'label'   => __( 'Hours', 'wptpl' ),
+				'default' => __( 'Monday – Friday', 'wptpl' ),
 				'type'    => 'textarea',
 			),
-			'modality'           => array(
-				'label'   => __( 'Modality', 'soywd' ),
-				'default' => __( 'CBT, ACT, IBCT, MBCT', 'soywd' ),
+			'modality'      => array(
+				'label'   => __( 'Modality', 'wptpl' ),
+				'default' => '',
 				'type'    => 'text',
 			),
-			'languages'          => array(
-				'label'   => __( 'Languages line (rendered as standalone eyebrow)', 'soywd' ),
-				'default' => __( 'Sessions in English and Farsi', 'soywd' ),
+			'languages'     => array(
+				'label'   => __( 'Languages line (rendered as standalone eyebrow)', 'wptpl' ),
+				'default' => '',
 				'type'    => 'text',
 			),
-			'crisis_text'        => array(
-				'label'   => __( 'Crisis disclaimer', 'soywd' ),
-				'default' => __( 'If you are in crisis, call or text 988 or visit our Crisis Resources page.', 'soywd' ),
+			'alert_text'    => array(
+				'label'   => __( 'Alert bar message (leave empty to hide the bar)', 'wptpl' ),
+				'default' => '',
 				'type'    => 'textarea',
 			),
 		);
 
 		foreach ( $footer_fields as $key => $cfg ) {
-			$setting = 'soywd_' . $key;
+			$setting = 'wptpl_' . $key;
 			$wp_customize->add_setting(
 				$setting,
 				array(
@@ -122,7 +127,7 @@ add_action(
 				$setting,
 				array(
 					'label'   => $cfg['label'],
-					'section' => 'soywd_footer',
+					'section' => 'wptpl_footer',
 					'type'    => $cfg['type'],
 				)
 			);
@@ -133,7 +138,7 @@ add_action(
 /**
  * Convenience accessor with the same defaults as the Customizer registration.
  */
-function soywd_setting( string $key, string $default = '' ): string {
-	$value = get_theme_mod( 'soywd_' . $key, $default );
+function wptpl_setting( string $key, string $default = '' ): string {
+	$value = get_theme_mod( 'wptpl_' . $key, $default );
 	return is_string( $value ) ? $value : $default;
 }

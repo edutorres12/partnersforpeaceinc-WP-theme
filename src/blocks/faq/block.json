@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "soywd/faq",
+	"name": "wptpl/faq",
 	"title": "FAQ",
-	"category": "soywd",
+	"category": "wptpl",
 	"icon": "editor-help",
 	"description": "List of questions and answers using native <details> accordion.",
 	"keywords": [ "faq", "questions", "accordion" ],
 	"version": "0.1.0",
-	"textdomain": "soywd",
+	"textdomain": "wptpl",
 	"supports": {
 		"html": false,
 		"anchor": true,

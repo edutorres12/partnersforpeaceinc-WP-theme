@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "soywd/category-filter",
+	"name": "wptpl/category-filter",
 	"title": "Category filter",
-	"category": "soywd",
+	"category": "wptpl",
 	"icon": "filter",
 	"description": "Pills for every post category (plus “All”). Clicking one filters the post grid on the same page — no reload.",
 	"keywords": [ "blog", "filter", "category", "pills" ],
 	"version": "0.1.0",
-	"textdomain": "soywd",
+	"textdomain": "wptpl",
 	"supports": {
 		"html": false,
 		"anchor": true,

@@ -1,25 +1,25 @@
 /**
  * Mobile navigation for the primary header menu.
  *
- * The hamburger opens #soywd-mobile-nav as a full-screen overlay that sits below
+ * The hamburger opens #wptpl-mobile-nav as a full-screen overlay that sits below
  * the header bar and scrolls internally — it never pushes the page, so the
  * document layout (including the 404 cover) is untouched whether the menu is
  * open or closed. Keeps aria-expanded in sync, morphs the icon (is-open), locks
  * background scroll, and closes on Escape or an outside click. Parent items
  * (e.g. Services) collapse by default with a caret disclosure button. The
- * overlay is offset by the live header height, published as `--soywd-header-h`.
+ * overlay is offset by the live header height, published as `--wptpl-header-h`.
  * Progressive enhancement: with JS off the panel stays hidden and the desktop
  * nav still works above the lg breakpoint.
  */
 ( function () {
-	const toggle = document.getElementById( 'soywd-nav-toggle' );
-	const panel = document.getElementById( 'soywd-mobile-nav' );
+	const toggle = document.getElementById( 'wptpl-nav-toggle' );
+	const panel = document.getElementById( 'wptpl-mobile-nav' );
 
 	if ( ! toggle || ! panel ) {
 		return;
 	}
 
-	const header = document.querySelector( '.soywd-header' );
+	const header = document.querySelector( '.wptpl-header' );
 	const parents = panel.querySelectorAll( '.menu-item-has-children' );
 
 	// Make the panel itself programmatically focusable (but not a Tab stop) so
@@ -37,7 +37,7 @@
 		const root = document.documentElement;
 		const adminBar = document.getElementById( 'wpadminbar' );
 		root.style.setProperty(
-			'--soywd-adminbar-h',
+			'--wptpl-adminbar-h',
 			( adminBar ? adminBar.offsetHeight : 0 ) + 'px'
 		);
 		if ( header ) {
@@ -46,7 +46,7 @@
 			// rounding, avoiding a gap that the height-plus-admin-bar arithmetic
 			// left. Measured at open time, when the header is at the top.
 			const bottom = Math.round( header.getBoundingClientRect().bottom );
-			root.style.setProperty( '--soywd-header-h', bottom + 'px' );
+			root.style.setProperty( '--wptpl-header-h', bottom + 'px' );
 		}
 	}
 
@@ -55,7 +55,7 @@
 	function collapseSubmenus() {
 		parents.forEach( function ( item ) {
 			item.classList.remove( 'is-open' );
-			const button = item.querySelector( '.soywd-submenu-toggle' );
+			const button = item.querySelector( '.wptpl-submenu-toggle' );
 			if ( button ) {
 				button.setAttribute( 'aria-expanded', 'false' );
 			}
@@ -67,7 +67,7 @@
 	// header is left alone because it holds the toggle and the panel itself.
 	const backgroundRegions = [
 		document.querySelector( 'main' ),
-		document.querySelector( '.soywd-footer' ),
+		document.querySelector( '.wptpl-footer' ),
 	].filter( Boolean );
 
 	// Visible, focusable elements currently inside the panel.
@@ -125,7 +125,7 @@
 		// The overlay is fixed, so locking the background is correct here (it
 		// keeps the page from scrolling behind the menu). The panel keeps its
 		// own scroll via overflow-y in CSS.
-		document.documentElement.classList.toggle( 'soywd-nav-open', open );
+		document.documentElement.classList.toggle( 'wptpl-nav-open', open );
 
 		// Make the rest of the page inert (non-focusable, hidden from AT) while
 		// the overlay is open.
@@ -165,12 +165,12 @@
 		}
 
 		if ( ! submenu.id ) {
-			submenu.id = 'soywd-submenu-' + index;
+			submenu.id = 'wptpl-submenu-' + index;
 		}
 
 		const button = document.createElement( 'button' );
 		button.type = 'button';
-		button.className = 'soywd-submenu-toggle';
+		button.className = 'wptpl-submenu-toggle';
 		button.setAttribute( 'aria-expanded', 'false' );
 		button.setAttribute( 'aria-controls', submenu.id );
 		// Describe the action, not just the section, so the disclosure isn't

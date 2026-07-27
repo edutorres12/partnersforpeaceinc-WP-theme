@@ -1,9 +1,9 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "soywd/section-header",
+  "name": "wptpl/section-header",
   "title": "Section header",
-  "category": "soywd",
+  "category": "wptpl",
   "icon": "heading",
   "description": "Eyebrow + headline + intro paragraph.",
   "keywords": [
@@ -13,7 +13,7 @@
     "heading"
   ],
   "version": "0.1.0",
-  "textdomain": "soywd",
+  "textdomain": "wptpl",
   "supports": {
     "html": false,
     "anchor": true,

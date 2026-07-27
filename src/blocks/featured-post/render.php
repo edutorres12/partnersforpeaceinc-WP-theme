@@ -1,55 +1,55 @@
 <?php
 /**
- * Server-side render for soywd/featured-post.
+ * Server-side render for wptpl/featured-post.
  *
- * Renders the large clay "Featured post" card from the blog's headline post
+ * Renders the large accent "Featured post" card from the blog's headline post
  * (sticky first, otherwise the most recent). Meant to sit inside the featured
- * section wrapper (the bark band + container) on the Blog hub page, replacing
+ * section wrapper (the muted band + container) on the Blog hub page, replacing
  * the previously-static card. Outputs nothing when there are no posts yet.
  *
  * The whole card is clickable: the "Read the article" CTA is a stretched link
- * (its ::after covers the card, see .soywd-featured-post in src/tailwind.css),
+ * (its ::after covers the card, see .wptpl-featured-post in src/tailwind.css),
  * so there is a single, accessible link per card. Title and image are plain
  * (not separate links) to avoid redundant links to the same URL.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$soywd_id = function_exists( 'soywd_blog_featured_id' ) ? soywd_blog_featured_id() : 0;
-if ( ! $soywd_id ) {
+$wptpl_id = function_exists( 'wptpl_blog_featured_id' ) ? wptpl_blog_featured_id() : 0;
+if ( ! $wptpl_id ) {
 	return;
 }
 
-$soywd_url     = get_permalink( $soywd_id );
-$soywd_title   = get_the_title( $soywd_id );
-$soywd_excerpt = get_the_excerpt( $soywd_id );
-$soywd_thumb   = get_the_post_thumbnail_url( $soywd_id, 'large' );
-$soywd_alt     = trim( (string) get_post_meta( get_post_thumbnail_id( $soywd_id ), '_wp_attachment_image_alt', true ) );
+$wptpl_url     = get_permalink( $wptpl_id );
+$wptpl_title   = get_the_title( $wptpl_id );
+$wptpl_excerpt = get_the_excerpt( $wptpl_id );
+$wptpl_thumb   = get_the_post_thumbnail_url( $wptpl_id, 'large' );
+$wptpl_alt     = trim( (string) get_post_meta( get_post_thumbnail_id( $wptpl_id ), '_wp_attachment_image_alt', true ) );
 
-// The card is the block's root element. Match the static design: clay bg,
-// 22px radius, cream text, generous bottom padding.
-$soywd_wrapper = get_block_wrapper_attributes(
+// The card is the block's root element. Match the static design: accent bg,
+// 22px radius, canvas text, generous bottom padding.
+$wptpl_wrapper = get_block_wrapper_attributes(
 	array(
-		'class' => 'soywd-featured-post has-accent-background-color has-text-color has-background',
-		'style' => 'border-radius:22px;color:#e6ded3;padding:1.5rem 1.5rem 7rem 1.5rem',
+		'class' => 'wptpl-featured-post has-accent-background-color has-text-color has-background',
+		'style' => 'border-radius:22px;color:#e6e6e6;padding:1.5rem 1.5rem 7rem 1.5rem',
 	)
 );
 ?>
-<div <?php echo $soywd_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<?php if ( $soywd_thumb ) : ?>
+<div <?php echo $wptpl_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+	<?php if ( $wptpl_thumb ) : ?>
 		<figure class="wp-block-image size-large is-style-rounded-square" style="margin:0">
-			<img src="<?php echo esc_url( $soywd_thumb ); ?>" alt="<?php echo esc_attr( $soywd_alt ); ?>" style="display:block;width:100%;height:auto" loading="lazy" decoding="async" />
+			<img src="<?php echo esc_url( $wptpl_thumb ); ?>" alt="<?php echo esc_attr( $wptpl_alt ); ?>" style="display:block;width:100%;height:auto" loading="lazy" decoding="async" />
 		</figure>
 	<?php endif; ?>
-	<h2 class="wp-block-heading has-text-color" style="color:#e6ded3;margin-top:1.5rem"><?php echo esc_html( $soywd_title ); ?></h2>
-	<?php if ( '' !== $soywd_excerpt ) : ?>
-		<p class="has-text-color" style="color:#ffffff"><?php echo esc_html( $soywd_excerpt ); ?></p>
+	<h2 class="wp-block-heading has-text-color" style="color:#e6e6e6;margin-top:1.5rem"><?php echo esc_html( $wptpl_title ); ?></h2>
+	<?php if ( '' !== $wptpl_excerpt ) : ?>
+		<p class="has-text-color" style="color:#ffffff"><?php echo esc_html( $wptpl_excerpt ); ?></p>
 	<?php endif; ?>
 	<p style="margin-top:1.25rem">
-		<a href="<?php echo esc_url( $soywd_url ); ?>" class="soywd-cta-arrow soywd-cta-arrow-light text-xs uppercase tracking-widest font-semibold">
-			<?php esc_html_e( 'Read the article', 'soywd' ); ?> <span class="soywd-cta-arrow-icon" aria-hidden="true">&rarr;</span>
+		<a href="<?php echo esc_url( $wptpl_url ); ?>" class="wptpl-cta-arrow wptpl-cta-arrow-light text-xs uppercase tracking-widest font-semibold">
+			<?php esc_html_e( 'Read the article', 'wptpl' ); ?> <span class="wptpl-cta-arrow-icon" aria-hidden="true">&rarr;</span>
 		</a>
 	</p>
 </div>

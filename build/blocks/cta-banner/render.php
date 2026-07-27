@@ -1,118 +1,118 @@
 <?php
 /**
- * Server-side render for soywd/cta-banner.
+ * Server-side render for wptpl/cta-banner.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$soywd_btn_styles      = array( 'auto', 'accent', 'sage', 'cream', 'primary', 'outline' );
-$soywd_eyebrow         = soywd_attr_html( $attributes, 'eyebrow' );
-$soywd_headline        = soywd_attr_html( $attributes, 'headline' );
-$soywd_text            = soywd_attr_html( $attributes, 'text' );
-$soywd_cta_text        = soywd_attr_text( $attributes, 'ctaText' );
-$soywd_cta_url         = soywd_attr_url( $attributes, 'ctaUrl' );
-$soywd_cta_style       = soywd_attr_enum( $attributes, 'ctaStyle', $soywd_btn_styles, 'auto' );
-$soywd_sec_cta_text    = soywd_attr_text( $attributes, 'secondaryCtaText' );
-$soywd_sec_cta_url     = soywd_attr_url( $attributes, 'secondaryCtaUrl' );
-$soywd_sec_cta_style   = soywd_attr_enum( $attributes, 'secondaryCtaStyle', $soywd_btn_styles, 'sage' );
-$soywd_sec_cta_color   = soywd_attr_color( $attributes, 'secondaryCtaTextColor' );
-$soywd_btn_layout      = soywd_attr_enum( $attributes, 'buttonLayout', array( 'row', 'column' ), 'row' );
-$soywd_theme           = soywd_attr_enum( $attributes, 'theme', array( 'dark', 'light' ), 'dark' );
-$soywd_is_dark         = 'dark' === $soywd_theme;
-$soywd_bg_image_url    = soywd_attr_url( $attributes, 'backgroundImageUrl' );
-$soywd_bg_image_alt    = soywd_attr_text( $attributes, 'backgroundImageAlt' );
-$soywd_overlay         = soywd_attr_float( $attributes, 'overlayOpacity', 0.0, 0.9, 0.45 );
-$soywd_headline_color  = soywd_attr_color( $attributes, 'headlineColor' );
-$soywd_body_color      = soywd_attr_color( $attributes, 'bodyColor' );
-$soywd_eyebrow_color   = soywd_attr_color( $attributes, 'eyebrowColor' );
+$wptpl_btn_styles      = array( 'auto', 'accent', 'soft', 'canvas', 'primary', 'outline' );
+$wptpl_eyebrow         = wptpl_attr_html( $attributes, 'eyebrow' );
+$wptpl_headline        = wptpl_attr_html( $attributes, 'headline' );
+$wptpl_text            = wptpl_attr_html( $attributes, 'text' );
+$wptpl_cta_text        = wptpl_attr_text( $attributes, 'ctaText' );
+$wptpl_cta_url         = wptpl_attr_url( $attributes, 'ctaUrl' );
+$wptpl_cta_style       = wptpl_attr_enum( $attributes, 'ctaStyle', $wptpl_btn_styles, 'auto' );
+$wptpl_sec_cta_text    = wptpl_attr_text( $attributes, 'secondaryCtaText' );
+$wptpl_sec_cta_url     = wptpl_attr_url( $attributes, 'secondaryCtaUrl' );
+$wptpl_sec_cta_style   = wptpl_attr_enum( $attributes, 'secondaryCtaStyle', $wptpl_btn_styles, 'soft' );
+$wptpl_sec_cta_color   = wptpl_attr_color( $attributes, 'secondaryCtaTextColor' );
+$wptpl_btn_layout      = wptpl_attr_enum( $attributes, 'buttonLayout', array( 'row', 'column' ), 'row' );
+$wptpl_theme           = wptpl_attr_enum( $attributes, 'theme', array( 'dark', 'light' ), 'dark' );
+$wptpl_is_dark         = 'dark' === $wptpl_theme;
+$wptpl_bg_image_url    = wptpl_attr_url( $attributes, 'backgroundImageUrl' );
+$wptpl_bg_image_alt    = wptpl_attr_text( $attributes, 'backgroundImageAlt' );
+$wptpl_overlay         = wptpl_attr_float( $attributes, 'overlayOpacity', 0.0, 0.9, 0.45 );
+$wptpl_headline_color  = wptpl_attr_color( $attributes, 'headlineColor' );
+$wptpl_body_color      = wptpl_attr_color( $attributes, 'bodyColor' );
+$wptpl_eyebrow_color   = wptpl_attr_color( $attributes, 'eyebrowColor' );
 
 // Auto-fill placeholder for the dark theme variant so the closing CTA always has a photo backdrop.
-if ( '' === $soywd_bg_image_url && $soywd_is_dark ) {
-	$soywd_bg_image_url = SOYWD_THEME_URI . '/assets/placeholders/cta-bg.jpg';
-	$soywd_bg_image_alt = '';
+if ( '' === $wptpl_bg_image_url && $wptpl_is_dark ) {
+	$wptpl_bg_image_url = WPTPL_THEME_URI . '/assets/placeholders/cta-bg.jpg';
+	$wptpl_bg_image_alt = '';
 }
 
-$soywd_has_image = '' !== $soywd_bg_image_url;
+$wptpl_has_image = '' !== $wptpl_bg_image_url;
 
-$soywd_solid_bg       = $soywd_is_dark ? 'bg-secondary text-white' : 'bg-cream text-contrast';
-$soywd_wrapper_class  = 'soywd-cta-banner relative text-center py-[6.25rem] px-6 overflow-hidden ' . ( $soywd_has_image ? 'text-white' : $soywd_solid_bg );
-$soywd_eyebrow_class  = 'text-xs uppercase tracking-widest mb-3 ' . ( $soywd_has_image || $soywd_is_dark ? 'text-white/70' : 'text-muted' );
-$soywd_text_class     = 'mt-4 max-w-2xl mx-auto text-xl ' . ( $soywd_has_image || $soywd_is_dark ? 'text-white/70' : 'text-muted' );
+$wptpl_solid_bg       = $wptpl_is_dark ? 'bg-secondary text-white' : 'bg-canvas text-contrast';
+$wptpl_wrapper_class  = 'wptpl-cta-banner relative text-center py-[6.25rem] px-6 overflow-hidden ' . ( $wptpl_has_image ? 'text-white' : $wptpl_solid_bg );
+$wptpl_eyebrow_class  = 'text-xs uppercase tracking-widest mb-3 ' . ( $wptpl_has_image || $wptpl_is_dark ? 'text-white/70' : 'text-muted' );
+$wptpl_text_class     = 'mt-4 max-w-2xl mx-auto text-xl ' . ( $wptpl_has_image || $wptpl_is_dark ? 'text-white/70' : 'text-muted' );
 /*
  * Resolve a button style enum to its brand button class. The "auto" default
  * keeps the original context-aware behavior so existing banners are unchanged:
- *   photo background → sage button with dark text (matches Figma final CTA),
- *   solid dark theme → cream button, light theme → primary olive button.
- * Any explicit value (accent/sage/cream/primary/outline) lets a single banner
- * override its buttons — e.g. clay primary + sage secondary — without touching
+ *   photo background → primary button with dark text (matches Figma final CTA),
+ *   solid dark theme → canvas button, light theme → primary secondary button.
+ * Any explicit value (accent/primary/canvas/primary/outline) lets a single banner
+ * override its buttons — e.g. accent primary + primary secondary — without touching
  * other pages.
  */
-$soywd_resolve_btn = static function ( string $soywd_style ) use ( $soywd_has_image, $soywd_is_dark ): string {
-	switch ( $soywd_style ) {
+$wptpl_resolve_btn = static function ( string $wptpl_style ) use ( $wptpl_has_image, $wptpl_is_dark ): string {
+	switch ( $wptpl_style ) {
 		case 'accent':
-			return 'soywd-btn-accent';
-		case 'sage':
-			return 'soywd-btn-photo';
-		case 'cream':
-			return 'soywd-btn bg-cream text-contrast hover:bg-primary hover:text-white';
+			return 'wptpl-btn-accent';
+		case 'soft':
+			return 'wptpl-btn-photo';
+		case 'canvas':
+			return 'wptpl-btn bg-canvas text-contrast hover:bg-primary hover:text-white';
 		case 'primary':
-			return 'soywd-btn-primary';
+			return 'wptpl-btn-primary';
 		case 'outline':
-			return 'soywd-btn-outline';
+			return 'wptpl-btn-outline';
 		case 'auto':
 		default:
-			if ( $soywd_has_image ) {
-				return 'soywd-btn-photo';
+			if ( $wptpl_has_image ) {
+				return 'wptpl-btn-photo';
 			}
-			if ( $soywd_is_dark ) {
-				return 'soywd-btn bg-cream text-contrast hover:bg-primary hover:text-white';
+			if ( $wptpl_is_dark ) {
+				return 'wptpl-btn bg-canvas text-contrast hover:bg-primary hover:text-white';
 			}
-			return 'soywd-btn-primary';
+			return 'wptpl-btn-primary';
 	}
 };
 
-$soywd_btn_class     = $soywd_resolve_btn( $soywd_cta_style );
-$soywd_sec_btn_class = $soywd_resolve_btn( $soywd_sec_cta_style );
-$soywd_has_secondary = '' !== $soywd_sec_cta_text;
+$wptpl_btn_class     = $wptpl_resolve_btn( $wptpl_cta_style );
+$wptpl_sec_btn_class = $wptpl_resolve_btn( $wptpl_sec_cta_style );
+$wptpl_has_secondary = '' !== $wptpl_sec_cta_text;
 
-$soywd_wrapper = get_block_wrapper_attributes(
-	array( 'class' => $soywd_wrapper_class )
+$wptpl_wrapper = get_block_wrapper_attributes(
+	array( 'class' => $wptpl_wrapper_class )
 );
 ?>
-<div <?php echo $soywd_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-	<?php if ( $soywd_has_image ) : ?>
+<div <?php echo $wptpl_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+	<?php if ( $wptpl_has_image ) : ?>
 		<?php
-		echo soywd_render_picture( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo wptpl_render_picture( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			array(
-				'src'         => $soywd_bg_image_url,
-				'alt'         => $soywd_bg_image_alt,
+				'src'         => $wptpl_bg_image_url,
+				'alt'         => $wptpl_bg_image_alt,
 				'class'       => 'absolute inset-0 w-full h-full object-cover',
 				'aria_hidden' => true,
 			)
 		);
 		?>
-		<div class="absolute inset-0 bg-secondary" style="opacity:<?php echo esc_attr( (string) $soywd_overlay ); ?>" aria-hidden="true"></div>
+		<div class="absolute inset-0 bg-secondary" style="opacity:<?php echo esc_attr( (string) $wptpl_overlay ); ?>" aria-hidden="true"></div>
 	<?php endif; ?>
 	<div class="relative z-10">
-		<?php if ( '' !== $soywd_eyebrow ) : ?>
-			<p class="<?php echo esc_attr( $soywd_eyebrow_class ); ?>"<?php echo $soywd_eyebrow_color ? ' style="color:' . esc_attr( $soywd_eyebrow_color ) . '"' : ''; ?>><?php echo $soywd_eyebrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+		<?php if ( '' !== $wptpl_eyebrow ) : ?>
+			<p class="<?php echo esc_attr( $wptpl_eyebrow_class ); ?>"<?php echo $wptpl_eyebrow_color ? ' style="color:' . esc_attr( $wptpl_eyebrow_color ) . '"' : ''; ?>><?php echo $wptpl_eyebrow; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 		<?php endif; ?>
-		<h2 class="max-w-3xl mx-auto"<?php echo $soywd_headline_color ? ' style="color:' . esc_attr( $soywd_headline_color ) . '"' : ''; ?>><?php echo $soywd_headline; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h2>
-		<?php if ( '' !== $soywd_text ) : ?>
-			<p class="<?php echo esc_attr( $soywd_text_class ); ?>"<?php echo $soywd_body_color ? ' style="color:' . esc_attr( $soywd_body_color ) . '"' : ''; ?>><?php echo $soywd_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+		<h2 class="max-w-3xl mx-auto"<?php echo $wptpl_headline_color ? ' style="color:' . esc_attr( $wptpl_headline_color ) . '"' : ''; ?>><?php echo $wptpl_headline; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h2>
+		<?php if ( '' !== $wptpl_text ) : ?>
+			<p class="<?php echo esc_attr( $wptpl_text_class ); ?>"<?php echo $wptpl_body_color ? ' style="color:' . esc_attr( $wptpl_body_color ) . '"' : ''; ?>><?php echo $wptpl_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 		<?php endif; ?>
-		<?php if ( '' !== $soywd_cta_text || $soywd_has_secondary ) : ?>
-			<div class="mt-6 flex gap-3 justify-center <?php echo 'column' === $soywd_btn_layout ? 'flex-col items-center' : 'flex-wrap'; ?>">
-				<?php if ( '' !== $soywd_cta_text ) : ?>
-					<a href="<?php echo esc_url( $soywd_cta_url ? $soywd_cta_url : '#' ); ?>" class="<?php echo esc_attr( $soywd_btn_class ); ?>">
-						<?php echo esc_html( $soywd_cta_text ); ?>
+		<?php if ( '' !== $wptpl_cta_text || $wptpl_has_secondary ) : ?>
+			<div class="mt-6 flex gap-3 justify-center <?php echo 'column' === $wptpl_btn_layout ? 'flex-col items-center' : 'flex-wrap'; ?>">
+				<?php if ( '' !== $wptpl_cta_text ) : ?>
+					<a href="<?php echo esc_url( $wptpl_cta_url ? $wptpl_cta_url : '#' ); ?>" class="<?php echo esc_attr( $wptpl_btn_class ); ?>">
+						<?php echo esc_html( $wptpl_cta_text ); ?>
 					</a>
 				<?php endif; ?>
-				<?php if ( $soywd_has_secondary ) : ?>
-					<a href="<?php echo esc_url( $soywd_sec_cta_url ? $soywd_sec_cta_url : '#' ); ?>" class="<?php echo esc_attr( $soywd_sec_btn_class ); ?>"<?php echo $soywd_sec_cta_color ? ' style="color:' . esc_attr( $soywd_sec_cta_color ) . '"' : ''; ?>>
-						<?php echo esc_html( $soywd_sec_cta_text ); ?>
+				<?php if ( $wptpl_has_secondary ) : ?>
+					<a href="<?php echo esc_url( $wptpl_sec_cta_url ? $wptpl_sec_cta_url : '#' ); ?>" class="<?php echo esc_attr( $wptpl_sec_btn_class ); ?>"<?php echo $wptpl_sec_cta_color ? ' style="color:' . esc_attr( $wptpl_sec_cta_color ) . '"' : ''; ?>>
+						<?php echo esc_html( $wptpl_sec_cta_text ); ?>
 					</a>
 				<?php endif; ?>
 			</div>

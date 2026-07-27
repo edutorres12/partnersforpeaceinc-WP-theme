@@ -11,7 +11,7 @@
  * Pinta los tags en <head> con info derivada del post actual (single/page),
  * con fallback a la info global del sitio (home, archives, 404).
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * Return true when an SEO plugin owns <head> tags already. Filterable so
  * callers can force-disable or force-enable this baseline if they want.
  */
-function soywd_seo_plugin_active(): bool {
+function wptpl_seo_plugin_active(): bool {
 	$active = defined( 'WPSEO_VERSION' )          // Yoast SEO
 		|| class_exists( 'WPSEO_Options' )        // Yoast SEO (older)
 		|| defined( 'RANK_MATH_VERSION' )         // Rank Math
@@ -31,18 +31,18 @@ function soywd_seo_plugin_active(): bool {
 	 * Allow forcing the theme's baseline SEO on/off regardless of plugin
 	 * detection. Return TRUE here to disable the theme tags.
 	 */
-	return (bool) apply_filters( 'soywd_seo_plugin_active', $active );
+	return (bool) apply_filters( 'wptpl_seo_plugin_active', $active );
 }
 
 // If a real SEO plugin is on duty, bail before registering any hooks.
-if ( soywd_seo_plugin_active() ) {
+if ( wptpl_seo_plugin_active() ) {
 	return;
 }
 
 /**
  * Resolve the canonical description for the current request.
  */
-function soywd_seo_description(): string {
+function wptpl_seo_description(): string {
 	if ( is_singular() ) {
 		$post_id = get_queried_object_id();
 		$excerpt = has_excerpt( $post_id ) ? get_the_excerpt( $post_id ) : '';
@@ -65,7 +65,7 @@ function soywd_seo_description(): string {
  * wp_get_document_title() honors theme-support('title-tag') and any SEO
  * plugins the user may add later.
  */
-function soywd_seo_title(): string {
+function wptpl_seo_title(): string {
 	return wp_get_document_title();
 }
 
@@ -73,7 +73,7 @@ function soywd_seo_title(): string {
  * Resolve the OG image URL: featured image → first attachment → site logo →
  * theme placeholder.
  */
-function soywd_seo_image(): string {
+function wptpl_seo_image(): string {
 	if ( is_singular() ) {
 		$post_id = get_queried_object_id();
 		$thumb   = get_the_post_thumbnail_url( $post_id, 'full' );
@@ -90,13 +90,13 @@ function soywd_seo_image(): string {
 		}
 	}
 
-	return SOYWD_THEME_URI . '/assets/placeholders/hero.jpg';
+	return WPTPL_THEME_URI . '/assets/placeholders/hero.jpg';
 }
 
 /**
  * Resolve the canonical URL for the current request.
  */
-function soywd_seo_url(): string {
+function wptpl_seo_url(): string {
 	if ( is_singular() ) {
 		$permalink = get_permalink();
 		if ( $permalink ) {
@@ -109,10 +109,10 @@ function soywd_seo_url(): string {
 add_action(
 	'wp_head',
 	function () {
-		$description = soywd_seo_description();
-		$title       = soywd_seo_title();
-		$image       = soywd_seo_image();
-		$url         = soywd_seo_url();
+		$description = wptpl_seo_description();
+		$title       = wptpl_seo_title();
+		$image       = wptpl_seo_image();
+		$url         = wptpl_seo_url();
 		$site_name   = get_bloginfo( 'name', 'display' );
 		$og_type     = is_singular( 'post' ) ? 'article' : 'website';
 		$locale      = get_locale();

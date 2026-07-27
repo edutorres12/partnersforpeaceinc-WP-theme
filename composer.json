@@ -1,6 +1,6 @@
 {
-	"name": "soywd/theme",
-	"description": "Soy Web Development WordPress theme — dev tooling.",
+	"name": "wptpl/theme",
+	"description": "Therapy Theme Template WordPress theme — dev tooling.",
 	"type": "wordpress-theme",
 	"license": "GPL-2.0-or-later",
 	"require-dev": {

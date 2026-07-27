@@ -29,10 +29,10 @@ const OVERLAY_BG = {
 	primary: 'bg-primary',
 	secondary: 'bg-secondary',
 	accent: 'bg-accent',
-	base: 'bg-cream',
-	'cream-light': 'bg-cream-light',
+	base: 'bg-canvas',
+	'on-dark': 'bg-on-dark',
 	muted: 'bg-muted',
-	bark: 'bg-bark',
+	'primary-soft': 'bg-primary-soft',
 	surface: 'bg-surface',
 	white: 'bg-white',
 };
@@ -40,14 +40,14 @@ const OVERLAY_BG = {
 // Friendly overlay names — matches the group block's "Overlay: *" styles
 // registered in inc/setup.php so authors see the same palette everywhere.
 const OVERLAY_COLORS = [
-	{ label: 'Olive (dark)', value: 'secondary' },
-	{ label: 'Sage', value: 'primary' },
-	{ label: 'Clay', value: 'accent' },
-	{ label: 'Ivory', value: 'base' },
-	{ label: 'Cream Light', value: 'cream-light' },
-	{ label: 'Taupe', value: 'muted' },
-	{ label: 'Bark', value: 'bark' },
-	{ label: 'Sand', value: 'surface' },
+	{ label: 'Secondary (dark)', value: 'secondary' },
+	{ label: 'Primary', value: 'primary' },
+	{ label: 'Accent', value: 'accent' },
+	{ label: 'Base', value: 'base' },
+	{ label: 'On dark', value: 'on-dark' },
+	{ label: 'Muted', value: 'muted' },
+	{ label: 'Primary soft', value: 'primary-soft' },
+	{ label: 'Surface', value: 'surface' },
 	{ label: 'White', value: 'white' },
 ];
 
@@ -86,7 +86,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	const hasImage = backgroundImageUrl !== '' || usePlaceholder;
 
 	const blockProps = useBlockProps( {
-		className: `soywd-steps text-center${
+		className: `wptpl-steps text-center${
 			hasImage ? ' relative overflow-hidden text-white py-[6.25rem]' : ''
 		}`,
 	} );
@@ -95,21 +95,21 @@ export default function Edit( { attributes, setAttributes } ) {
 	const gridCols = GRID_COLS[ count ] || 'md:grid-cols-3';
 
 	const cardClass = hasImage
-		? 'relative border border-cream rounded-lg pt-16 px-6 pb-6 h-full'
+		? 'relative border border-canvas rounded-lg pt-16 px-6 pb-6 h-full'
 		: '';
 	const numberClass = hasImage
-		? 'w-20 h-20 rounded-full bg-accent text-cream flex items-center justify-center text-2xl absolute -top-10 left-1/2 -translate-x-1/2'
+		? 'w-20 h-20 rounded-full bg-accent text-canvas flex items-center justify-center text-2xl absolute -top-10 left-1/2 -translate-x-1/2'
 		: 'w-20 h-20 rounded-full bg-accent text-white flex items-center justify-center text-2xl mx-auto mb-4';
-	const titleClass = hasImage ? 'text-cream' : '';
+	const titleClass = hasImage ? 'text-canvas' : '';
 	const bodyClass = hasImage
-		? 'text-cream/85 mt-2 font-medium'
+		? 'text-canvas/85 mt-2 font-medium'
 		: 'text-sm opacity-80 mt-2 font-medium';
 	const headingClass = hasImage
-		? 'soywd-steps__heading text-cream'
-		: 'soywd-steps__heading';
-	const introClass = hasImage ? 'mt-3 text-cream/85' : 'mt-3 text-muted';
+		? 'wptpl-steps__heading text-canvas'
+		: 'wptpl-steps__heading';
+	const introClass = hasImage ? 'mt-3 text-canvas/85' : 'mt-3 text-muted';
 	const headerMb = hasImage ? 'mb-20' : 'mb-12';
-	const ctaClass = hasImage ? 'soywd-btn-accent' : 'soywd-btn-primary';
+	const ctaClass = hasImage ? 'wptpl-btn-accent' : 'wptpl-btn-primary';
 	const microcopyClass = hasImage
 		? 'mt-3 text-sm text-white/70'
 		: 'mt-3 text-sm text-muted';
@@ -118,21 +118,21 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Section header', 'soywd' ) }
+					title={ __( 'Section header', 'wptpl' ) }
 					initialOpen
 				>
 					<TextControl
-						label={ __( 'Heading', 'soywd' ) }
+						label={ __( 'Heading', 'wptpl' ) }
 						value={ heading }
 						onChange={ ( v ) => setAttributes( { heading: v } ) }
 					/>
 					<TextControl
-						label={ __( 'Intro', 'soywd' ) }
+						label={ __( 'Intro', 'wptpl' ) }
 						value={ intro }
 						onChange={ ( v ) => setAttributes( { intro: v } ) }
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Steps', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Steps', 'wptpl' ) } initialOpen>
 					{ items.map( ( item, i ) => (
 						<div
 							key={ i }
@@ -143,14 +143,14 @@ export default function Edit( { attributes, setAttributes } ) {
 							} }
 						>
 							<TextControl
-								label={ `${ __( 'Title', 'soywd' ) } ${
+								label={ `${ __( 'Title', 'wptpl' ) } ${
 									i + 1
 								}` }
 								value={ item.title }
 								onChange={ ( v ) => update( i, 'title', v ) }
 							/>
 							<TextareaControl
-								label={ __( 'Description', 'soywd' ) }
+								label={ __( 'Description', 'wptpl' ) }
 								value={ item.text }
 								onChange={ ( v ) => update( i, 'text', v ) }
 							/>
@@ -159,16 +159,16 @@ export default function Edit( { attributes, setAttributes } ) {
 								isSmall
 								onClick={ () => remove( i ) }
 							>
-								{ __( 'Remove', 'soywd' ) }
+								{ __( 'Remove', 'wptpl' ) }
 							</Button>
 						</div>
 					) ) }
 					<Button variant="primary" onClick={ add }>
-						{ __( 'Add step', 'soywd' ) }
+						{ __( 'Add step', 'wptpl' ) }
 					</Button>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Background image', 'soywd' ) }
+					title={ __( 'Background image', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<MediaUploadCheck>
@@ -183,8 +183,8 @@ export default function Edit( { attributes, setAttributes } ) {
 							render={ ( { open } ) => (
 								<Button variant="secondary" onClick={ open }>
 									{ backgroundImageUrl
-										? __( 'Change image', 'soywd' )
-										: __( 'Select image', 'soywd' ) }
+										? __( 'Change image', 'wptpl' )
+										: __( 'Select image', 'wptpl' ) }
 								</Button>
 							) }
 						/>
@@ -201,11 +201,11 @@ export default function Edit( { attributes, setAttributes } ) {
 							}
 							style={ { marginLeft: 8 } }
 						>
-							{ __( 'Remove', 'soywd' ) }
+							{ __( 'Remove', 'wptpl' ) }
 						</Button>
 					) }
 					<SelectControl
-						label={ __( 'Overlay color', 'soywd' ) }
+						label={ __( 'Overlay color', 'wptpl' ) }
 						value={ overlayColor }
 						options={ OVERLAY_COLORS }
 						onChange={ ( v ) =>
@@ -213,7 +213,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 					<RangeControl
-						label={ __( 'Overlay opacity', 'soywd' ) }
+						label={ __( 'Overlay opacity', 'wptpl' ) }
 						value={ overlayOpacity }
 						min={ 0 }
 						max={ 0.9 }
@@ -225,7 +225,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					<ToggleControl
 						label={ __(
 							'Use placeholder image when none selected',
-							'soywd'
+							'wptpl'
 						) }
 						checked={ usePlaceholder }
 						onChange={ ( v ) =>
@@ -234,32 +234,32 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Call to action', 'soywd' ) }
+					title={ __( 'Call to action', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<ToggleControl
-						label={ __( 'Show CTA button', 'soywd' ) }
+						label={ __( 'Show CTA button', 'wptpl' ) }
 						checked={ showCta }
 						onChange={ ( v ) => setAttributes( { showCta: v } ) }
 					/>
 					{ showCta && (
 						<>
 							<TextControl
-								label={ __( 'Button text', 'soywd' ) }
+								label={ __( 'Button text', 'wptpl' ) }
 								value={ ctaText }
 								onChange={ ( v ) =>
 									setAttributes( { ctaText: v } )
 								}
 							/>
 							<TextControl
-								label={ __( 'Button URL', 'soywd' ) }
+								label={ __( 'Button URL', 'wptpl' ) }
 								value={ ctaUrl }
 								onChange={ ( v ) =>
 									setAttributes( { ctaUrl: v } )
 								}
 							/>
 							<TextControl
-								label={ __( 'Microcopy below CTA', 'soywd' ) }
+								label={ __( 'Microcopy below CTA', 'wptpl' ) }
 								value={ microcopy }
 								onChange={ ( v ) =>
 									setAttributes( { microcopy: v } )
@@ -293,7 +293,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					</>
 				) }
 				<div
-					className={ `soywd-container-md${
+					className={ `wptpl-container-md${
 						hasImage ? ' relative z-10' : ''
 					}` }
 				>
@@ -313,7 +313,8 @@ export default function Edit( { attributes, setAttributes } ) {
 								<div
 									className={ numberClass }
 									style={ {
-										fontFamily: "'Urbanist', sans-serif",
+										fontFamily:
+											'Arial, Helvetica, sans-serif',
 										fontWeight: 700,
 									} }
 								>

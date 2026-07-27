@@ -7,7 +7,7 @@
  * theme has no use for. Keeps wp_head() output lean and avoids exposing
  * version info that helps attackers.
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;

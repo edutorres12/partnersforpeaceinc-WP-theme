@@ -15,35 +15,35 @@
  * when those happen WordPress itself is not running to render a theme file.
  * The branded page for those lives in `dropins/php-error.php` (self-contained).
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$soywd_cta_text = soywd_setting( 'primary_cta_text', __( 'Book a free consultation', 'soywd' ) );
-$soywd_cta_url  = soywd_setting( 'primary_cta_url', '#book' );
+$wptpl_cta_text = wptpl_setting( 'primary_cta_text', __( 'Book a free consultation', 'wptpl' ) );
+$wptpl_cta_url  = wptpl_setting( 'primary_cta_url', '#book' );
 
 get_header();
 ?>
 
-<div class="soywd-error-cover">
-	<div class="soywd-error soywd-container-narrow">
-		<p class="soywd-eyebrow mb-4"><?php esc_html_e( 'Page not found', 'soywd' ); ?></p>
+<div class="wptpl-error-cover">
+	<div class="wptpl-error wptpl-container-narrow">
+		<p class="wptpl-eyebrow mb-4"><?php esc_html_e( 'Page not found', 'wptpl' ); ?></p>
 
-		<p class="soywd-error__code" aria-hidden="true">404</p>
+		<p class="wptpl-error__code" aria-hidden="true">404</p>
 
-		<h1 class="mb-5 text-primary"><?php esc_html_e( 'This page took a wrong turn', 'soywd' ); ?></h1>
+		<h1 class="mb-5 text-primary"><?php esc_html_e( 'This page took a wrong turn', 'wptpl' ); ?></h1>
 
-		<p class="soywd-error__lead mb-8 text-muted">
-			<?php esc_html_e( 'This page may have moved or no longer exists.', 'soywd' ); ?>
+		<p class="wptpl-error__lead mb-8 text-muted">
+			<?php esc_html_e( 'This page may have moved or no longer exists.', 'wptpl' ); ?>
 		</p>
 
 		<div class="flex gap-3 flex-wrap justify-center">
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="soywd-btn-accent">
-				<?php esc_html_e( 'Back to home', 'soywd' ); ?>
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="wptpl-btn-accent">
+				<?php esc_html_e( 'Back to home', 'wptpl' ); ?>
 			</a>
-			<a href="<?php echo esc_url( $soywd_cta_url ); ?>" class="soywd-btn-outline">
-				<?php echo esc_html( $soywd_cta_text ); ?>
+			<a href="<?php echo esc_url( $wptpl_cta_url ); ?>" class="wptpl-btn-outline">
+				<?php echo esc_html( $wptpl_cta_text ); ?>
 			</a>
 		</div>
 	</div>

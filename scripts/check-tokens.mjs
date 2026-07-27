@@ -7,12 +7,12 @@
  *
  * Notes about the deliberate mismatch we allow:
  *   - `theme.json` has slug `base`, `tailwind.config.js` mirrors that
- *     as `cream`. They are the same color (#e3ded4) but distinct names
- *     because Tailwind's `text-base` utility means "base font-size", so
- *     we can't use `base` there.
- *   - `contrast` and `secondary` share the same hex (#2f3328) on
- *     purpose — `secondary` is the design token, `contrast` is what
- *     theme.json exposes to WP's contrast picker.
+ *     as `canvas`. They are the same color but distinct names because
+ *     Tailwind's `text-base` utility means "base font-size", so we
+ *     can't use `base` there.
+ *   - `contrast` and `primary` share the same hex on purpose —
+ *     `primary` is the design token, `contrast` is what theme.json
+ *     exposes to WP's contrast picker.
  *
  * Exit code 1 on drift so CI fails until the configs are reconciled.
  */
@@ -44,7 +44,7 @@ const tailwindColors = Object.fromEntries(
 
 // Allowed deliberate mismatches: tailwind slug → theme.json slug it mirrors.
 const ALIASES = {
-	cream: 'base',
+	canvas: 'base',
 };
 
 const issues = [];

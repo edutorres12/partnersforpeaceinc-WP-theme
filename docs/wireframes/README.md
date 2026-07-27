@@ -7,7 +7,7 @@ Workflow:
 
 1. The page is wireframed here as a single self-contained `*-wireframe.html`.
 2. The block markup is then ported to the WP page editor (Gutenberg) using
-   the custom `soywd/*` blocks defined in `src/blocks/`.
+   the custom `wptpl/*` blocks defined in `src/blocks/`.
 3. Once the page is built in WP, the wireframe stays as the spec — useful for
    diffing layout / spacing changes and onboarding new collaborators.
 

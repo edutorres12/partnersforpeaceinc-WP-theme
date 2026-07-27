@@ -7,12 +7,12 @@ export default function Edit() {
 	return (
 		<div { ...blockProps }>
 			<ServerSideRender
-				block="soywd/featured-post"
+				block="wptpl/featured-post"
 				EmptyResponsePlaceholder={ () => (
 					<p style={ { padding: '2rem', textAlign: 'center' } }>
 						{ __(
 							'No published posts yet. This card will show the sticky post (or the most recent one) once you publish.',
-							'soywd'
+							'wptpl'
 						) }
 					</p>
 				) }

@@ -9,9 +9,9 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Grid', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Grid', 'wptpl' ) } initialOpen>
 					<RangeControl
-						label={ __( 'Number of posts (0 = all)', 'soywd' ) }
+						label={ __( 'Number of posts (0 = all)', 'wptpl' ) }
 						value={ count }
 						min={ 0 }
 						max={ 24 }
@@ -21,13 +21,13 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 			<div { ...blockProps }>
 				<ServerSideRender
-					block="soywd/post-grid"
+					block="wptpl/post-grid"
 					attributes={ attributes }
 					EmptyResponsePlaceholder={ () => (
 						<p style={ { padding: '2rem', textAlign: 'center' } }>
 							{ __(
 								'No posts to show yet. Publish some posts and they will appear here automatically.',
-								'soywd'
+								'wptpl'
 							) }
 						</p>
 					) }

@@ -7,12 +7,12 @@ export default function Edit() {
 	return (
 		<div { ...blockProps }>
 			<ServerSideRender
-				block="soywd/category-filter"
+				block="wptpl/category-filter"
 				EmptyResponsePlaceholder={ () => (
 					<p style={ { padding: '1rem', textAlign: 'center' } }>
 						{ __(
 							'No categories with posts yet. Add categories to your posts and the filter pills will appear here.',
-							'soywd'
+							'wptpl'
 						) }
 					</p>
 				) }

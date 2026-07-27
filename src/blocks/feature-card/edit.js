@@ -72,11 +72,11 @@ export default function Edit( { attributes, setAttributes } ) {
 	// A bilingual card needs more room for its two language columns, so it
 	// centers at a wider reading width than the 50% half-card width.
 	const centeredClass = isBilingual
-		? 'soywd-card-bilingual-centered'
-		: 'soywd-card-half-centered';
+		? 'wptpl-card-bilingual-centered'
+		: 'wptpl-card-half-centered';
 
 	const cardClasses = [
-		'soywd-feature-card',
+		'wptpl-feature-card',
 		'rounded-[14px]',
 		'overflow-hidden',
 		bordered ? 'border border-muted/25' : '',
@@ -103,12 +103,12 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Image', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Image', 'wptpl' ) } initialOpen>
 					<ToggleControl
-						label={ __( 'Show image', 'soywd' ) }
+						label={ __( 'Show image', 'wptpl' ) }
 						help={ __(
 							'Turn off for text-only cards (no placeholder).',
-							'soywd'
+							'wptpl'
 						) }
 						checked={ showImage !== false }
 						onChange={ ( v ) => setAttributes( { showImage: v } ) }
@@ -125,8 +125,8 @@ export default function Edit( { attributes, setAttributes } ) {
 							render={ ( { open } ) => (
 								<Button variant="secondary" onClick={ open }>
 									{ imageUrl
-										? __( 'Change image', 'soywd' )
-										: __( 'Select image', 'soywd' ) }
+										? __( 'Change image', 'wptpl' )
+										: __( 'Select image', 'wptpl' ) }
 								</Button>
 							) }
 						/>
@@ -140,24 +140,24 @@ export default function Edit( { attributes, setAttributes } ) {
 							}
 							style={ { marginLeft: 8 } }
 						>
-							{ __( 'Remove', 'soywd' ) }
+							{ __( 'Remove', 'wptpl' ) }
 						</Button>
 					) }
 					<SelectControl
-						label={ __( 'Overlay color', 'soywd' ) }
+						label={ __( 'Overlay color', 'wptpl' ) }
 						value={ imageOverlayColor }
 						options={ [
-							{ label: __( 'None', 'soywd' ), value: '' },
+							{ label: __( 'None', 'wptpl' ), value: '' },
 							{
-								label: __( 'Accent (clay)', 'soywd' ),
+								label: __( 'Accent (accent)', 'wptpl' ),
 								value: 'accent',
 							},
 							{
-								label: __( 'Primary (olive)', 'soywd' ),
+								label: __( 'Primary (secondary)', 'wptpl' ),
 								value: 'primary',
 							},
 							{
-								label: __( 'Secondary (dark brown)', 'soywd' ),
+								label: __( 'Secondary (dark brown)', 'wptpl' ),
 								value: 'secondary',
 							},
 						] }
@@ -167,7 +167,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					{ imageOverlayColor && (
 						<RangeControl
-							label={ __( 'Overlay opacity', 'soywd' ) }
+							label={ __( 'Overlay opacity', 'wptpl' ) }
 							value={ imageOverlayOpacity }
 							min={ 0 }
 							max={ 0.7 }
@@ -179,7 +179,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					) }
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Icon', 'soywd' ) }
+					title={ __( 'Icon', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<MediaUploadCheck>
@@ -191,8 +191,8 @@ export default function Edit( { attributes, setAttributes } ) {
 							render={ ( { open } ) => (
 								<Button variant="secondary" onClick={ open }>
 									{ iconImageUrl
-										? __( 'Change icon SVG', 'soywd' )
-										: __( 'Select icon SVG', 'soywd' ) }
+										? __( 'Change icon SVG', 'wptpl' )
+										: __( 'Select icon SVG', 'wptpl' ) }
 								</Button>
 							) }
 						/>
@@ -206,24 +206,24 @@ export default function Edit( { attributes, setAttributes } ) {
 							}
 							style={ { marginLeft: 8 } }
 						>
-							{ __( 'Remove', 'soywd' ) }
+							{ __( 'Remove', 'wptpl' ) }
 						</Button>
 					) }
 					<TextControl
-						label={ __( 'Or emoji character', 'soywd' ) }
+						label={ __( 'Or emoji character', 'wptpl' ) }
 						value={ icon }
 						onChange={ ( v ) => setAttributes( { icon: v } ) }
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Tags', 'soywd' ) }
+					title={ __( 'Tags', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<TextareaControl
-						label={ __( 'Tags (one per line)', 'soywd' ) }
+						label={ __( 'Tags (one per line)', 'wptpl' ) }
 						help={ __(
 							'Subtopic pills shown below the text. Leave empty for none.',
-							'soywd'
+							'wptpl'
 						) }
 						value={ tagsToText( tags ) }
 						onChange={ ( v ) =>
@@ -231,24 +231,24 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'CTA', 'soywd' ) } initialOpen={ false }>
+				<PanelBody title={ __( 'CTA', 'wptpl' ) } initialOpen={ false }>
 					<TextControl
-						label={ __( 'Text', 'soywd' ) }
+						label={ __( 'Text', 'wptpl' ) }
 						value={ ctaText }
 						onChange={ ( v ) => setAttributes( { ctaText: v } ) }
 					/>
 					<TextControl
-						label={ __( 'URL', 'soywd' ) }
+						label={ __( 'URL', 'wptpl' ) }
 						value={ ctaUrl }
 						onChange={ ( v ) => setAttributes( { ctaUrl: v } ) }
 					/>
 					<SelectControl
-						label={ __( 'Style', 'soywd' ) }
+						label={ __( 'Style', 'wptpl' ) }
 						value={ ctaStyle }
 						options={ [
-							{ label: __( 'Button', 'soywd' ), value: 'button' },
+							{ label: __( 'Button', 'wptpl' ), value: 'button' },
 							{
-								label: __( 'Arrow link', 'soywd' ),
+								label: __( 'Arrow link', 'wptpl' ),
 								value: 'arrow',
 							},
 						] }
@@ -256,31 +256,31 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Card style', 'soywd' ) }
+					title={ __( 'Card style', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<SelectControl
-						label={ __( 'Layout', 'soywd' ) }
+						label={ __( 'Layout', 'wptpl' ) }
 						value={ layout }
 						options={ [
 							{
 								label: __(
 									'Vertical (icon above title)',
-									'soywd'
+									'wptpl'
 								),
 								value: 'vertical',
 							},
 							{
 								label: __(
 									'Horizontal header (icon beside title)',
-									'soywd'
+									'wptpl'
 								),
 								value: 'horizontal-header',
 							},
 							{
 								label: __(
 									'Bilingual (two columns + divider)',
-									'soywd'
+									'wptpl'
 								),
 								value: 'bilingual',
 							},
@@ -288,7 +288,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						onChange={ ( v ) => setAttributes( { layout: v } ) }
 					/>
 					<SelectControl
-						label={ __( 'Heading level', 'soywd' ) }
+						label={ __( 'Heading level', 'wptpl' ) }
 						value={ String( headingLevel ) }
 						options={ [
 							{ label: 'H2', value: '2' },
@@ -302,23 +302,23 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						help={ __(
 							'Match the section: H3 under a section H2, etc. Avoid skipping levels.',
-							'soywd'
+							'wptpl'
 						) }
 					/>
 					<ToggleControl
-						label={ __( 'Center content', 'soywd' ) }
+						label={ __( 'Center content', 'wptpl' ) }
 						checked={ centered }
 						onChange={ ( v ) => setAttributes( { centered: v } ) }
 					/>
 					<ToggleControl
-						label={ __( 'Bordered', 'soywd' ) }
+						label={ __( 'Bordered', 'wptpl' ) }
 						checked={ bordered }
 						onChange={ ( v ) => setAttributes( { bordered: v } ) }
 					/>
 					<ToggleControl
 						label={ __(
 							'Transparent (inherit parent background)',
-							'soywd'
+							'wptpl'
 						) }
 						checked={ transparent }
 						onChange={ ( v ) =>
@@ -326,10 +326,10 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 					<ToggleControl
-						label={ __( 'Half width (centered)', 'soywd' ) }
+						label={ __( 'Half width (centered)', 'wptpl' ) }
 						help={ __(
 							'Match a 2-column card width and center it. Use for a lone card on its own row.',
-							'soywd'
+							'wptpl'
 						) }
 						checked={ halfWidthCentered }
 						onChange={ ( v ) =>
@@ -346,7 +346,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							opacity: 0.7,
 						} }
 					>
-						{ __( 'Background texture', 'soywd' ) }
+						{ __( 'Background texture', 'wptpl' ) }
 					</p>
 					<MediaUploadCheck>
 						<MediaUpload
@@ -359,8 +359,8 @@ export default function Edit( { attributes, setAttributes } ) {
 							render={ ( { open } ) => (
 								<Button variant="secondary" onClick={ open }>
 									{ backgroundImageUrl
-										? __( 'Change texture', 'soywd' )
-										: __( 'Select texture', 'soywd' ) }
+										? __( 'Change texture', 'wptpl' )
+										: __( 'Select texture', 'wptpl' ) }
 								</Button>
 							) }
 						/>
@@ -374,12 +374,12 @@ export default function Edit( { attributes, setAttributes } ) {
 							}
 							style={ { marginLeft: 8 } }
 						>
-							{ __( 'Remove', 'soywd' ) }
+							{ __( 'Remove', 'wptpl' ) }
 						</Button>
 					) }
 					<TextControl
-						label={ __( 'Title color (hex)', 'soywd' ) }
-						help={ __( 'Optional. e.g. #5e5646', 'soywd' ) }
+						label={ __( 'Title color (hex)', 'wptpl' ) }
+						help={ __( 'Optional. e.g. #999999', 'wptpl' ) }
 						value={ titleColor || '' }
 						onChange={ ( v ) => setAttributes( { titleColor: v } ) }
 					/>
@@ -418,7 +418,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									}
 									placeholder={ __(
 										'Title (left)…',
-										'soywd'
+										'wptpl'
 									) }
 									style={
 										titleColor
@@ -435,7 +435,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									}
 									placeholder={ __(
 										'Text (left)…',
-										'soywd'
+										'wptpl'
 									) }
 								/>
 							</div>
@@ -452,7 +452,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									}
 									placeholder={ __(
 										'Title (right)…',
-										'soywd'
+										'wptpl'
 									) }
 									style={
 										titleColor
@@ -469,7 +469,7 @@ export default function Edit( { attributes, setAttributes } ) {
 									}
 									placeholder={ __(
 										'Text (right)…',
-										'soywd'
+										'wptpl'
 									) }
 								/>
 							</div>
@@ -501,14 +501,14 @@ export default function Edit( { attributes, setAttributes } ) {
 							{ eyebrow !== undefined && (
 								<RichText
 									tagName="p"
-									className="soywd-eyebrow mb-2"
+									className="wptpl-eyebrow mb-2"
 									value={ eyebrow }
 									onChange={ ( v ) =>
 										setAttributes( { eyebrow: v } )
 									}
 									placeholder={ __(
 										'Eyebrow (optional)',
-										'soywd'
+										'wptpl'
 									) }
 								/>
 							) }
@@ -519,7 +519,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								onChange={ ( v ) =>
 									setAttributes( { title: v } )
 								}
-								placeholder={ __( 'Card title…', 'soywd' ) }
+								placeholder={ __( 'Card title…', 'wptpl' ) }
 								style={
 									titleColor
 										? { color: titleColor }
@@ -533,7 +533,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								onChange={ ( v ) =>
 									setAttributes( { text: v } )
 								}
-								placeholder={ __( 'Card text…', 'soywd' ) }
+								placeholder={ __( 'Card text…', 'wptpl' ) }
 							/>
 						</>
 					) }
@@ -568,7 +568,7 @@ export default function Edit( { attributes, setAttributes } ) {
 							{ ctaStyle === 'button' ? (
 								<a
 									href={ ctaUrl || '#' }
-									className="soywd-btn-primary"
+									className="wptpl-btn-primary"
 									onClick={ ( e ) => e.preventDefault() }
 								>
 									{ ctaText }

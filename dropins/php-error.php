@@ -6,16 +6,17 @@
  * of its plain "There has been a critical error on this website" screen. It runs
  * AFTER a fatal PHP error, so WordPress, the active theme, and its stylesheet are
  * NOT available — everything here must be self-contained: inline CSS, no theme
- * functions, no external assets required to render. Brand fonts load from Google
- * Fonts if reachable, but the page is fully styled without them.
+ * functions, no external assets required to render.
  *
  * The same file also works as an Apache/Nginx `ErrorDocument 500` target for
  * server-level failures that never reach PHP. See dropins/README.md to install.
  *
- * Colors mirror the theme tokens (theme.json / tailwind.config.js):
- *   cream #e3ded4 · sage #7a8461 · olive #2f3328 · clay #8f6a4f · taupe #5c5648
+ * Colors mirror the theme tokens (theme.json / tailwind.config.js) and are the
+ * same neutral placeholders — restyle here when the site's design lands:
+ *   base #ffffff · primary #333333 · secondary #222222 · accent #666666 ·
+ *   accent-deep #4d4d4d · muted #999999 · on-dark #e6e6e6
  *
- * @package soywd
+ * @package wptpl
  */
 
 if ( ! headers_sent() ) {
@@ -30,26 +31,24 @@ if ( ! headers_sent() ) {
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex, nofollow">
-	<title>We&rsquo;ll be right back &middot; Seasons of You Therapy</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@600;700;800&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+	<title>We&rsquo;ll be right back</title>
 	<style>
 		:root {
-			--cream: #e3ded4;
-			--sage: #7a8461;
-			--olive: #2f3328;
-			--clay: #8f6a4f;
-			--clay-deep: #73513c;
-			--taupe: #5c5648;
-			--cream-light: #e6ded3;
+			--base: #ffffff;
+			--primary: #333333;
+			--secondary: #222222;
+			--accent: #666666;
+			--accent-deep: #4d4d4d;
+			--muted: #999999;
+			--on-dark: #e6e6e6;
+			--font: Arial, Helvetica, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 		}
 		* { box-sizing: border-box; }
 		html, body { height: 100%; margin: 0; }
 		body {
-			background-color: var(--cream);
-			color: var(--olive);
-			font-family: 'Quicksand', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+			background-color: var(--base);
+			color: var(--secondary);
+			font-family: var(--font);
 			-webkit-font-smoothing: antialiased;
 			display: flex;
 			align-items: center;
@@ -63,34 +62,34 @@ if ( ! headers_sent() ) {
 			text-align: center;
 		}
 		.eyebrow {
-			font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+			font-family: var(--font);
 			font-size: 0.75rem;
 			font-weight: 700;
 			text-transform: uppercase;
 			letter-spacing: 0.18em;
-			color: var(--taupe);
+			color: var(--muted);
 			margin: 0 0 1rem;
 		}
 		.code {
-			font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+			font-family: var(--font);
 			font-weight: 800;
 			font-size: clamp(4.5rem, 16vw, 8rem);
 			line-height: 1;
 			letter-spacing: -0.02em;
-			color: var(--sage);
+			color: var(--primary);
 			margin: 0 0 1rem;
 		}
 		h1 {
-			font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+			font-family: var(--font);
 			font-weight: 700;
 			font-size: clamp(1.6rem, 4vw, 2.25rem);
 			line-height: 1.2;
-			color: var(--sage);
+			color: var(--primary);
 			margin: 0 0 1.25rem;
 		}
 		p.lead {
 			font-size: 1.05rem;
-			color: var(--taupe);
+			color: var(--muted);
 			margin: 0 auto 2rem;
 			max-width: 30rem;
 		}
@@ -100,32 +99,32 @@ if ( ! headers_sent() ) {
 			justify-content: center;
 			border-radius: 0.375rem;
 			padding: 0.875rem 1.75rem;
-			font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+			font-family: var(--font);
 			font-size: 0.9rem;
 			font-weight: 700;
 			text-transform: uppercase;
 			letter-spacing: 0.2em;
 			text-decoration: none;
-			background-color: var(--clay);
-			color: var(--cream-light);
-			box-shadow: 0 2px 5px rgba(47, 51, 40, 0.18);
+			background-color: var(--accent);
+			color: var(--on-dark);
+			box-shadow: 0 2px 5px rgba(34, 34, 34, 0.18);
 			transition: background-color 200ms ease-out, box-shadow 200ms ease-out;
 		}
 		.btn:hover, .btn:focus {
-			background-color: var(--clay-deep);
-			box-shadow: 0 5px 12px rgba(47, 51, 40, 0.22);
+			background-color: var(--accent-deep);
+			box-shadow: 0 5px 12px rgba(34, 34, 34, 0.22);
 		}
 		.note {
 			margin-top: 2.5rem;
 			font-size: 0.85rem;
-			color: var(--taupe);
+			color: var(--muted);
 			opacity: 0.85;
 		}
 	</style>
 </head>
 <body>
 	<main class="wrap">
-		<p class="eyebrow">Seasons of You Therapy</p>
+		<p class="eyebrow">Site temporarily unavailable</p>
 		<p class="code" aria-hidden="true">500</p>
 		<h1>We&rsquo;ll be right back</h1>
 		<p class="lead">

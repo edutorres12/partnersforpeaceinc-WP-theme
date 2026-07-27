@@ -1,6 +1,20 @@
-# Soy Web Development — WordPress custom theme
+# Therapy Theme Template — WordPress custom theme
 
-Custom WordPress theme using **Tailwind CSS** + **custom Gutenberg blocks**, built for a therapy practice (English-first; Farsi may be added later).
+Unstyled starter theme for therapy-practice sites, using **Tailwind CSS** + **custom Gutenberg blocks**.
+
+It ships **structure without design**: every block, template, container, spacing
+token and responsive rule is in place, but the palette is neutral grayscale and
+both font stacks are the system sans. Building a site on it means replacing hex
+values, font stacks and photography — not rewriting layout. The visual target
+for the un-restyled state is `docs/wireframes/*.html`.
+
+Where the design lives, and the only places you edit to apply one:
+
+| What | Where |
+|---|---|
+| Palette | `theme.json` `settings.color.palette` + `tailwind.config.js` `theme.extend.colors` + the `@layer utilities` fallback at the bottom of `src/tailwind.css` (all three, kept in sync by `npm run check:tokens`) |
+| Fonts | `theme.json` `settings.typography.fontFamilies` + `tailwind.config.js` `fontFamily` + the `@layer base` block in `src/tailwind.css`. Register webfonts in `inc/enqueue.php` |
+| Imagery | `assets/placeholders/` (see its `CREDITS.md`) |
 
 ## Philosophy
 
@@ -23,12 +37,12 @@ Custom WordPress theme using **Tailwind CSS** + **custom Gutenberg blocks**, bui
 ├── inc/
 │   ├── setup.php             # add_theme_support, menus, editor styles
 │   ├── cleanup.php           # Strips unused WP <head> (emoji, oEmbed, …)
-│   ├── enqueue.php           # Tailwind + Google Fonts (preconnect/preload)
+│   ├── enqueue.php           # Tailwind + motion bootstrap (no webfonts)
 │   ├── seo.php               # Baseline meta + OG + Twitter tags. Bails
 │   │                         #   automatically if Yoast / Rank Math /
 │   │                         #   SEOPress / AIOSEO is active.
 │   ├── block-helpers.php     # Shared helpers used by every render.php:
-│   │                         #   soywd_attr_* (sanitize), soywd_render_picture
+│   │                         #   wptpl_attr_* (sanitize), wptpl_render_picture
 │   ├── blocks.php            # Auto-registers blocks from build/blocks/
 │   └── customizer.php        # Customizer fields (CTA + footer info)
 ├── src/
@@ -43,9 +57,10 @@ Custom WordPress theme using **Tailwind CSS** + **custom Gutenberg blocks**, bui
 │       ├── hero/             # Hero with primary + secondary CTA + microcopy
 │       └── feature-card/     # Versatile card (icon/image/CTA)
 ├── assets/
-│   ├── icons/                # SVG icons
-│   └── placeholders/         # JPG + .webp variants for hero/cards/CTA bg
+│   ├── js/                   # nav.js, blog-filter.js
+│   └── placeholders/         # JPG + .webp wireframe boxes for hero/cards/CTA bg
 ├── scripts/
+│   ├── gen-placeholders.mjs  # Regenerate the neutral placeholder images
 │   ├── optimize-images.mjs   # Regenerate .webp from JPG/PNG
 │   └── check-tokens.mjs      # Verify theme.json ↔ tailwind.config alignment
 ├── build/                    # ⚠ COMMITTED (see "Deploy" below)
@@ -83,6 +98,7 @@ Configured once via `npm install` + `composer install`:
 | `npm run lint:php:fix` | PHPCBF — auto-fixes most PHP issues |
 | `npm run format` | Prettier across JS / JSON via `@wordpress/scripts` |
 | `npm run check:tokens` | Verifies `theme.json` ↔ `tailwind.config.js` palette + fonts are in sync |
+| `npm run gen:placeholders` | Regenerates the neutral wireframe placeholder images |
 | `npm run optimize:images` | Regenerates `.webp` siblings for every JPG/PNG in `assets/placeholders/` |
 | `npm run build` | Compiles blocks + Tailwind to `build/` |
 | `npm run dev` | Watch mode |
@@ -160,7 +176,7 @@ src/blocks/<slug>/
 └── editor.css     # (optional) editor-only styles
 ```
 
-`@wordpress/scripts` compiles them to `build/blocks/<slug>/`. `inc/blocks.php` walks that folder and registers each one with `register_block_type( $path )`. They appear under the **"Soy Web Development"** category in the inserter.
+`@wordpress/scripts` compiles them to `build/blocks/<slug>/`. `inc/blocks.php` walks that folder and registers each one with `register_block_type( $path )`. They appear under the **"Theme Blocks"** category in the inserter.
 
 #### Helpers used by every `render.php`
 
@@ -168,16 +184,16 @@ Defined in `inc/block-helpers.php`. **Always use these** when reading or renderi
 
 | Helper | Returns | Use for |
 |---|---|---|
-| `soywd_attr_html( $attrs, $key )` | string, `wp_kses_post`'d | `RichText` fields (eyebrow, title, body) |
-| `soywd_attr_text( $attrs, $key )` | string, `sanitize_text_field`'d | Plain text (CTA label, alt text) |
-| `soywd_attr_url( $attrs, $key )` | string, `esc_url` + http/https/mailto/tel | Any link URL |
-| `soywd_attr_color( $attrs, $key )` | hex, `sanitize_hex_color`'d | Custom color pickers |
-| `soywd_attr_float( $attrs, $key, $min, $max, $default )` | clamped float | Opacity / similar 0–1 inputs |
-| `soywd_attr_int( $attrs, $key, $min, $max, $default )` | clamped int | Column counts, heading levels |
-| `soywd_attr_enum( $attrs, $key, $allowed, $default )` | one of `$allowed` | Variant / layout / theme attributes |
-| `soywd_attr_array( $attrs, $key )` | array (`[]` fallback) | Repeatable items |
-| `soywd_attr_bool( $attrs, $key, $default = false )` | bool | Toggle attributes |
-| `soywd_render_picture( [ src, alt, class, loading, fetchpriority, decoding, aria_hidden ] )` | `<picture>` with WebP `<source>` when the URL points to a theme asset that has a `.webp` sibling; plain `<img>` otherwise | Every `<img>` we emit |
+| `wptpl_attr_html( $attrs, $key )` | string, `wp_kses_post`'d | `RichText` fields (eyebrow, title, body) |
+| `wptpl_attr_text( $attrs, $key )` | string, `sanitize_text_field`'d | Plain text (CTA label, alt text) |
+| `wptpl_attr_url( $attrs, $key )` | string, `esc_url` + http/https/mailto/tel | Any link URL |
+| `wptpl_attr_color( $attrs, $key )` | hex, `sanitize_hex_color`'d | Custom color pickers |
+| `wptpl_attr_float( $attrs, $key, $min, $max, $default )` | clamped float | Opacity / similar 0–1 inputs |
+| `wptpl_attr_int( $attrs, $key, $min, $max, $default )` | clamped int | Column counts, heading levels |
+| `wptpl_attr_enum( $attrs, $key, $allowed, $default )` | one of `$allowed` | Variant / layout / theme attributes |
+| `wptpl_attr_array( $attrs, $key )` | array (`[]` fallback) | Repeatable items |
+| `wptpl_attr_bool( $attrs, $key, $default = false )` | bool | Toggle attributes |
+| `wptpl_render_picture( [ src, alt, class, loading, fetchpriority, decoding, aria_hidden ] )` | `<picture>` with WebP `<source>` when the URL points to a theme asset that has a `.webp` sibling; plain `<img>` otherwise | Every `<img>` we emit |
 
 The matching `block.json` should declare `minimum`/`maximum` on number attributes and `enum` on string attributes that have a fixed set of values. The helpers clamp at read time as a defense-in-depth, but enforcing in the schema means the editor's NumberControl / SelectControl won't silently store out-of-range values.
 
@@ -190,48 +206,53 @@ Each block exposes:
 
 ### Changing CSS
 
-- **Brand colors and fonts** live in two places that MUST stay in sync: `theme.json` (`settings.color.palette` + `settings.typography.fontFamilies`) and `tailwind.config.js` (`theme.extend.colors` + `fontFamily`). `npm run check:tokens` (also in CI) fails if they drift. When adding a new color, also add it to the `@layer utilities` fallback block at the bottom of `src/tailwind.css` (hardcoded hex; the script doesn't check that one because it's intentionally a duplicate).
+- **Palette and fonts** live in two places that MUST stay in sync: `theme.json` (`settings.color.palette` + `settings.typography.fontFamilies`) and `tailwind.config.js` (`theme.extend.colors` + `fontFamily`). `npm run check:tokens` (also in CI) fails if they drift. When adding or changing a color, also update the `@layer utilities` fallback block at the bottom of `src/tailwind.css` (hardcoded hex; the script doesn't check that one because it's intentionally a duplicate). Note the deliberate alias: theme.json's `base` slug is exposed to Tailwind as `canvas`, because `text-base` is already a Tailwind font-size utility.
 - **Reusable components** (buttons, container, eyebrow, nav, lang switch): `src/tailwind.css` inside `@layer components`. Use `@apply text-primary` etc. — never hardcode hex inside `@layer`.
 - **Block styles registered via `register_block_style()`**: live OUTSIDE `@layer` (so Tailwind doesn't purge classes that only appear in WP markup). Use `var(--wp--preset--color--*)` here, not `@apply` (which won't apply outside layers).
 - **Per-block CSS**: `src/blocks/<slug>/style.css` or `editor.css`.
 
 ### SEO
 
-`inc/seo.php` writes a baseline `<meta description>` + Open Graph + Twitter Cards into `<head>` so the theme is presentable without an SEO plugin. The file **detects Yoast SEO, Rank Math, SEOPress, and All in One SEO** and bails out at load time when any of them is active, so installing one of those plugins later doesn't produce duplicate tags. To override the detection from code, filter `soywd_seo_plugin_active`.
+`inc/seo.php` writes a baseline `<meta description>` + Open Graph + Twitter Cards into `<head>` so the theme is presentable without an SEO plugin. The file **detects Yoast SEO, Rank Math, SEOPress, and All in One SEO** and bails out at load time when any of them is active, so installing one of those plugins later doesn't produce duplicate tags. To override the detection from code, filter `wptpl_seo_plugin_active`.
 
-When you install Yoast (recommended for this site): configure *Yoast → Social* with a default OG image, *Search appearance* with title templates per post type, and *Knowledge graph → Organization* with the LocalBusiness fields. Yoast then owns `<head>` end-to-end (description, OG, Twitter, JSON-LD, canonical, sitemap).
+When you install Yoast (recommended): configure *Yoast → Social* with a default OG image, *Search appearance* with title templates per post type, and *Knowledge graph → Organization* with the practice's LocalBusiness fields. Yoast then owns `<head>` end-to-end (description, OG, Twitter, JSON-LD, canonical, sitemap).
 
 ### Performance & accessibility
 
-- **Fonts**: Google Fonts is loaded with a `preconnect` to `fonts.gstatic.com` (saves ~100–300ms on cold loads) plus a `preload` on the stylesheet itself. The font `.woff2` URLs are not preloaded directly because Google rotates their hash on every version bump.
-- **Images**: `assets/placeholders/*.jpg` ship next to `.webp` variants generated by `npm run optimize:images` (sharp). `soywd_render_picture()` emits a `<picture>` with a WebP `<source>` whenever the URL points to a theme asset that has a `.webp` sibling — the browser picks WebP when supported, falls back to JPG otherwise. The hero image renders with `loading="eager" fetchpriority="high"`; everything else below the fold uses `loading="lazy" decoding="async"`.
+- **Fonts**: none are loaded. The template runs on the system sans stack, so there is no webfont request, no preconnect and no preload. When a site picks its typefaces, register them in `inc/enqueue.php` — self-hosted `.woff2` under `assets/fonts/` beats a third-party CDN — and preload the faces that render above the fold.
+- **Images**: `assets/placeholders/*.jpg` are generated wireframe boxes (`npm run gen:placeholders`) and ship next to `.webp` variants generated by `npm run optimize:images` (sharp). `wptpl_render_picture()` emits a `<picture>` with a WebP `<source>` whenever the URL points to a theme asset that has a `.webp` sibling — the browser picks WebP when supported, falls back to JPG otherwise. The hero image renders with `loading="eager" fetchpriority="high"`; everything else below the fold uses `loading="lazy" decoding="async"`.
 - **`<head>` cleanup**: `inc/cleanup.php` strips WP defaults the theme doesn't use — emoji detection scripts, oEmbed discovery, `wp_generator` (hides the version), RSD / WLW manifest links, the `s.w.org` DNS prefetch.
-- **Skip-to-content** link injected at the top of `header.php` before the `<header>` tag; targets `<main id="soywd-main">`. Visible only when focused.
+- **Skip-to-content** link injected at the top of `header.php` before the `<header>` tag; targets `<main id="wptpl-main">`. Visible only when focused.
 
 ### Global strings (header/footer)
 
-Not blocks. Edited in **Appearance → Customize → Soy Web Development**:
+Not blocks. Edited in **Appearance → Customize → Theme Settings**:
 
 - **Header & CTA**: primary CTA text + URL.
-- **Footer / Practice info**: practice name, practitioner, license, hours, modality/languages, crisis disclaimer.
+- **Footer / Practice info**: practice name, practitioner, license, hours, modality, languages, alert bar message.
+
+Every field ships as a neutral placeholder or empty; the footer skips the empty
+ones instead of rendering blank rows. The alert bar (`inc/topbar.php`) renders
+at the top of the footer only when **Alert bar message** holds text, and can be
+hidden per page from the editor sidebar.
 
 ## Available blocks
 
 | Slug                  | Purpose                                              |
 |-----------------------|------------------------------------------------------|
-| `soywd/hero`          | Hero with eyebrow, primary + secondary CTA, image    |
-| `soywd/section-header`| Eyebrow + headline + intro (used in EVERY section)   |
-| `soywd/feature-card`  | Versatile card: icon/image, CTA as button or arrow   |
-| `soywd/checklist`     | ✓ list, vertical or horizontal (covers trust bar)    |
-| `soywd/tag-list`      | Pills/chips with optional URL, outline or filled     |
-| `soywd/steps`         | Numbered steps with optional CTA                     |
-| `soywd/cta-banner`    | Closing banner, dark or light                        |
-| `soywd/faq`           | Accordion (HTML `<details>`, no JS)                  |
+| `wptpl/hero`          | Hero with eyebrow, primary + secondary CTA, image    |
+| `wptpl/section-header`| Eyebrow + headline + intro (used in EVERY section)   |
+| `wptpl/feature-card`  | Versatile card: icon/image, CTA as button or arrow   |
+| `wptpl/checklist`     | ✓ list, vertical or horizontal (covers trust bar)    |
+| `wptpl/tag-list`      | Pills/chips with optional URL, outline or filled     |
+| `wptpl/steps`         | Numbered steps with optional CTA                     |
+| `wptpl/cta-banner`    | Closing banner, dark or light                        |
+| `wptpl/faq`           | Accordion (HTML `<details>`, no JS)                  |
 
 ## Setting up WordPress (first time)
 
 1. Activate the theme in **Appearance → Themes**.
-2. Configure **Appearance → Customize → Soy Web Development**:
+2. Configure **Appearance → Customize → Theme Settings**:
    - Header & CTA: primary button text + URL.
    - Footer / Practice info: fill in every field.
 3. Create empty pages: About, Services, Resources, Blog, Fees, Contact, Crisis Resources, Privacy Policy, Terms of Service, Accessibility, Good Faith Estimate.
@@ -244,10 +265,10 @@ Not blocks. Edited in **Appearance → Customize → Soy Web Development**:
 
 ## Conventions
 
-- CSS/PHP prefix: `soywd-` / `soywd_`.
-- Block namespace: `soywd/<slug>`.
-- Text domain: `soywd`.
-- English UI strings throughout. We still use `__('text', 'soywd')` so future translations (Farsi, Spanish, etc.) can be added without refactoring.
+- CSS/PHP prefix: `wptpl-` / `wptpl_`.
+- Block namespace: `wptpl/<slug>`.
+- Text domain: `wptpl`.
+- English UI strings throughout. We still use `__('text', 'wptpl')` so translations can be added without refactoring.
 
 ### Git: branches & commits (English only)
 
@@ -276,7 +297,7 @@ available. Full rules in [`AGENTS.md`](./AGENTS.md#git-conventions).
 - Mobile menu (hamburger with JS).
 - Block patterns for remaining pages (services, contact, fees, blog, etc.).
 - CPTs `service` and `guide`.
-- Polylang/WPML when Farsi is added; switch to Tailwind logical utilities (`ms-*`, `me-*`, `text-start`, `text-end`) at the same time.
-- Replace placeholder JPGs in `assets/placeholders/` with the final brand photos. After dropping new files in, run `npm run optimize:images` to regenerate the WebP variants and commit both.
+- Polylang/WPML if a second language is added; switch to Tailwind logical utilities (`ms-*`, `me-*`, `text-start`, `text-end`) at the same time.
+- Replace the wireframe JPGs in `assets/placeholders/` with the site's real photography. After dropping new files in, run `npm run optimize:images` to regenerate the WebP variants and commit both.
 - Form plugin (Fluent Forms / Gravity Forms) for Contact and opt-ins.
-- Optional: self-host Urbanist + Quicksand `.woff2` under `assets/fonts/` (drop the Google Fonts dependency entirely; saves a DNS lookup + lets us preload the exact font files).
+- Pick the site's typefaces and self-host them as `.woff2` under `assets/fonts/`, registered in `inc/enqueue.php` (no third-party CDN; lets us preload the exact font files).

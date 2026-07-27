@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "soywd/steps",
+	"name": "wptpl/steps",
 	"title": "Steps",
-	"category": "soywd",
+	"category": "wptpl",
 	"icon": "list-view",
 	"description": "Numbered steps with title and description.",
 	"keywords": [ "steps", "numbered", "how-to-start" ],
 	"version": "0.1.0",
-	"textdomain": "soywd",
+	"textdomain": "wptpl",
 	"supports": {
 		"html": false,
 		"anchor": true,

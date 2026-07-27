@@ -1,29 +1,29 @@
 /**
  * Blog hub category filter.
  *
- * Wires soywd/category-filter pills to soywd/post-grid cards, all on the same
+ * Wires wptpl/category-filter pills to wptpl/post-grid cards, all on the same
  * page with no reload:
- *   - "All": show the featured hero (soywd/featured-post's section) and every
+ *   - "All": show the featured hero (wptpl/featured-post's section) and every
  *     grid card except the featured one (it already shows as the hero).
  *   - A category: hide the featured hero and show only the grid cards in that
  *     category — including the featured post if it belongs there (its grid item
  *     is hidden by default, so this is where it reappears).
  *
- * The featured section is matched by `.soywd-featured-section` (add that class
+ * The featured section is matched by `.wptpl-featured-section` (add that class
  * to the featured section group). No-ops on pages without the filter.
  */
 ( function () {
 	function init() {
-		const filter = document.querySelector( '.soywd-cat-filter' );
+		const filter = document.querySelector( '.wptpl-cat-filter' );
 		if ( ! filter ) {
 			return;
 		}
 
 		const featuredSection = document.querySelector(
-			'.soywd-featured-section'
+			'.wptpl-featured-section'
 		);
 		const items = Array.prototype.slice.call(
-			document.querySelectorAll( '.soywd-post-grid__item' )
+			document.querySelectorAll( '.wptpl-post-grid__item' )
 		);
 
 		function apply( slug ) {
@@ -103,17 +103,17 @@
 	 * bar hides itself whenever the row doesn't overflow (e.g. desktop).
 	 */
 	function initScrollbar() {
-		const filter = document.querySelector( '.soywd-cat-filter' );
+		const filter = document.querySelector( '.wptpl-cat-filter' );
 		if ( ! filter ) {
 			return;
 		}
 
 		const bar = document.createElement( 'div' );
-		bar.className = 'soywd-cat-scrollbar';
+		bar.className = 'wptpl-cat-scrollbar';
 		const track = document.createElement( 'div' );
-		track.className = 'soywd-cat-scrollbar__track';
+		track.className = 'wptpl-cat-scrollbar__track';
 		const thumb = document.createElement( 'div' );
-		thumb.className = 'soywd-cat-scrollbar__thumb';
+		thumb.className = 'wptpl-cat-scrollbar__thumb';
 		track.appendChild( thumb );
 		bar.appendChild( track );
 		filter.after( bar );

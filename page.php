@@ -2,14 +2,14 @@
 /**
  * Template para páginas. El contenido viene 100% del page editor (Gutenberg).
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
 
 get_header(); ?>
 
-<article <?php post_class( 'soywd-page' ); ?>>
+<article <?php post_class( 'wptpl-page' ); ?>>
 	<?php
 	while ( have_posts() ) :
 		the_post();

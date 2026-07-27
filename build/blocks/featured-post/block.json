@@ -1,11 +1,11 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "soywd/featured-post",
+  "name": "wptpl/featured-post",
   "title": "Featured post",
-  "category": "soywd",
+  "category": "wptpl",
   "icon": "star-filled",
-  "description": "The headline blog post — the sticky post if there is one, otherwise the most recent — rendered as the large clay card.",
+  "description": "The headline blog post — the sticky post if there is one, otherwise the most recent — rendered as the large accent card.",
   "keywords": [
     "blog",
     "featured",
@@ -13,7 +13,7 @@
     "sticky"
   ],
   "version": "0.1.0",
-  "textdomain": "soywd",
+  "textdomain": "wptpl",
   "supports": {
     "html": false,
     "anchor": true,

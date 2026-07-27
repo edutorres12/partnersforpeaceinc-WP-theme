@@ -18,24 +18,23 @@
 			"customGradient": true,
 			"defaultPalette": false,
 			"palette": [
-				{ "slug": "primary", "name": "Sage", "color": "#636d4d" },
-				{ "slug": "secondary", "name": "Olive", "color": "#2f3328" },
-				{ "slug": "accent", "name": "Clay", "color": "#8f6a4f" },
-				{ "slug": "base", "name": "Ivory", "color": "#e3ded4" },
+				{ "slug": "primary", "name": "Primary", "color": "#333333" },
 				{
-					"slug": "cream-light",
-					"name": "Cream Light",
-					"color": "#e6ded3"
+					"slug": "secondary",
+					"name": "Secondary",
+					"color": "#222222"
 				},
+				{ "slug": "accent", "name": "Accent", "color": "#666666" },
+				{ "slug": "base", "name": "Base", "color": "#ffffff" },
+				{ "slug": "on-dark", "name": "On dark", "color": "#e6e6e6" },
 				{
-					"slug": "sage-light",
-					"name": "Sage Light",
-					"color": "#a8b08a"
+					"slug": "primary-soft",
+					"name": "Primary soft",
+					"color": "#cccccc"
 				},
-				{ "slug": "contrast", "name": "Olive", "color": "#2f3328" },
-				{ "slug": "muted", "name": "Taupe", "color": "#5c5648" },
-				{ "slug": "bark", "name": "Bark", "color": "#5e5646" },
-				{ "slug": "surface", "name": "Sand", "color": "#f0e8d9" },
+				{ "slug": "contrast", "name": "Contrast", "color": "#333333" },
+				{ "slug": "muted", "name": "Muted", "color": "#999999" },
+				{ "slug": "surface", "name": "Surface", "color": "#f7f7f7" },
 				{ "slug": "white", "name": "White", "color": "#ffffff" }
 			]
 		},
@@ -46,13 +45,13 @@
 			"fontFamilies": [
 				{
 					"slug": "heading",
-					"name": "Heading (Urbanist)",
-					"fontFamily": "Urbanist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+					"name": "Heading",
+					"fontFamily": "Arial, Helvetica, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
 				},
 				{
 					"slug": "body",
-					"name": "Body (Quicksand)",
-					"fontFamily": "Quicksand, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+					"name": "Body",
+					"fontFamily": "Arial, Helvetica, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
 				}
 			],
 			"fontSizes": [
@@ -91,7 +90,7 @@
 		},
 
 		"custom": {
-			"note": "Tokens — colors: palette (Sage / Olive / Clay / Ivory / Taupe / Sand / White). Fonts: heading=Urbanist, body=Quicksand. Sizes: eyebrow/small/body/button/h3/h2/h1. Spacing: 10..60 (Section = 50px top+bottom)."
+			"note": "Tokens — colors: neutral grayscale placeholders (primary / secondary / accent / base / on-dark / primary-soft / contrast / muted / surface / white); swap the hex values when the site's design lands. Fonts: heading and body both on the system sans stack. Sizes: eyebrow/small/body/button/h3/h2/h1. Spacing: 10..60 (Section = 100px top+bottom)."
 		}
 	},
 
@@ -156,7 +155,7 @@
 				}
 			},
 			"link": {
-				"color": { "text": "#6f4b34" },
+				"color": { "text": "#333333" },
 				"typography": { "textDecoration": "underline" }
 			}
 		}

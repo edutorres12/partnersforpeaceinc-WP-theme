@@ -8,7 +8,7 @@ from the theme directory — you copy them into place once per environment.
 
 When a fatal PHP error occurs, WordPress normally shows a plain white
 _"There has been a critical error on this website"_ page. This drop-in replaces
-that with the Seasons of You Therapy branded page (`dropins/php-error.php`).
+that with the theme's own styled page (`dropins/php-error.php`).
 
 It runs **after** WordPress has crashed, so it is fully self-contained: inline
 CSS, no theme functions, no required external assets. Brand fonts load from
@@ -26,7 +26,7 @@ standalone, dependency-free file.
 Copy the file to `wp-content/`:
 
 ```bash
-cp wp-content/themes/soywd/dropins/php-error.php wp-content/php-error.php
+cp wp-content/themes/wptpl/dropins/php-error.php wp-content/php-error.php
 ```
 
 On Hostinger you can also do this from **File Manager**: copy

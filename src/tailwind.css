@@ -14,57 +14,61 @@
 
    So this is the ONE place you change global heading sizes:
 
-     h1       → 48px Urbanist 700, line-height 53px
-     h2       → 32px Urbanist 700, line-height 40px
-     h3       → 27px Urbanist 700, line-height 32px
-     h4       → 20px Urbanist 700
-     h5       → 18px Urbanist 700
-     h6       → 12px Urbanist 700 uppercase tracking-widest
-     body     → 16px Quicksand 400, line-height 24px (1.5)
+     h1       → 48px heading face 700, line-height 53px
+     h2       → 32px heading face 700, line-height 40px
+     h3       → 27px heading face 700, line-height 32px
+     h4       → 20px heading face 700
+     h5       → 18px heading face 700
+     h6       → 12px heading face 700 uppercase tracking-widest
+     body     → 16px body face 400, line-height 24px (1.5)
+
+   Both faces are the same system sans stack until a site picks its
+   typefaces — swap the stacks here, in theme.json, and in
+   tailwind.config.js together.
 
    Keep the values here in sync with theme.json (so the editor
    picker matches the frontend).
    --------------------------------------------------------------- */
 @layer base {
   html, body {
-    font-family: 'Quicksand', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   }
   body {
     font-size: 1rem;
     line-height: 1.5; /* 24px on 16px */
   }
   h1 {
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 3rem;        /* 48px */
     line-height: 1.1;       /* ~53px */
     font-weight: 700;
   }
   h2 {
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 2rem;        /* 32px */
     line-height: 1.25;      /* 40px */
     font-weight: 700;
   }
   h3 {
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 1.6875rem;   /* 27px (20pt) */
     line-height: 1.1852;    /* 32px (24pt) */
     font-weight: 700;
   }
   h4 {
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 1.25rem;     /* 20px */
     line-height: 1.3;
     font-weight: 700;
   }
   h5 {
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 1.125rem;    /* 18px */
     line-height: 1.35;
     font-weight: 700;
   }
   h6 {
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.75rem;     /* 12px */
     line-height: 1.2;
     font-weight: 700;
@@ -79,9 +83,9 @@
      for all interactive surfaces. `outline` is intentionally excluded so
      focus rings stay instant for accessibility. */
   a, button,
-  .soywd-btn, .soywd-feature-card,
-  .soywd-lang-switch, .soywd-tag-list a,
-  .soywd-header .custom-logo-link,
+  .wptpl-btn, .wptpl-feature-card,
+  .wptpl-lang-switch, .wptpl-tag-list a,
+  .wptpl-header .custom-logo-link,
   [role="button"] {
     transition-property: color, background-color, border-color, opacity, transform, box-shadow;
     transition-duration: 200ms;
@@ -91,9 +95,9 @@
   /* Visible keyboard focus. Previously the theme relied on the UA default
      outline, which is near-invisible on the branded backgrounds. This is a
      single, consistent ring for every interactive element, shown only for
-     keyboard/AT focus (:focus-visible) so mouse clicks don't draw it. Clay
+     keyboard/AT focus (:focus-visible) so mouse clicks don't draw it. Accent
      reads on the light surfaces that dominate the site; dark landmarks get a
-     cream override below. `outline` is deliberately kept out of the global
+     canvas override below. `outline` is deliberately kept out of the global
      transition (above) so the ring appears instantly. */
   a:focus-visible,
   button:focus-visible,
@@ -108,11 +112,11 @@
     border-radius: 2px;
   }
 
-  /* Dark surfaces (footer, and the 988/topbar band) — swap to a light ring so
-     it stays visible against olive/cream-dark backgrounds. */
-  .soywd-footer :focus-visible,
-  .soywd-topbar :focus-visible {
-    outline-color: var(--wp--preset--color--cream-light);
+  /* Dark surfaces (footer and the alert-bar band) — swap to a light ring so
+     it stays visible against secondary/canvas-dark backgrounds. */
+  .wptpl-footer :focus-visible,
+  .wptpl-topbar :focus-visible {
+    outline-color: var(--wp--preset--color--on-dark);
   }
 }
 
@@ -121,52 +125,51 @@
    the horizontal gutter between content and the viewport edge.
 
    Containers (3 tiers):
-     .soywd-container         → 1400px  general content (header, footer,
+     .wptpl-container         → 1400px  general content (header, footer,
                                          masthead, 4-card grids)
-     .soywd-container-md      → 1200px  3-card sections (find your season,
-                                         how to get started, free guides)
-     .soywd-container-narrow  →  760px  long-form text, FAQ
+     .wptpl-container-md      → 1200px  3-card sections
+     .wptpl-container-narrow  →  760px  long-form text, FAQ
 
    Gutter: clamp(1rem, 4vw, 2rem) → 32px on desktop; below 768px the
    responsive overrides pin it to a fixed 20px.
-   The same gutter is applied to .soywd-section so header / footer /
+   The same gutter is applied to .wptpl-section so header / footer /
    sections all line up against the viewport edge.
    --------------------------------------------------------------- */
 :root {
-  --soywd-container-wide:   1400px;
-  --soywd-container-md:     1200px;
-  --soywd-container-narrow:  760px;
-  --soywd-gutter: clamp(1rem, 4vw, 2rem);
+  --wptpl-container-wide:   1400px;
+  --wptpl-container-md:     1200px;
+  --wptpl-container-narrow:  760px;
+  --wptpl-gutter: clamp(1rem, 4vw, 2rem);
 
-  /* Card elevation tokens — kept in olive (secondary) to stay in palette. */
-  --soywd-shadow-rest:  0 1px 3px  rgba(47, 51, 40, 0.06);
-  --soywd-shadow-hover: 0 8px 24px rgba(47, 51, 40, 0.10);
+  /* Card elevation tokens — kept in secondary (secondary) to stay in palette. */
+  --wptpl-shadow-rest:  0 1px 3px  rgba(34, 34, 34, 0.06);
+  --wptpl-shadow-hover: 0 8px 24px rgba(34, 34, 34, 0.10);
 }
 
 /* ---------------------------------------------------------------
    Reusable theme components.
    --------------------------------------------------------------- */
 @layer components {
-  .soywd-container,
-  .soywd-container-md,
-  .soywd-container-narrow {
+  .wptpl-container,
+  .wptpl-container-md,
+  .wptpl-container-narrow {
     width: 100%;
     margin-inline: auto;
-    padding-inline: var(--soywd-gutter);
+    padding-inline: var(--wptpl-gutter);
   }
-  .soywd-container        { max-width: var(--soywd-container-wide); }
-  .soywd-container-md     { max-width: var(--soywd-container-md); }
-  .soywd-container-narrow { max-width: var(--soywd-container-narrow); }
+  .wptpl-container        { max-width: var(--wptpl-container-wide); }
+  .wptpl-container-md     { max-width: var(--wptpl-container-md); }
+  .wptpl-container-narrow { max-width: var(--wptpl-container-narrow); }
 
-  /* Button — 16px Urbanist Bold, uppercase, tracking-widest.
+  /* Button — 16px heading Bold, uppercase, tracking-widest.
      16px = 1rem; 19.2px line-height ≈ 1.2. */
-  .soywd-btn {
+  .wptpl-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 0.375rem;
     padding: 0.875rem 1.5rem;
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.9rem;
     line-height: 1.2;
     font-weight: 700;
@@ -180,32 +183,32 @@
     /* Subtle elevation so a flat filled CTA reads as a raised, tappable button
        (affordance) — same shadow language as the cards. Deepens slightly on
        hover; the box-shadow transition is already set in the base layer. */
-    box-shadow: 0 2px 5px rgba(47, 51, 40, 0.18);
+    box-shadow: 0 2px 5px rgba(34, 34, 34, 0.18);
   }
-  .soywd-btn:hover {
-    box-shadow: 0 5px 12px rgba(47, 51, 40, 0.22);
+  .wptpl-btn:hover {
+    box-shadow: 0 5px 12px rgba(34, 34, 34, 0.22);
   }
-  .soywd-btn-primary {
-    @apply soywd-btn bg-primary text-white hover:bg-secondary;
+  .wptpl-btn-primary {
+    @apply wptpl-btn bg-primary text-white hover:bg-secondary;
   }
-  .soywd-btn-secondary {
-    @apply soywd-btn bg-secondary text-white hover:bg-primary;
+  .wptpl-btn-secondary {
+    @apply wptpl-btn bg-secondary text-white hover:bg-primary;
   }
-  .soywd-btn-accent {
-    @apply soywd-btn bg-accent text-white;
+  .wptpl-btn-accent {
+    @apply wptpl-btn bg-accent text-white;
   }
-  .soywd-btn-accent:hover {
+  .wptpl-btn-accent:hover {
     @apply text-white;
-    background-color: #73513c; /* deeper clay — same hue, softer than jumping to olive */
+    background-color: #4d4d4d; /* deeper accent — same hue, softer than jumping to secondary */
   }
-  .soywd-btn-outline {
-    @apply soywd-btn border border-contrast text-contrast hover:bg-contrast hover:text-white;
+  .wptpl-btn-outline {
+    @apply wptpl-btn border border-contrast text-contrast hover:bg-contrast hover:text-white;
   }
 
-  /* Eyebrow — small caps label (12px Urbanist Bold uppercase tracking-widest). */
-  .soywd-eyebrow {
+  /* Eyebrow — small caps label (12px heading Bold uppercase tracking-widest). */
+  .wptpl-eyebrow {
     @apply text-muted;
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.75rem;
     line-height: 1.2;
     font-weight: 700;
@@ -213,23 +216,23 @@
     letter-spacing: 0.18em;
   }
 
-  /* Section-header eyebrow override — Urbanist 12px light, dark olive. */
-  .soywd-section-header .soywd-eyebrow {
+  /* Section-header eyebrow override — heading 12px light, dark secondary. */
+  .wptpl-section-header .wptpl-eyebrow {
     @apply text-secondary;
-    font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 300;
     letter-spacing: 0.18em;
   }
 
-  /* Nav links — Quicksand 0.9rem medium, uppercase.
-     Hover color is clay (accent) for warmth + visual differentiation
-     from buttons (which use sage/olive). Transition inherited from
+  /* Nav links — body 0.9rem medium, uppercase.
+     Hover color is accent (accent) for warmth + visual differentiation
+     from buttons (which use soft/secondary). Transition inherited from
      the global rule in @layer base. */
-  .soywd-nav a,
-  .soywd-nav .menu-item a {
+  .wptpl-nav a,
+  .wptpl-nav .menu-item a {
     @apply text-black;
-    font-family: 'Quicksand', ui-sans-serif, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, sans-serif;
     font-size: 0.9rem;
     line-height: 1;
     font-weight: 500;
@@ -237,8 +240,8 @@
     text-transform: uppercase;
     /* Transition inherited from the unified rule in @layer base. */
   }
-  .soywd-nav a:hover,
-  .soywd-nav .menu-item a:hover {
+  .wptpl-nav a:hover,
+  .wptpl-nav .menu-item a:hover {
     @apply text-accent;
   }
 
@@ -247,13 +250,13 @@
      marks the parent <li> with `menu-item-has-children` and wraps the children
      in a `.sub-menu` <ul>. Hidden by default, revealed on hover OR keyboard
      focus (`focus-within`) so it's reachable without a mouse. Styled to match
-     the site: light card, olive labels, clay hover (inherited from the nav
+     the site: light card, secondary labels, accent hover (inherited from the nav
      hover rule above), soft elevation. */
-  .soywd-nav .menu-item-has-children {
+  .wptpl-nav .menu-item-has-children {
     position: relative;
   }
   /* Down-caret after a parent item; rotates 180deg when the menu opens. */
-  .soywd-nav .menu-item-has-children > a::after {
+  .wptpl-nav .menu-item-has-children > a::after {
     content: "";
     display: inline-block;
     margin-left: 0.4em;
@@ -263,11 +266,11 @@
     vertical-align: middle;
     transition: transform 200ms ease-out;
   }
-  .soywd-nav .menu-item-has-children:hover > a::after,
-  .soywd-nav .menu-item-has-children:focus-within > a::after {
+  .wptpl-nav .menu-item-has-children:hover > a::after,
+  .wptpl-nav .menu-item-has-children:focus-within > a::after {
     transform: rotate(180deg);
   }
-  .soywd-nav .sub-menu {
+  .wptpl-nav .sub-menu {
     position: absolute;
     top: 100%;
     left: 0;
@@ -277,9 +280,9 @@
     padding: 0.5rem 0;
     list-style: none;
     background-color: #ffffff;
-    border: 1px solid var(--wp--preset--color--cream-light);
+    border: 1px solid var(--wp--preset--color--on-dark);
     border-radius: 0.5rem;
-    box-shadow: var(--soywd-shadow-hover);
+    box-shadow: var(--wptpl-shadow-hover);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-0.25rem);
@@ -287,7 +290,7 @@
   }
   /* Invisible bridge across the gap so moving the cursor from the parent down
      into the card doesn't drop the hover and close it. */
-  .soywd-nav .sub-menu::before {
+  .wptpl-nav .sub-menu::before {
     content: "";
     position: absolute;
     left: 0;
@@ -295,18 +298,18 @@
     top: -0.5rem;
     height: 0.5rem;
   }
-  .soywd-nav .menu-item-has-children:hover > .sub-menu,
-  .soywd-nav .menu-item-has-children:focus-within > .sub-menu {
+  .wptpl-nav .menu-item-has-children:hover > .sub-menu,
+  .wptpl-nav .menu-item-has-children:focus-within > .sub-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
     transition-delay: 0s;
   }
-  /* Submenu labels: olive, normal-case (long service names stay readable).
-     Hover fills cream + flips to clay + grows a 3px clay bar on the left
+  /* Submenu labels: secondary, normal-case (long service names stay readable).
+     Hover fills canvas + flips to accent + grows a 3px accent bar on the left
      (inset shadow, so no layout shift). Transition inherited from the global
      `a` rule in @layer base. */
-  .soywd-nav .sub-menu a {
+  .wptpl-nav .sub-menu a {
     display: block;
     padding: 0.5rem 1.25rem;
     color: var(--wp--preset--color--secondary);
@@ -317,42 +320,42 @@
     white-space: nowrap;
     box-shadow: inset 0 0 0 0 var(--wp--preset--color--accent);
   }
-  .soywd-nav .sub-menu a:hover {
+  .wptpl-nav .sub-menu a:hover {
     color: var(--wp--preset--color--accent);
-    background-color: var(--wp--preset--color--cream-light);
+    background-color: var(--wp--preset--color--on-dark);
     box-shadow: inset 0.1875rem 0 0 0 var(--wp--preset--color--accent);
   }
   /* Highlight the service page you're currently on. */
-  .soywd-nav .sub-menu .current-menu-item > a,
-  .soywd-nav .sub-menu .current_page_item > a {
+  .wptpl-nav .sub-menu .current-menu-item > a,
+  .wptpl-nav .sub-menu .current_page_item > a {
     color: var(--wp--preset--color--accent);
     font-weight: 600;
   }
 
-  /* Footer menu links — cream on the dark footer (AA 9.7:1); brighten to
-     white on hover. The global link color (deep clay) is for light
+  /* Footer menu links — on-dark on the dark footer; brighten to
+     white on hover. The global link color (deep accent) is for light
      backgrounds and would be near-invisible here, so scope a rest color. */
-  .soywd-footer .menu a,
-  .soywd-footer .menu-item a {
-    @apply text-cream-light;
+  .wptpl-footer .menu a,
+  .wptpl-footer .menu-item a {
+    @apply text-on-dark;
   }
-  .soywd-footer .menu a:hover,
-  .soywd-footer .menu-item a:hover {
+  .wptpl-footer .menu a:hover,
+  .wptpl-footer .menu-item a:hover {
     @apply text-white;
   }
 
   /* Current top-level section indicator — the nav item for the page you're on
-     (or its ancestor) reads in clay. */
-  .soywd-nav .current-menu-item > a,
-  .soywd-nav .current-menu-ancestor > a,
-  .soywd-nav .current_page_item > a {
+     (or its ancestor) reads in accent. */
+  .wptpl-nav .current-menu-item > a,
+  .wptpl-nav .current-menu-ancestor > a,
+  .wptpl-nav .current_page_item > a {
     @apply text-accent;
   }
 
   /* --- Mobile menu (below the lg breakpoint, where the desktop nav hides) --- */
 
   /* Hamburger button → morphs to an X when open (.is-open from nav.js). */
-  .soywd-nav-toggle {
+  .wptpl-nav-toggle {
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
@@ -364,7 +367,7 @@
     background: none;
     cursor: pointer;
   }
-  .soywd-nav-toggle__bar {
+  .wptpl-nav-toggle__bar {
     display: block;
     width: 1.5rem;
     height: 2px;
@@ -372,13 +375,13 @@
     background-color: var(--wp--preset--color--secondary);
     transition: transform 200ms ease-out, opacity 150ms ease-out;
   }
-  .soywd-nav-toggle.is-open .soywd-nav-toggle__bar:nth-child(1) {
+  .wptpl-nav-toggle.is-open .wptpl-nav-toggle__bar:nth-child(1) {
     transform: translateY(7px) rotate(45deg);
   }
-  .soywd-nav-toggle.is-open .soywd-nav-toggle__bar:nth-child(2) {
+  .wptpl-nav-toggle.is-open .wptpl-nav-toggle__bar:nth-child(2) {
     opacity: 0;
   }
-  .soywd-nav-toggle.is-open .soywd-nav-toggle__bar:nth-child(3) {
+  .wptpl-nav-toggle.is-open .wptpl-nav-toggle__bar:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
   }
 
@@ -390,12 +393,12 @@
      (`overflow-y: auto`); `overscroll-behavior: contain` keeps that scroll from
      chaining to the locked page behind it. Height is pinned to the small viewport
      unit so an iOS toolbar can't crop the bottom. */
-  .soywd-mobile-nav {
+  .wptpl-mobile-nav {
     position: fixed;
     /* Start exactly at the header's real bottom edge (measured by nav.js, so it
        already accounts for the admin bar when logged in). The header's own
        border-b is the single separator — no border-top here, to avoid a seam. */
-    top: var(--soywd-header-h, 4.75rem);
+    top: var(--wptpl-header-h, 4.75rem);
     left: 0;
     right: 0;
     bottom: 0;
@@ -403,57 +406,57 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     background-color: #ffffff;
-    padding: 0.5rem var(--soywd-gutter) 2rem;
+    padding: 0.5rem var(--wptpl-gutter) 2rem;
   }
   /* Keep the header bar (logo + close button) pinned above the overlay while the
      menu is open, so the close control is always reachable even if a mobile
      browser lets the locked page drift. Sticky (not fixed) stays in flow, so
      opening the menu doesn't shift the page underneath. `top` clears the admin
      bar so the header doesn't tuck under it when logged in. */
-  html.soywd-nav-open .soywd-header {
+  html.wptpl-nav-open .wptpl-header {
     position: sticky;
-    top: var(--soywd-adminbar-h, 0px);
+    top: var(--wptpl-adminbar-h, 0px);
     z-index: 50;
   }
-  .soywd-mobile-menu {
+  .wptpl-mobile-menu {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .soywd-mobile-menu a {
+  .wptpl-mobile-menu a {
     @apply text-secondary;
     display: block;
-    font-family: 'Quicksand', ui-sans-serif, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, sans-serif;
     font-size: 1rem;
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 0.75rem 0.25rem;
-    border-bottom: 1px solid var(--wp--preset--color--cream-light);
+    border-bottom: 1px solid var(--wp--preset--color--on-dark);
   }
-  .soywd-mobile-menu a:hover {
+  .wptpl-mobile-menu a:hover {
     @apply text-accent;
   }
   /* Parent items (e.g. Services) collapse by default in the mobile panel; a
      caret button (injected by assets/js/nav.js) toggles the children. The parent
      link is left alone, so it still navigates to its own page. */
-  .soywd-mobile-menu .menu-item-has-children {
+  .wptpl-mobile-menu .menu-item-has-children {
     position: relative;
   }
-  .soywd-mobile-menu .menu-item-has-children > a {
+  .wptpl-mobile-menu .menu-item-has-children > a {
     padding-right: 3rem; /* clear the caret so long labels never run under it */
   }
   /* Service children: indented, normal-case, lighter so the hierarchy reads. */
-  .soywd-mobile-menu .sub-menu {
+  .wptpl-mobile-menu .sub-menu {
     margin: 0;
     padding: 0;
     list-style: none;
     display: none;
   }
-  .soywd-mobile-menu .menu-item-has-children.is-open > .sub-menu {
+  .wptpl-mobile-menu .menu-item-has-children.is-open > .sub-menu {
     display: block;
   }
-  .soywd-mobile-menu .sub-menu a {
+  .wptpl-mobile-menu .sub-menu a {
     padding-left: 1.25rem;
     font-size: 0.9375rem;
     font-weight: 400;
@@ -462,7 +465,7 @@
     color: var(--wp--preset--color--muted);
   }
   /* Caret disclosure button — a 44px tap target over the parent row's right end. */
-  .soywd-submenu-toggle {
+  .wptpl-submenu-toggle {
     position: absolute;
     top: 0;
     right: -0.25rem;
@@ -478,7 +481,7 @@
     cursor: pointer;
   }
   /* Chevron drawn from borders: points down when closed, flips up when open. */
-  .soywd-submenu-toggle::after {
+  .wptpl-submenu-toggle::after {
     content: "";
     width: 0.5rem;
     height: 0.5rem;
@@ -488,40 +491,40 @@
     transform: rotate(45deg);
     transition: transform 200ms ease-out;
   }
-  .soywd-submenu-toggle[aria-expanded="true"]::after {
+  .wptpl-submenu-toggle[aria-expanded="true"]::after {
     margin-top: 0.15rem;
     transform: rotate(-135deg);
   }
-  .soywd-mobile-nav__actions {
+  .wptpl-mobile-nav__actions {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-top: 1.25rem;
   }
   /* Lock page scroll while the mobile menu is open. */
-  html.soywd-nav-open {
+  html.wptpl-nav-open {
     overflow: hidden;
   }
 
   /* Respect reduced-motion: kill the nav animations for users who ask. */
   @media (prefers-reduced-motion: reduce) {
-    .soywd-nav .sub-menu,
-    .soywd-nav-toggle__bar {
+    .wptpl-nav .sub-menu,
+    .wptpl-nav-toggle__bar {
       transition: none;
     }
   }
 
   /* Header logo — cap the WP custom logo to header height; strip
      any inherited margins so it sits flush left. */
-  .soywd-header .custom-logo-link {
+  .wptpl-header .custom-logo-link {
     display: inline-block;
     line-height: 0;
     margin: 0;
   }
-  .soywd-header .custom-logo-link:hover {
+  .wptpl-header .custom-logo-link:hover {
     opacity: 0.85;
   }
-  .soywd-header .custom-logo {
+  .wptpl-header .custom-logo {
     width: auto;
     height: auto;
     max-height: 56px;
@@ -529,76 +532,76 @@
     margin: 0;
   }
 
-  /* Language switcher — Urbanist 11px bold, sage.
-     Hover fills with sage + flips text to white (button-style chip). */
-  .soywd-lang-switch {
+  /* Language switcher — heading 11px bold, soft.
+     Hover fills with soft + flips text to white (button-style chip). */
+  .wptpl-lang-switch {
     @apply text-primary border-primary;
-    font-family: 'Urbanist', ui-sans-serif, sans-serif;
+    font-family: Arial, Helvetica, ui-sans-serif, sans-serif;
     font-size: 11px;
     line-height: 1;
     font-weight: 700;
     letter-spacing: 0.12em;
     border-radius: 0.25rem;
   }
-  .soywd-lang-switch:hover {
-    background-color: #7a8461;
+  .wptpl-lang-switch:hover {
+    background-color: #1a1a1a;
     color: #ffffff;
   }
 
-  /* Crisis topbar — site-wide alert that sits above the header. Reuses the
-     `crisis_text` Customizer setting; hidden per page via the editor sidebar
-     toggle (see inc/topbar.php). */
-  .soywd-topbar {
-    @apply bg-cream-light text-black text-sm;
+  /* Alert bar — site-wide notice at the top of the footer. Copy comes from the
+     `alert_text` Customizer setting (empty by default, so the bar is hidden);
+     toggled per page from the editor sidebar (see inc/topbar.php). */
+  .wptpl-topbar {
+    @apply bg-on-dark text-black text-sm;
   }
-  .soywd-topbar a {
+  .wptpl-topbar a {
     @apply underline;
     color: inherit;
   }
-  .soywd-topbar a:hover {
+  .wptpl-topbar a:hover {
     opacity: 0.85;
   }
 
-  /* Button variant for CTA-banner on photo background — sage tint,
-     darkens to full sage on hover (matches global "darken bg" pattern). */
-  .soywd-btn-photo {
-    @apply soywd-btn;
-    background-color: #a8b08a;
-    color: #2f3328;
+  /* Button variant for CTA-banner on photo background — soft tint,
+     darkens to full soft on hover (matches global "darken bg" pattern). */
+  .wptpl-btn-photo {
+    @apply wptpl-btn;
+    background-color: #cccccc;
+    color: #222222;
   }
-  .soywd-btn-photo:hover {
-    background-color: #7a8461;
-    color: #2f3328;
+  .wptpl-btn-photo:hover {
+    background-color: #1a1a1a;
+    color: #222222;
   }
 
   /* ---------------------------------------------------------------
      Section spacing — top + bottom padding from spacing token "50"
      (= 100px). One change in theme.json updates the whole site.
 
-     .soywd-section        → 100px top + bottom
-     .soywd-section-sm     → 24px top + bottom (Medium token)
-     .soywd-section-lg     → 80px top + bottom (Large token)
-     .soywd-section-tight  → 16px top + bottom (Small token)
+     .wptpl-section        → 100px top + bottom
+     .wptpl-section-sm     → 24px top + bottom (Medium token)
+     .wptpl-section-lg     → 80px top + bottom (Large token)
+     .wptpl-section-tight  → 16px top + bottom (Small token)
      --------------------------------------------------------------- */
-  .soywd-section,
-  .soywd-section-sm,
-  .soywd-section-lg,
-  .soywd-section-tight {
-    padding-inline: var(--soywd-gutter);
+  .wptpl-section,
+  .wptpl-section-sm,
+  .wptpl-section-lg,
+  .wptpl-section-tight {
+    padding-inline: var(--wptpl-gutter);
   }
-  .soywd-section {
+  .wptpl-section {
     padding-top: var(--wp--preset--spacing--50, 6.25rem);
     padding-bottom: var(--wp--preset--spacing--50, 6.25rem);
   }
-  .soywd-section-sm {
+  .wptpl-section-sm {
     padding-top: var(--wp--preset--spacing--40, 1.5rem);
     padding-bottom: var(--wp--preset--spacing--40, 1.5rem);
   }
-  .soywd-section-lg {
+  .wptpl-section-lg {
     padding-top: var(--wp--preset--spacing--60, 5rem);
     padding-bottom: var(--wp--preset--spacing--60, 5rem);
   }
-  .soywd-section-tight {
+  .wptpl-section-tight {
     padding-top: var(--wp--preset--spacing--30, 1rem);
     padding-bottom: var(--wp--preset--spacing--30, 1rem);
   }
@@ -606,7 +609,7 @@
   /* Hero intro paragraph widen modifier. Mirrors the rule in the hero block's
      style.css, but lives here too so it ships in the always-enqueued
      tailwind.css (per-block style assets can be stripped by cache plugins). */
-  .soywd-hero.is-intro-wide .soywd-hero__subtitle {
+  .wptpl-hero.is-intro-wide .wptpl-hero__subtitle {
     max-width: 66rem;
     font-size: 1.25rem;
   }
@@ -618,7 +621,7 @@
    class WordPress adds at render time that never appears in scanned source —
    inside @layer, Tailwind's purge strips the body rule and centering breaks.
    Scoped to `.error404` so the flex layout never leaks onto normal pages: the
-   body becomes a full-height flex column, .soywd-main grows, and the cover
+   body becomes a full-height flex column, .wptpl-main grows, and the cover
    fills exactly the space under the header and centers its content.
    --------------------------------------------------------------- */
 body.error404 {
@@ -639,41 +642,41 @@ body.error404.admin-bar {
     min-height: calc(100dvh - 46px);
   }
 }
-body.error404 .soywd-main {
+body.error404 .wptpl-main {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
 }
-.soywd-error-cover {
+.wptpl-error-cover {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem var(--soywd-gutter);
+  padding: 3rem var(--wptpl-gutter);
 }
-.soywd-error {
+.wptpl-error {
   text-align: center;
 }
-/* Big, calm "404" — sage (not alarm-red), Urbanist Extrabold, tight leading.
+/* Big, calm "404" — soft (not alarm-red), heading Extrabold, tight leading.
    Fluid so it never overflows the narrow column on small screens. */
-.soywd-error__code {
+.wptpl-error__code {
   color: var(--wp--preset--color--primary);
-  font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-weight: 800;
   font-size: clamp(4.5rem, 16vw, 8rem);
   line-height: 1;
   letter-spacing: -0.02em;
   margin-bottom: 1rem;
 }
-.soywd-error__lead {
+.wptpl-error__lead {
   font-size: 1.05rem;
   line-height: 1.7;
   margin-inline: auto;
   max-width: 34rem;
 }
-/* The mobile menu is a fixed overlay (see .soywd-mobile-nav), so it no longer
+/* The mobile menu is a fixed overlay (see .wptpl-mobile-nav), so it no longer
    interacts with this cover — the 404 needs no menu-specific scroll handling. */
 
 /* ---------------------------------------------------------------
@@ -681,71 +684,60 @@ body.error404 .soywd-main {
    names only appear in the editor content, never in scanned source), so they
    live OUTSIDE @layer to survive purge.
    --------------------------------------------------------------- */
-/* Mobile-only line break. A `<br class="soywd-br-mobile">` collapses on
+/* Mobile-only line break. A `<br class="wptpl-br-mobile">` collapses on
    desktop/tablet (no break) and only breaks the line on phones (≤767px), so
    copy can wrap differently on mobile without touching the larger layouts. */
-.soywd-br-mobile {
+.wptpl-br-mobile {
   display: none;
 }
 /* Tablet-only line break — breaks ONLY on tablet (768–1023px) and collapses on
    desktop and mobile, so a break can be placed for the tablet layout alone. */
-.soywd-br-tablet {
+.wptpl-br-tablet {
   display: none;
 }
 /* Desktop-only line break — breaks ONLY on desktop (≥1024px) and collapses on
    tablet (768–1023px) AND mobile (≤767px), so a break meant for the widest
    layout stops forcing an awkward wrap on both smaller viewports. */
-.soywd-br-desktop-only {
+.wptpl-br-desktop-only {
   display: none;
 }
-/* Desktop/tablet-only line break — the inverse. A `<br class="soywd-br-desktop">`
+/* Desktop/tablet-only line break — the inverse. A `<br class="wptpl-br-desktop">`
    breaks the line on ≥768px but collapses on phones, so a hard-coded desktop
    break stops forcing an awkward wrap on mobile (pair it with a
-   `.soywd-br-mobile` placed where the phone break should land instead). */
+   `.wptpl-br-mobile` placed where the phone break should land instead). */
 /* Tablet-off line break — breaks on desktop AND mobile, but collapses on tablet
    only (768–1023px), so a desktop break that wraps badly on tablet can be
    suppressed there without touching the other two viewports. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-br-tablet {
+  .wptpl-br-tablet {
     display: inline;
   }
-  .soywd-br-tablet-off {
+  .wptpl-br-tablet-off {
     display: none;
   }
 }
 @media (min-width: 1024px) {
-  .soywd-br-desktop-only {
+  .wptpl-br-desktop-only {
     display: inline;
   }
 }
 @media (max-width: 767px) {
-  .soywd-br-mobile {
+  .wptpl-br-mobile {
     display: inline;
   }
-  .soywd-br-desktop {
+  .wptpl-br-desktop {
     display: none;
   }
   /* Trust-bar checklist (horizontal = flex; vertical lists use grid): a bit
      more room between the items once they stack on a phone. */
-  .soywd-checklist > ul.flex {
+  .wptpl-checklist > ul.flex {
     row-gap: 1.25rem;
   }
   /* Homepage trust bar: tighten the wrapped-row gap to 0.8rem so it matches the
      0.8rem column gap on phones. Scoped to `.home` so other pages keep the
      roomier 1.25rem set above. */
-  .home .soywd-checklist > ul.flex {
+  .home .wptpl-checklist > ul.flex {
     row-gap: 0.8rem;
-  }
-}
-
-/* "LMFT" credential label under the practitioner name: on tablet + phone only
-   (≤1023px) it's a bit smaller and tucked closer to the name; desktop keeps the
-   larger inline size the block sets. `!important` beats the block's inline
-   font-size/margin. Add the class via the paragraph's Advanced → CSS class. */
-@media (max-width: 1023px) {
-  .soywd-lmft-label {
-    font-size: 18px !important;
-    margin-top: 0 !important;
   }
 }
 
@@ -758,51 +750,51 @@ body.error404 .soywd-main {
 /* Feature-card elevation. Rest state ships a subtle shadow; hover
    lifts 2px and deepens the shadow. Paired with
    src/blocks/feature-card/style.css which owns the transform timing. */
-.soywd-feature-card {
-  box-shadow: var(--soywd-shadow-rest);
+.wptpl-feature-card {
+  box-shadow: var(--wptpl-shadow-rest);
 }
-.soywd-feature-card:hover {
+.wptpl-feature-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--soywd-shadow-hover);
+  box-shadow: var(--wptpl-shadow-hover);
 }
 
 /* Feature-card "Learn more →" arrow CTA. On hover the arrow icon slides
-   right and the text shifts color. Light cards → clay; dark-bg cards
-   carry the -light modifier (cream at rest, brighten to white). The
+   right and the text shifts color. Light cards → accent; dark-bg cards
+   carry the -light modifier (canvas at rest, brighten to white). The
    -light:hover rule must follow the base :hover so it wins on dark cards
    (equal specificity → source order decides). */
-.soywd-cta-arrow-icon {
+.wptpl-cta-arrow-icon {
   display: inline-block;
   transition: transform 200ms ease-out;
 }
-.soywd-cta-arrow:hover .soywd-cta-arrow-icon {
+.wptpl-cta-arrow:hover .wptpl-cta-arrow-icon {
   transform: translateX(4px);
 }
-.soywd-cta-arrow:hover {
-  color: #8f6a4f; /* clay — light cards */
+.wptpl-cta-arrow:hover {
+  color: #666666; /* accent — light cards */
 }
-.soywd-cta-arrow-light {
-  color: #e6ded3;
+.wptpl-cta-arrow-light {
+  color: #e6e6e6;
 }
-.soywd-cta-arrow-light:hover {
+.wptpl-cta-arrow-light:hover {
   color: #ffffff; /* brighten on dark cards */
 }
 
-/* FAQ question — deep clay so it clears AA (5.7:1) on the light section;
-   accent #8f6a4f fails at body size. The decorative "+" keeps its own
-   text-accent utility (aria-hidden, so contrast is not required). */
-.soywd-faq__summary {
-  color: #6f4b34;
+/* FAQ question — one step darker than `accent` so it stays legible at body
+   size on a light section. The decorative "+" keeps its own text-accent
+   utility (aria-hidden, so contrast is not required). */
+.wptpl-faq__summary {
+  color: #333333;
 }
 
 /* Tag-list hover — color/border shift, no opacity. */
-.soywd-tag-list a:hover {
-  color: #8f6a4f;
-  border-color: #8f6a4f;
+.wptpl-tag-list a:hover {
+  color: #666666;
+  border-color: #666666;
 }
-.soywd-tag-list a.bg-secondary:hover {
-  background-color: #7a8461;
-  border-color: #7a8461;
+.wptpl-tag-list a.bg-secondary:hover {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
 }
 
 /* Half-width centered block — matches the rendered width of a card sitting in
@@ -816,29 +808,27 @@ body.error404 .soywd-main {
    `styles.spacing.blockGap`, so `--wp--style--block-gap` resolves to no
    gap on `wp:columns` here; mirroring that fallback keeps the centered
    card the same width as a regular 2-col card. */
-.soywd-card-half-centered {
+.wptpl-card-half-centered {
   margin-inline: auto;
 }
 @media (min-width: 782px) {
-  .soywd-card-half-centered {
+  .wptpl-card-half-centered {
     max-width: calc(50% - var(--wp--style--block-gap, 0px) / 2);
   }
 }
 
-/* Centered bilingual card — like `.soywd-card-half-centered`, but for a lone
-   `bilingual` feature-card. A bilingual card carries two text columns side by
-   side, so the 50% half-card width crams each language into ~25% and reads
-   badly. This caps it at a comfortable two-column reading width and centers it
-   in its own (full-width) row instead. The `min()` keeps it from stretching
-   too wide on large screens while still shrinking below the cap on narrower
-   desktops; below the columns-stack breakpoint the cap is dropped so it spans
-   full width like the stacked 2-col cards. Emitted automatically when a
-   bilingual card has "Half width (centered)" enabled. */
-.soywd-card-bilingual-centered {
+/* Centered bilingual card — like `.wptpl-card-half-centered`, but for a lone
+   feature-card using the block's `bilingual` layout. That layout carries two
+   text columns side by side, so the 50% half-card width crams each language
+   into ~25% and reads badly. This caps it at a comfortable two-column reading
+   width and centers it in its own (full-width) row instead. Emitted
+   automatically by the block when a bilingual card has "Half width (centered)"
+   enabled — see src/blocks/feature-card/render.php. */
+.wptpl-card-bilingual-centered {
   margin-inline: auto;
 }
 @media (min-width: 782px) {
-  .soywd-card-bilingual-centered {
+  .wptpl-card-bilingual-centered {
     max-width: min(52rem, 100%);
   }
 }
@@ -847,56 +837,15 @@ body.error404 .soywd-main {
    only for the wide two-column layout. (The tag row is the only flex-wrap +
    justify-center element in the card.) */
 @media (max-width: 781px) {
-  .soywd-card-bilingual-centered .flex-wrap.justify-center {
+  .wptpl-card-bilingual-centered .flex-wrap.justify-center {
     justify-content: flex-start;
   }
 }
 
-/* About » My Approach / What working together — vertical rule between the
-   icon+title column and the body column. Replaces the column's hairline
-   left border with a thicker bar that overhangs the text top and bottom so
-   it "surpasses" the copy. Add `soywd-vrule` as the column's CSS class and
-   keep its left padding. Hidden on mobile, where the columns stack. */
-.soywd-vrule {
-  position: relative;
-}
-.soywd-vrule::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: calc(100% + 4rem);
-  background: var(--wp--preset--color--cream-light);
-}
-@media (max-width: 781px) {
-  .soywd-vrule {
-    padding-left: 0 !important;
-    /* Columns are stacked here (WP stacks < 782px), so the body column sits
-       under the centered icon + title. Center its copy to match instead of
-       leaving it left-aligned. Above 782px it's a real two-column row and the
-       body stays left-aligned. */
-    text-align: center;
-  }
-  .soywd-vrule::before {
-    display: none;
-  }
-}
-
-/* About » Modalities — horizontal dividers between the four approaches.
-   Thin (default 1px) solid bar. Width + centering come from the
-   `.soywd-modalities-card > *` rule (shared 500px content column); here we only
-   add the 25px vertical breathing room. Add `soywd-sep-wide` alongside
-   `is-style-wide`. */
-.wp-block-separator.is-style-wide.soywd-sep-wide {
-  margin-top: 25px;
-  margin-bottom: 25px;
-}
-
-/* About » Who this practice was built for — smaller feature-card titles.
-   Add `soywd-title-sm` as the card's CSS class. */
-.soywd-title-sm h3 {
+/* Smaller feature-card titles, capped and centered — for card rows whose
+   titles are short labels rather than sentences. Add `wptpl-title-sm` as the
+   card's CSS class. */
+.wptpl-title-sm h3 {
   font-size: 1.25rem;
   line-height: 1.3;
   max-width: 350px;
@@ -906,179 +855,93 @@ body.error404 .soywd-main {
 /* Opt-in: a heading that is semantically H2 but should read at the H3 visual
    scale. Lets a page use the correct heading level (e.g. a service/section
    title sitting directly under the page's H1) without the H2 type size, so
-   the hierarchy is fixed with no visual change. Add `soywd-h2-as-h3` as the
+   the hierarchy is fixed with no visual change. Add `wptpl-h2-as-h3` as the
    block's CSS class. Two forms are covered: the class ON the heading itself
    (core `wp:heading`) and ON a wrapper whose title is a descendant (a
    feature-card, where the class lands on the card). Both selectors are pinned
    to a heading (`:is(h2,h3)…` / `… :is(h2,h3)`) on purpose — a bare
-   `.soywd-h2-as-h3` would set font-size on the feature-card wrapper, and it
+   `.wptpl-h2-as-h3` would set font-size on the feature-card wrapper, and it
    would then inherit into the card's body copy. The mobile step mirrors the
    global H3 ramp so responsive stays identical too. */
-:is( h2, h3 ).soywd-h2-as-h3,
-.soywd-h2-as-h3 :is( h2, h3 ) {
+:is( h2, h3 ).wptpl-h2-as-h3,
+.wptpl-h2-as-h3 :is( h2, h3 ) {
   font-size: 1.6875rem; /* 27px — matches the H3 desktop size */
   line-height: 1.1852;
 }
 @media ( max-width: 767px ) {
-  :is( h2, h3 ).soywd-h2-as-h3,
-  .soywd-h2-as-h3 :is( h2, h3 ) {
+  :is( h2, h3 ).wptpl-h2-as-h3,
+  .wptpl-h2-as-h3 :is( h2, h3 ) {
     font-size: 1.375rem; /* 22px — matches the H3 mobile size */
     line-height: 1.2;
   }
 }
 
-/* About » Who this practice was built for — the lone third card. Match the
-   exact rendered width of the 2-col cards above (50% minus half the 1.5rem
-   column gap) and match their 203px height so it reads as a true peer of the
-   pair. `height:auto` clears any forced inline height on the inner body. */
-.soywd-about-couples-card {
-  margin-inline: auto;
-}
-.soywd-about-couples-card .p-6 {
-  height: auto !important;
-  justify-content: center;
-}
-@media (min-width: 782px) {
-  .soywd-about-couples-card {
-    max-width: calc(50% - 0.75rem);
-  }
-  .soywd-about-couples-card .p-6 {
-    min-height: 230px;
-  }
-}
-
-/* About » Who this practice was built for — fix the three audience cards to a
-   550px box (500px content + 25px inline padding each side), centered. Add
-   `soywd-title-sm` as the card's CSS class (already present on these cards). */
-.soywd-feature-card.soywd-title-sm {
-  width: 550px;
-  max-width: 100%;
-  margin-inline: auto;
-}
-.soywd-feature-card.soywd-title-sm .p-6 {
-  padding: 25px;
-}
-/* The two top audience cards sit in a 2-column row. Drop their inner auto
-   margin (right on the left card, left on the right card) so they pull toward
-   each other and the only space between them is the column gap. The outer auto
-   margins stay, keeping the pair centered. */
-.wp-block-column:first-child .soywd-feature-card.soywd-title-sm {
-  margin-right: 0;
-}
-.wp-block-column:last-child .soywd-feature-card.soywd-title-sm {
-  margin-left: 0;
-}
-/* When the two-column row stacks (≤781px — WP's column breakpoint, which
-   includes iPad portrait at 768px), the inner-margin overrides above pull the
-   two top cards flush-right / flush-left in their now-full-width columns, so the
-   pair and the centered couples card below zig-zag (right, left, center).
-   Restore auto side margins on the stacked cards so all three read as one
-   centered column. */
-@media (max-width: 781px) {
-  .wp-block-column:first-child .soywd-feature-card.soywd-title-sm,
-  .wp-block-column:last-child .soywd-feature-card.soywd-title-sm {
-    margin-inline: auto;
-  }
-}
-
-/* About » "How to Get Started" steps (the hand-built core-columns variant, not
-   the soywd/steps block): each column's number circle is pulled up 5rem so it
-   overhangs the column's top edge, eating into the section's top padding so the
-   band reads top-heavy. Give the top padding explicit, tuned values per
-   breakpoint so there's clear breathing room above the circles: 140px desktop,
-   112px tablet, 80px mobile. Scoped by `.has-global-padding` — the hand-built
-   Group carries it, the soywd/steps block wrapper (`soywd-steps text-center …`)
-   does not — so this avoids `:has()`, which CSS optimizers (LiteSpeed "Remove
-   Unused CSS" / combine) can strip. `!important` beats the inline `padding-top`. */
-.wp-block-group.alignfull.soywd-steps.has-global-padding {
-  padding-top: 140px !important;
-}
-@media (max-width: 1023px) {
-  .wp-block-group.alignfull.soywd-steps.has-global-padding {
-    padding-top: 112px !important;
-  }
-}
-@media (max-width: 767px) {
-  .wp-block-group.alignfull.soywd-steps.has-global-padding {
-    padding-top: 80px !important;
-  }
-}
-
-/* Blog-hub "For X posts" cards. Scoped modifier so the resources / other
-   feature-cards stay untouched — add `soywd-post-card` as the card's CSS class.
+/* Post cards on the blog hub. Scoped modifier so the resource / other
+   feature-cards stay untouched — add `wptpl-post-card` as the card's CSS class.
    Differences from the default feature-card:
    - The arrow CTA hugs the title instead of being pushed to the card bottom
      (drop the `mt-auto`); an empty body paragraph is hidden so there's no gap.
    - A little more breathing room up top and on the sides. */
-.soywd-post-card .mt-auto {
+.wptpl-post-card .mt-auto {
   margin-top: 0;
 }
-.soywd-post-card p:empty {
+.wptpl-post-card p:empty {
   display: none;
 }
 /* Image and text share the same 20px top/side padding so the picture and the
    copy line up on the same edge. */
-.soywd-post-card .p-3 {
+.wptpl-post-card .p-3 {
   padding-top: 1.25rem;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
-.soywd-post-card .p-6 {
+.wptpl-post-card .p-6 {
   padding-top: 1.25rem;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
 /* CTA sits right under the title: remove the block's default pt-4 (1rem) so the
    only gap is the title's own bottom margin. */
-.soywd-post-card .pt-4 {
+.wptpl-post-card .pt-4 {
   padding-top: 0;
 }
-/* Hide the static "For X posts" guide-cards row on the blog hub. That row is a
-   `wp:columns` block placed right after the dynamic post grid, so this adjacent
-   selector targets it precisely — the grid's own `.soywd-post-card` items live
-   inside `.soywd-post-grid`, not `.wp-block-columns`, and stay visible. */
-.soywd-post-grid + .wp-block-columns {
-  /* !important so the tablet 3-up -> 2+1 grid rule (which is higher specificity)
-     can't re-show this intentionally hidden static guide-cards row on tablet. */
-  display: none !important;
-}
 
-/* Blog hub category filter (soywd/category-filter). Pills match the services
-   `.soywd-tags-light.soywd-tags-lg` look — cream outline, Urbanist, 1.5rem
+/* Blog hub category filter (wptpl/category-filter). Pills match the services
+   `.wptpl-tags-light.wptpl-tags-lg` look — canvas outline, heading face, 1.5rem
    corners — so the filter reads the same as the rest of the site. The active
-   pill fills dark olive with cream text (the "All"-selected state in the
+   pill fills dark secondary with canvas text (the "All"-selected state in the
    design). blog-filter.js toggles `.is-active` and hides non-matching
-   `.soywd-post-grid__item` cards via the `hidden` attribute. */
-.soywd-cat-filter {
+   `.wptpl-post-grid__item` cards via the `hidden` attribute. */
+.wptpl-cat-filter {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.5rem;
 }
-.soywd-cat-filter__pill {
-  font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+.wptpl-cat-filter__pill {
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   font-weight: 700;
   padding: 0.5rem 1.25rem;
   border-radius: 1.5rem;
-  border: 1px solid var(--wp--preset--color--cream-light);
-  color: var(--wp--preset--color--cream-light);
+  border: 1px solid var(--wp--preset--color--on-dark);
+  color: var(--wp--preset--color--on-dark);
   background-color: transparent;
   cursor: pointer;
   transition: background-color 200ms ease-out, color 200ms ease-out,
     border-color 200ms ease-out;
 }
-.soywd-cat-filter__pill:hover {
-  background-color: #e6ded3;
-  border-color: #e6ded3;
-  color: #2f3328;
+.wptpl-cat-filter__pill:hover {
+  background-color: #e6e6e6;
+  border-color: #e6e6e6;
+  color: #222222;
 }
-.soywd-cat-filter__pill.is-active {
+.wptpl-cat-filter__pill.is-active {
   background-color: var(--wp--preset--color--secondary);
   border-color: var(--wp--preset--color--secondary);
-  color: var(--wp--preset--color--cream-light);
+  color: var(--wp--preset--color--on-dark);
 }
-.soywd-post-grid__item[hidden] {
+.wptpl-post-grid__item[hidden] {
   display: none;
 }
 
@@ -1088,13 +951,13 @@ body.error404 .soywd-main {
    just one accessible link per card (labelled by the CTA, with the card heading
    for context). These cards have only the one CTA link; a second interactive
    element would need its own `position:relative;z-index` to stay clickable. */
-.soywd-featured-post,
-.soywd-post-card {
+.wptpl-featured-post,
+.wptpl-post-card {
   position: relative;
 }
 
-.soywd-featured-post .soywd-cta-arrow::after,
-.soywd-post-card .soywd-cta-arrow::after {
+.wptpl-featured-post .wptpl-cta-arrow::after,
+.wptpl-post-card .wptpl-cta-arrow::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -1106,61 +969,61 @@ body.error404 .soywd-main {
 /* The article column uses the site's standard container gutter at every
    breakpoint, like every other page — so the title, meta, featured image and
    body copy always have a reading margin instead of running to the screen
-   edges. (This is just the shared `.soywd-container-narrow` gutter; the rule is
+   edges. (This is just the shared `.wptpl-container-narrow` gutter; the rule is
    kept explicit so the previous edge-to-edge override isn't reintroduced.) */
-.soywd-single .soywd-container-narrow {
-  padding-inline: var(--soywd-gutter);
+.wptpl-single .wptpl-container-narrow {
+  padding-inline: var(--wptpl-gutter);
 }
 
-/* Page content built as a `.soywd-container-narrow` Group (page.php renders the
+/* Page content built as a `.wptpl-container-narrow` Group (page.php renders the
    blocks with no outer container) also carries WordPress's `has-global-padding`,
    which stacks a second side padding on top of the container gutter — so on
    small screens the copy sits over-inset. On mobile + tablet pin it to the
    single standard gutter so it lines up with the rest of the site. Desktop keeps
    its wider inset. `!important` beats WP's unlayered `.has-global-padding`. */
 @media (max-width: 1023px) {
-  .soywd-container-narrow.has-global-padding {
-    padding-inline: var(--soywd-gutter) !important;
+  .wptpl-container-narrow.has-global-padding {
+    padding-inline: var(--wptpl-gutter) !important;
   }
 }
 
-/* Double side-gutter fix. A `.soywd-container*` group nested inside a
-   `.soywd-section*` gets a SECOND side inset: the section already applies the
-   standard `--soywd-gutter`, and the inner container stacks its own on top, so
-   the content sits over-inset (e.g. the Blog hero). Add `soywd-flush-x` to the
+/* Double side-gutter fix. A `.wptpl-container*` group nested inside a
+   `.wptpl-section*` gets a SECOND side inset: the section already applies the
+   standard `--wptpl-gutter`, and the inner container stacks its own on top, so
+   the content sits over-inset (e.g. the Blog hero). Add `wptpl-flush-x` to the
    section to drop the inner container's side padding, leaving the single section
    gutter. Unlayered so it beats the container's own (layered) padding and WP's
    has-global-padding. */
-.soywd-flush-x .soywd-container,
-.soywd-flush-x .soywd-container-md {
+.wptpl-flush-x .wptpl-container,
+.wptpl-flush-x .wptpl-container-md {
   padding-inline: 0;
 }
 
-/* When a `.soywd-container-narrow` is nested inside another one — the single
+/* When a `.wptpl-container-narrow` is nested inside another one — the single
    post wraps its body in a container-narrow Group inside single.php's own
    container-narrow — the two gutters stack, doubly insetting the copy. Zero the
    inner one at every breakpoint so the text aligns to the single outer gutter.
    Placed after the rule above so it wins for the nested case; a top-level page
    group still gets the single gutter from that rule. */
-.soywd-container-narrow .soywd-container-narrow {
+.wptpl-container-narrow .wptpl-container-narrow {
   padding-inline: 0 !important;
 }
 
-.soywd-single__header {
+.wptpl-single__header {
   text-align: center;
 }
-.soywd-single__title {
+.wptpl-single__title {
   margin-bottom: 1rem;
 }
-.soywd-single__meta {
+.wptpl-single__meta {
   color: var(--wp--preset--color--muted);
   font-size: 0.9rem;
 }
-.soywd-single__figure {
+.wptpl-single__figure {
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
 }
-.soywd-single__figure img {
+.wptpl-single__figure img {
   display: block;
   width: 100%;
   height: 400px;
@@ -1171,7 +1034,7 @@ body.error404 .soywd-main {
    the source aspect ratio. Shrink it on phones so the 480px crop doesn't
    dominate small screens, mirroring the hero's responsive height step-down. */
 @media (max-width: 767px) {
-  .soywd-single__figure img {
+  .wptpl-single__figure img {
     height: 280px;
   }
 }
@@ -1179,114 +1042,81 @@ body.error404 .soywd-main {
    typography plugin isn't installed). `margin-top` only, so it collapses with
    WordPress's block gap instead of stacking. Element selectors so nested
    blocks are covered whether or not the content sits in a wrapper group. */
-.soywd-post-content > :first-child {
+.wptpl-post-content > :first-child {
   margin-top: 0;
 }
-.soywd-post-content p,
-.soywd-post-content ul,
-.soywd-post-content ol,
-.soywd-post-content figure,
-.soywd-post-content blockquote {
+.wptpl-post-content p,
+.wptpl-post-content ul,
+.wptpl-post-content ol,
+.wptpl-post-content figure,
+.wptpl-post-content blockquote {
   margin-top: 1.25rem;
 }
-.soywd-post-content h2 {
+.wptpl-post-content h2 {
   margin-top: 2.5rem;
 }
-.soywd-post-content h3 {
+.wptpl-post-content h3 {
   margin-top: 2rem;
 }
-.soywd-post-content ul {
+.wptpl-post-content ul {
   list-style: disc;
   padding-left: 1.5rem;
 }
-.soywd-post-content ol {
+.wptpl-post-content ol {
   list-style: decimal;
   padding-left: 1.5rem;
 }
-.soywd-post-content li + li {
+.wptpl-post-content li + li {
   margin-top: 0.5rem;
 }
-.soywd-post-content p a,
-.soywd-post-content li a {
-  color: #6f4b34; /* deep clay — AA (5.7:1) on ivory/sand; accent #8f6a4f fails (3.6:1) */
+.wptpl-post-content p a,
+.wptpl-post-content li a {
+  color: #333333; /* one step darker than `accent` — keeps body-size link copy legible */
   text-decoration: underline;
 }
-.soywd-post-content blockquote {
+.wptpl-post-content blockquote {
   padding-left: 1.25rem;
   border-left: 3px solid var(--wp--preset--color--accent);
   font-style: italic;
   color: var(--wp--preset--color--muted);
 }
-.soywd-post-content img {
+.wptpl-post-content img {
   height: auto;
   border-radius: 0.75rem;
-}
-
-/* About » How to start — constrain the step descriptions to a narrower,
-   centered column so they wrap to ~2 lines like the design. Add `soywd-steps`
-   as the section group's CSS class. */
-.soywd-steps p {
-  max-width: 320px;
-  margin-inline: auto;
-}
-
-/* About » Modalities — fixed, centered width for the clay modalities card.
-   Add `soywd-modalities-card` as the card's CSS class. The card is capped at
-   600px; every direct child (headings, paragraphs AND the dividers) shares a
-   single 500px centered content column, so the inner content width and the
-   divider width always match and stay centered — independent of the block's
-   `contentSize`. max-width keeps it responsive on narrow viewports. */
-.soywd-modalities-card.soywd-modalities-card {
-  max-width: 600px;
-  margin-inline: auto;
-}
-.soywd-modalities-card.soywd-modalities-card > * {
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* About hero — larger role line ("LMFT, Licensed Therapist in California")
-   under the name. Bumps the section-header intro above its default text-xl.
-   Add `soywd-hero-header` as the section-header's CSS class. */
-.soywd-hero-header .soywd-section-header__intro {
-  font-size: var(--wp--preset--font-size--h3);
-  line-height: 1.3;
-  color: var(--wp--preset--color--cream-light);
 }
 
 /* Wider header lead — the section-header intro is capped at max-w-2xl (42rem)
    by default, so a wider section container alone does nothing to the visible
    text width. This lets the lead span more of the section (e.g. the Blog hub
-   hero, which wants a broad, full-width feel). Add `soywd-header-wide` as the
+   hero, which wants a broad, full-width feel). Add `wptpl-header-wide` as the
    section-header's CSS class. */
-.soywd-header-wide .soywd-section-header__intro {
+.wptpl-header-wide .wptpl-section-header__intro {
   max-width: 58rem;
 }
 
-/* Extra-wide header lead — same idea as `soywd-header-wide` but tied to the
+/* Extra-wide header lead — same idea as `wptpl-header-wide` but tied to the
    1200px container token, so a long lead fits on two lines instead of three;
    `text-wrap: balance` evens the two lines. Scoped to its own class so widening
-   it never touches sections that use `soywd-header-wide`. Add `soywd-header-xwide`
+   it never touches sections that use `wptpl-header-wide`. Add `wptpl-header-xwide`
    as the section-header's CSS class (used on the Blog hub hero). */
-.soywd-header-xwide .soywd-section-header__intro {
-  max-width: var(--soywd-container-md); /* 1200px */
+.wptpl-header-xwide .wptpl-section-header__intro {
+  max-width: var(--wptpl-container-md); /* 1200px */
   text-wrap: balance;
 }
 
 /* Section overlay — a configurable color tint laid over a section's
-   background, behind its content. Pair `.soywd-overlay` on a wp:group
-   (typically a `.soywd-section`) with one color modifier and one
+   background, behind its content. Pair `.wptpl-overlay` on a wp:group
+   (typically a `.wptpl-section`) with one color modifier and one
    opacity modifier, typed into the block's "Additional CSS class(es)"
    field, e.g.:
 
-     soywd-overlay soywd-overlay-primary soywd-overlay-op-40
+     wptpl-overlay wptpl-overlay-primary wptpl-overlay-op-40
 
    Colors come from the brand palette via WP preset CSS vars so a
    theme.json tweak propagates automatically; opacity steps from 10%
-   to 90%. With no modifiers the overlay falls back to olive @ 0.659.
+   to 90%. With no modifiers the overlay falls back to secondary @ 0.659.
 
-   `.soywd-overlay-dark` is the legacy preset (same default) kept for
+   `.wptpl-overlay-dark` is the legacy preset (same default) kept for
    backward compatibility; it now shares the variable plumbing below.
    The whole block lives OUTSIDE @layer so Tailwind never purges it —
    the classes only appear in WP markup, not in scanned source.
@@ -1295,170 +1125,149 @@ body.error404 .soywd-main {
    registered in inc/setup.php — clicking one in the editor's "Styles"
    panel activates the overlay AND sets its color, so authors only need
    to add an opacity class by hand. */
-.soywd-overlay,
-.soywd-overlay-dark,
+.wptpl-overlay,
+.wptpl-overlay-dark,
 .wp-block-group[class*="is-style-overlay-"] {
   position: relative;
 }
-.soywd-overlay::before,
-.soywd-overlay-dark::before,
+.wptpl-overlay::before,
+.wptpl-overlay-dark::before,
 .wp-block-group[class*="is-style-overlay-"]::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: var( --soywd-overlay-color, var( --wp--preset--color--secondary ) );
-  opacity: var( --soywd-overlay-opacity, 0.659 );
+  background-color: var( --wptpl-overlay-color, var( --wp--preset--color--secondary ) );
+  opacity: var( --wptpl-overlay-opacity, 0.659 );
   pointer-events: none;
 }
-.soywd-overlay > *,
-.soywd-overlay-dark > *,
+.wptpl-overlay > *,
+.wptpl-overlay-dark > *,
 .wp-block-group[class*="is-style-overlay-"] > * {
   position: relative;
   z-index: 1;
 }
 
-/* Overlay color modifiers — brand palette (see theme.json). Each
+/* Overlay color modifiers — one per palette slug (see theme.json). Each
    utility class is paired with its `is-style-*` block-style twin so
    both authoring paths resolve to the same tint. */
-.soywd-overlay-primary,
+.wptpl-overlay-primary,
 .is-style-overlay-primary {
-  --soywd-overlay-color: var( --wp--preset--color--primary );
+  --wptpl-overlay-color: var( --wp--preset--color--primary );
 }
-.soywd-overlay-secondary,
+.wptpl-overlay-secondary,
 .is-style-overlay-secondary {
-  --soywd-overlay-color: var( --wp--preset--color--secondary );
+  --wptpl-overlay-color: var( --wp--preset--color--secondary );
 }
-.soywd-overlay-accent,
+.wptpl-overlay-accent,
 .is-style-overlay-accent {
-  --soywd-overlay-color: var( --wp--preset--color--accent );
+  --wptpl-overlay-color: var( --wp--preset--color--accent );
 }
-.soywd-overlay-base,
+.wptpl-overlay-base,
 .is-style-overlay-base {
-  --soywd-overlay-color: var( --wp--preset--color--base );
+  --wptpl-overlay-color: var( --wp--preset--color--base );
 }
-.soywd-overlay-cream-light,
-.is-style-overlay-cream-light {
-  --soywd-overlay-color: var( --wp--preset--color--cream-light );
+.wptpl-overlay-on-dark,
+.is-style-overlay-on-dark {
+  --wptpl-overlay-color: var( --wp--preset--color--on-dark );
 }
-.soywd-overlay-contrast,
+.wptpl-overlay-contrast,
 .is-style-overlay-contrast {
-  --soywd-overlay-color: var( --wp--preset--color--contrast );
+  --wptpl-overlay-color: var( --wp--preset--color--contrast );
 }
-.soywd-overlay-muted,
+.wptpl-overlay-muted,
 .is-style-overlay-muted {
-  --soywd-overlay-color: var( --wp--preset--color--muted );
+  --wptpl-overlay-color: var( --wp--preset--color--muted );
 }
-.soywd-overlay-bark,
-.is-style-overlay-bark {
-  --soywd-overlay-color: var( --wp--preset--color--bark );
+.wptpl-overlay-primary-soft,
+.is-style-overlay-primary-soft {
+  --wptpl-overlay-color: var( --wp--preset--color--primary-soft );
 }
-.soywd-overlay-surface,
+.wptpl-overlay-surface,
 .is-style-overlay-surface {
-  --soywd-overlay-color: var( --wp--preset--color--surface );
+  --wptpl-overlay-color: var( --wp--preset--color--surface );
 }
-.soywd-overlay-white,
+.wptpl-overlay-white,
 .is-style-overlay-white {
-  --soywd-overlay-color: var( --wp--preset--color--white );
+  --wptpl-overlay-color: var( --wp--preset--color--white );
 }
 
 /* Overlay opacity modifiers — 10%..90% in 10-point steps. */
-.soywd-overlay-op-10 {
-  --soywd-overlay-opacity: 0.1;
+.wptpl-overlay-op-10 {
+  --wptpl-overlay-opacity: 0.1;
 }
-.soywd-overlay-op-20 {
-  --soywd-overlay-opacity: 0.2;
+.wptpl-overlay-op-20 {
+  --wptpl-overlay-opacity: 0.2;
 }
-.soywd-overlay-op-30 {
-  --soywd-overlay-opacity: 0.3;
+.wptpl-overlay-op-30 {
+  --wptpl-overlay-opacity: 0.3;
 }
-.soywd-overlay-op-40 {
-  --soywd-overlay-opacity: 0.4;
+.wptpl-overlay-op-40 {
+  --wptpl-overlay-opacity: 0.4;
 }
-.soywd-overlay-op-50 {
-  --soywd-overlay-opacity: 0.5;
+.wptpl-overlay-op-50 {
+  --wptpl-overlay-opacity: 0.5;
 }
-.soywd-overlay-op-60 {
-  --soywd-overlay-opacity: 0.6;
+.wptpl-overlay-op-60 {
+  --wptpl-overlay-opacity: 0.6;
 }
-.soywd-overlay-op-70 {
-  --soywd-overlay-opacity: 0.7;
+.wptpl-overlay-op-70 {
+  --wptpl-overlay-opacity: 0.7;
 }
-.soywd-overlay-op-80 {
-  --soywd-overlay-opacity: 0.8;
+.wptpl-overlay-op-80 {
+  --wptpl-overlay-opacity: 0.8;
 }
-.soywd-overlay-op-90 {
-  --soywd-overlay-opacity: 0.9;
+.wptpl-overlay-op-90 {
+  --wptpl-overlay-opacity: 0.9;
 }
 
-/* Tag-list "light" variant — cream outline for dark
+/* Tag-list "light" variant — canvas outline for dark
    sections. Add as the tag-list block's "Additional CSS class". Width
-   inherits from the surrounding container (see :root --soywd-container-*
+   inherits from the surrounding container (see :root --wptpl-container-*
    tokens) so it never goes wider than the rest of the section content.
    Corner radius is left to the block's own rounded-* utility so it stays
    the single source of truth. */
-.soywd-tags-light a,
-.soywd-tags-light span {
-  border-color: var(--wp--preset--color--cream-light);
+.wptpl-tags-light a,
+.wptpl-tags-light span {
+  border-color: var(--wp--preset--color--on-dark);
   color: var(--wp--preset--color--white);
 }
-/* Services-band pills (light + lg) use cream-light for BOTH the border and the
-   label text, so the pills read in the same cream as the section headings
-   (e.g. "This is for you if...", which is #e6ded3 = cream-light) rather than
+/* Services-band pills (light + lg) use on-dark for BOTH the border and the
+   label text, so the pills read in the same canvas as the section headings
+   (e.g. "This is for you if...", which is #e6e6e6 = on-dark) rather than
    pure white. Scoped to the light+lg combo so other light tag rows keep their
    white labels. */
-.soywd-tags-light.soywd-tags-lg a,
-.soywd-tags-light.soywd-tags-lg span {
-  color: var(--wp--preset--color--cream-light);
-  border-color: var(--wp--preset--color--cream-light);
+.wptpl-tags-light.wptpl-tags-lg a,
+.wptpl-tags-light.wptpl-tags-lg span {
+  color: var(--wp--preset--color--on-dark);
+  border-color: var(--wp--preset--color--on-dark);
 }
-/* Override the global .soywd-tag-list a:hover (clay) for the light variant.
-   Clay-on-dark has too little contrast and the hover gets lost; fill with
-   cream + flip text to olive so it pops against dark backgrounds. */
-.soywd-tags-light a:hover {
-  background-color: #e6ded3;
-  color: #2f3328;
-  border-color: #e6ded3;
+/* Override the global .wptpl-tag-list a:hover (accent) for the light variant.
+   Accent-on-dark has too little contrast and the hover gets lost; fill with
+   canvas + flip text to secondary so it pops against dark backgrounds. */
+.wptpl-tags-light a:hover {
+  background-color: #e6e6e6;
+  color: #222222;
+  border-color: #e6e6e6;
 }
 /* The services-band resting rule above (0,3,1) outranks the light hover (0,2,1),
-   so without this the hovered label would stay cream-light over the cream fill
-   (invisible). Re-assert the olive label at matching specificity (0,3,2). */
-.soywd-tags-light.soywd-tags-lg a:hover {
-  color: #2f3328;
-}
-
-/* Tag-list "cream" variant — solid cream fill + dark olive text, for tag
-   rows that sit on a solid DARK section (the service-page "Related services"
-   band on dark olive). Reads as a filled chip — the counterpart to the
-   outline-style -light variant on the same dark background. Hover deepens
-   the fill slightly. Must follow the global `.soywd-tag-list a:hover` (equal
-   specificity → source order wins) so it overrides the clay hover. Add
-   `soywd-tags-cream` as the tag-list block's "Additional CSS class". */
-.soywd-tags-cream a,
-.soywd-tags-cream span {
-  background-color: var(--wp--preset--color--cream-light);
-  border-color: var(--wp--preset--color--cream-light);
-  color: var(--wp--preset--color--muted);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.soywd-tags-cream a:hover {
-  background-color: #d8cebd;
-  border-color: #d8cebd;
-  color: var(--wp--preset--color--muted);
+   so without this the hovered label would stay on-dark over the canvas fill
+   (invisible). Re-assert the secondary label at matching specificity (0,3,2). */
+.wptpl-tags-light.wptpl-tags-lg a:hover {
+  color: #222222;
 }
 
 /* Tag-list "large" size modifier — slightly bigger pills (16px bold + roomy
    padding) for the service-page specialties + related-services bands, where
    the pills read larger than the default 12px trust-bar size. Sized so that
-   three pills fit across the 760px (soywd-container-narrow) bands — including
-   the uppercase + tracked cream variant — without breaking the row. Both -lg
+   three pills fit across the 760px (wptpl-container-narrow) bands — including
+   the uppercase + tracked canvas variant — without breaking the row. Both -lg
    bands also use a rounder 1.5rem corner radius (vs the block's default
-   rounded-2xl) and the heading face (Urbanist) instead of the inherited body
+   rounded-2xl) and the heading face instead of the inherited body
    font, so the labels read as geometric, capsule-style chips. Scoped to where
    the class is added, so the home tag rows keep their approved size + corners.
-   Stack it alongside a color variant, e.g. `soywd-tags-light soywd-tags-lg`. */
-.soywd-tags-lg a,
-.soywd-tags-lg span {
+   Stack it alongside a color variant, e.g. `wptpl-tags-light wptpl-tags-lg`. */
+.wptpl-tags-lg a,
+.wptpl-tags-lg span {
   font-size: 1rem;
   font-weight: 700;
   padding: 0.5rem 1.25rem;
@@ -1469,8 +1278,8 @@ body.error404 .soywd-main {
    longer labels can't pair up and end up stacked one per row. Shrink them on
    mobile so they flow two per row like the shorter ones. */
 @media (max-width: 767px) {
-  .soywd-tags-lg a,
-  .soywd-tags-lg span {
+  .wptpl-tags-lg a,
+  .wptpl-tags-lg span {
     font-size: 0.8125rem;
     padding: 0.4rem 0.95rem;
   }
@@ -1482,18 +1291,18 @@ body.error404 .soywd-main {
    gap on the right. Drop them there — the render already adds a space so the
    words around each break don't run together. */
 @media (max-width: 781px) {
-  .soywd-checklist li br {
+  .wptpl-checklist li br {
     display: none;
   }
 }
 
 /* Row-break spacer reset. The hard row break (rowBreak / auto-split) is an
    empty full-basis <span> used only to force the flex to wrap. The bare-span
-   selectors in the tag color/size modifiers above (e.g. `.soywd-tags-lg span`)
+   selectors in the tag color/size modifiers above (e.g. `.wptpl-tags-lg span`)
    would otherwise give it pill padding/border/background, rendering it as a
-   visible band between the two rows. Neutralize it here. `.soywd-tag-list
+   visible band between the two rows. Neutralize it here. `.wptpl-tag-list
    .basis-full` (0,2,0) outranks those `.modifier span` selectors (0,1,1). */
-.soywd-tag-list .basis-full {
+.wptpl-tag-list .basis-full {
   padding: 0;
   border: 0;
   background: none;
@@ -1503,16 +1312,16 @@ body.error404 .soywd-main {
    every tag-list pill so they never read as highlightable text, and give the
    decorative (non-link <span>) pills the default arrow cursor instead of the
    text I-beam. Link pills keep the pointer cursor they get from the <a>. */
-.soywd-tag-list a,
-.soywd-tag-list span {
+.wptpl-tag-list a,
+.wptpl-tag-list span {
   user-select: none;
 }
 /* Decorative pills — non-link <span> and placeholder <a href="#"> with no real
    destination — are labels, not controls: default cursor, not clickable. Pills
    that carry a real URL keep their pointer + click. Add a destination and the
    pill becomes interactive again automatically. */
-.soywd-tag-list span,
-.soywd-tag-list a[href="#"] {
+.wptpl-tag-list span,
+.wptpl-tag-list a[href="#"] {
   cursor: default;
   pointer-events: none;
 }
@@ -1521,7 +1330,7 @@ body.error404 .soywd-main {
    on the two-row (rowBreak 3+3) services band that vertical gap reads too airy.
    Tighten only the ROW gap to 0.2rem (column gap between pills stays 0.5rem).
    Scoped to the light+lg combo so only the services band is affected. */
-.soywd-tags-light.soywd-tags-lg .flex {
+.wptpl-tags-light.wptpl-tags-lg .flex {
   row-gap: 0.2rem;
 }
 
@@ -1530,9 +1339,9 @@ body.error404 .soywd-main {
    "Symptoms" / "This is for / you if..." labels: a one-line label reads
    centered, a two-line label reads flush-left but the block still sits
    centered in its narrow column instead of jumping to the gutter. Add
-   `soywd-heading-shrink` as the heading's "Additional CSS class" (and do not
+   `wptpl-heading-shrink` as the heading's "Additional CSS class" (and do not
    set a text alignment on the block). */
-.soywd-heading-shrink {
+.wptpl-heading-shrink {
   width: fit-content;
   max-width: 100%;
   margin-inline: auto;
@@ -1545,9 +1354,9 @@ body.error404 .soywd-main {
    from the block default (gap-3 / 12px) to 8px, for the service-page
    Symptoms / "This is for you if" columns whose items wrap to two lines and
    read too airy at the default. Scoped via the class so the home checklists
-   (Helia bio, credentials bar) keep their approved spacing. Add
-   `soywd-checklist-tight` as the checklist block's "Additional CSS class". */
-.soywd-checklist-tight ul {
+   (bio, credentials bar) keep their approved spacing. Add
+   `wptpl-checklist-tight` as the checklist block's "Additional CSS class". */
+.wptpl-checklist-tight ul {
   gap: 0.5rem;
 }
 
@@ -1556,7 +1365,7 @@ body.error404 .soywd-main {
    the items never read as selectable pills / buttons. Scoped via `-tight` (the
    service-page checklist modifier) so the home trust bar / bio / credentials
    checklists keep normal text selection. */
-.soywd-checklist-tight {
+.wptpl-checklist-tight {
   user-select: none;
   cursor: default;
 }
@@ -1566,78 +1375,68 @@ body.error404 .soywd-main {
    breathing room above it (the default 100px is measured to the card top, so
    the overhanging circle visually crowds the section edge). Scoped via the
    class so the home "How to Get Started" steps keep their approved spacing.
-   `.soywd-steps.soywd-steps-pad-top` (0,2,0) outranks the `py-[6.25rem]`
-   utility (0,1,0). Add `soywd-steps-pad-top` as the steps block's "Additional
+   `.wptpl-steps.wptpl-steps-pad-top` (0,2,0) outranks the `py-[6.25rem]`
+   utility (0,1,0). Add `wptpl-steps-pad-top` as the steps block's "Additional
    CSS class". */
-.soywd-steps.soywd-steps-pad-top {
+.wptpl-steps.wptpl-steps-pad-top {
   padding-top: 135px;
 }
 
-/* Section-header eyebrow override → cream. Add `soywd-eyebrow-light`
+/* Section-header eyebrow override → canvas. Add `wptpl-eyebrow-light`
    as the section-header's "Additional CSS class" when it sits on a
-   dark background. Needs !important to beat the base .soywd-eyebrow
+   dark background. Needs !important to beat the base .wptpl-eyebrow
    color rule. */
-.soywd-eyebrow-light .soywd-eyebrow {
-  color: var(--wp--preset--color--cream-light) !important;
+.wptpl-eyebrow-light .wptpl-eyebrow {
+  color: var(--wp--preset--color--on-dark) !important;
 }
 
 /* Feature-card image "pop" — image sits shorter (89px) and overhangs
-   the top edge of the card. Add `soywd-image-pop` as the card's
+   the top edge of the card. Add `wptpl-image-pop` as the card's
    "Additional CSS class". The !important on overflow beats the base
    `overflow-hidden` Tailwind utility the card ships with. */
-.soywd-image-pop {
+.wptpl-image-pop {
   overflow: visible !important;
 }
-.soywd-image-pop > .p-3 {
+.wptpl-image-pop > .p-3 {
   margin-top: -30px;
   padding-bottom: 0.75rem;
 }
-.soywd-image-pop > .p-6 {
+.wptpl-image-pop > .p-6 {
   padding-top: 0 !important;
 }
-.soywd-image-pop .p-3 > .relative {
+.wptpl-image-pop .p-3 > .relative {
   border: 3px solid var(--wp--preset--color--accent);
 }
-.soywd-image-pop .p-3 > .relative img {
+.wptpl-image-pop .p-3 > .relative img {
   height: 113px !important;
 }
 
-/* Feature-card image "medium" — shorter 140px image. Add `soywd-image-md`
+/* Feature-card image "medium" — shorter 140px image. Add `wptpl-image-md`
    as the card's "Additional CSS class". */
-.soywd-image-md .p-3 > .relative img {
+.wptpl-image-md .p-3 > .relative img {
   height: 140px !important;
 }
 
-/* Hero "dark" variant — paints the split hero dark olive and flips the
-   title to cream, for service-page heroes (the home hero stays light with a
-   sage title). The subtitle color is set per instance via the block's
-   subtitleColor attribute. `.soywd-hero-dark h1` (0,1,1) outranks the
+/* Hero "dark" variant — paints the split hero dark secondary and flips the
+   title to canvas, for service-page heroes (the home hero stays light with a
+   soft title). The subtitle color is set per instance via the block's
+   subtitleColor attribute. `.wptpl-hero-dark h1` (0,1,1) outranks the
    `.text-primary` utility (0,1,0) the title ships with, so no !important is
    needed. Lives OUTSIDE @layer so Tailwind never purges it — the class only
-   appears in WP markup. Add `soywd-hero-dark` as the hero's "Additional CSS
+   appears in WP markup. Add `wptpl-hero-dark` as the hero's "Additional CSS
    class". */
-.soywd-hero-dark {
+.wptpl-hero-dark {
   background-color: var(--wp--preset--color--secondary);
 }
-.soywd-hero-dark h1 {
-  color: var(--wp--preset--color--cream-light);
+.wptpl-hero-dark h1 {
+  color: var(--wp--preset--color--on-dark);
 }
 /* Service-page hero subtitle reads heavier (semibold) than the default
    medium, so the intro lead carries more presence over the photo. Scoped to
-   the dark service heroes so the home / Fee heroes keep their medium weight. */
-.soywd-hero-dark .soywd-hero__subtitle {
+   the dark heroes so light heroes keep their medium weight. */
+.wptpl-hero-dark .wptpl-hero__subtitle {
   font-weight: 600;
 }
-/* The postpartum hero wants an 18px subtitle, a touch smaller than the Fee
-   treatment. `is-intro-wide` ships its own rule in the hero block stylesheet
-   (`.soywd-hero.is-intro-wide .soywd-hero__subtitle`, 0,3,0, unlayered)
-   forcing 20px, so a plain `.soywd-hero-dark` rule (0,2,0) loses to it. Match
-   all three classes (0,4,0) to win on font-size while keeping is-intro-wide's
-   66rem max-width. */
-.soywd-hero.soywd-hero-dark.is-intro-wide .soywd-hero__subtitle {
-  font-size: 1.125rem;
-}
-
 .is-style-rounded-square img,
 .is-style-rounded-square {
   border-radius: 1.5rem;
@@ -1652,63 +1451,63 @@ body.error404 .soywd-main {
    breakpoint 782px es el default de wp-block-columns; debajo de eso
    las columnas se apilan y la imagen vuelve a su tamaño natural. */
 @media (min-width: 782px) {
-  .soywd-portrait-fill,
-  .soywd-portrait-fill img {
+  .wptpl-portrait-fill,
+  .wptpl-portrait-fill img {
     height: 100%;
     width: 100%;
   }
-  .soywd-portrait-fill img {
+  .wptpl-portrait-fill img {
     object-fit: cover;
     display: block;
   }
 }
 
 /* ---------------------------------------------------------------
-   Contact form — Fluent Forms, scoped to `.soywd-form`.
+   Contact form — Fluent Forms, scoped to `.wptpl-form`.
 
    The Contact page wraps the [fluentform] shortcode in a
-   `<div class="soywd-form">`. Fluent Forms emits its own markup
+   `<div class="wptpl-form">`. Fluent Forms emits its own markup
    (`.ff-el-*`, `.ff-btn-submit`) whose class names never appear in any file
    Tailwind scans, so these rules live OUTSIDE @layer — otherwise the purge
-   would strip them. Brand treatment: rounded paper-tone inputs with olive
-   borders, Urbanist olive labels, the language / session-type radios rendered
-   as clay-on-olive pills, and a full-width clay submit. `!important` appears
+   would strip them. Brand treatment: rounded paper-tone inputs with secondary
+   borders, heading-face labels, the language / session-type radios rendered
+   as accent-on-secondary pills, and a full-width accent submit. `!important` appears
    only where it overrides Fluent Forms' own (strongly specific) default skin.
    --------------------------------------------------------------- */
-.soywd-form .ff-el-group {
+.wptpl-form .ff-el-group {
   margin-bottom: 0.9rem;
 }
-/* Labels — Urbanist bold, taupe. */
-.soywd-form .ff-el-input--label label {
-  font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+/* Labels — heading face, bold, muted. */
+.wptpl-form .ff-el-input--label label {
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
   font-size: 1rem;
-  color: var(--wp--preset--color--muted) !important; /* #5c5648 — !important beats Fluent Forms' own label color when its skin loads after ours */
+  color: var(--wp--preset--color--muted) !important; /* #999999 — !important beats Fluent Forms' own label color when its skin loads after ours */
   margin-bottom: 0.1rem;
 }
-/* Text / email / phone inputs, textareas and selects — rounded, olive border,
+/* Text / email / phone inputs, textareas and selects — rounded, secondary border,
    translucent paper fill so the card texture shows through faintly. */
-.soywd-form .ff-el-form-control {
+.wptpl-form .ff-el-form-control {
   width: 100%;
   border-radius: 0.75rem;
-  border: 1px solid #5c5648; /* olive */
+  border: 1px solid #999999; /* secondary */
   background-color: rgba(255, 255, 255, 0.12); /* barely-there fill so the paper texture reads through */
   padding: 0.6rem 1rem;
-  font-family: 'Quicksand', ui-sans-serif, system-ui, sans-serif;
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.4;
   color: var(--wp--preset--color--secondary);
   transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
 }
-.soywd-form .ff-el-form-control::placeholder {
-  color: rgba(92, 86, 72, 0.6);
+.wptpl-form .ff-el-form-control::placeholder {
+  color: rgba(153, 153, 153, 0.6);
 }
-.soywd-form .ff-el-form-control:focus {
+.wptpl-form .ff-el-form-control:focus {
   outline: none;
-  border-color: var(--wp--preset--color--accent); /* clay */
-  box-shadow: 0 0 0 3px rgba(143, 106, 79, 0.18);
+  border-color: var(--wp--preset--color--accent); /* accent */
+  box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.18);
 }
-.soywd-form textarea.ff-el-form-control {
+.wptpl-form textarea.ff-el-form-control {
   min-height: 9rem;
   resize: vertical;
 }
@@ -1721,7 +1520,7 @@ body.error404 .soywd-main {
    row on desktop but stacks it into a column on small screens. Force the content
    to a wrapping row at every width. (Flexing the option divs themselves was the
    earlier mistake — each holds a single option, so it just stacked the blocks.) */
-.soywd-form .ff-el-group.ff_list_inline .ff-el-input--content {
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-input--content {
   display: flex !important;
   flex-wrap: wrap !important;
   gap: 0.6rem;
@@ -1735,21 +1534,21 @@ body.error404 .soywd-main {
    we override with !important — the same approach already used for the
    pill/submit fills — to keep every field row on the uniform 0.9rem rhythm
    that .ff-el-group provides. */
-.soywd-form .ff-el-group.ff_list_inline .ff-el-form-check {
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-form-check {
   margin-bottom: 0 !important;
 }
-.soywd-form .ff-el-form-check label.ff-el-form-check-label {
+.wptpl-form .ff-el-form-check label.ff-el-form-check-label {
   margin: 0 !important;
 }
-.soywd-form .ff-el-form-check input[type="radio"],
-.soywd-form .ff-el-form-check input[type="checkbox"] {
+.wptpl-form .ff-el-form-check input[type="radio"],
+.wptpl-form .ff-el-form-check input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   width: 1px;
   height: 1px;
   pointer-events: none;
 }
-.soywd-form .ff-el-form-check label {
+.wptpl-form .ff-el-form-check label {
   display: inline-flex;
   align-items: center;
   margin: 0;
@@ -1759,36 +1558,36 @@ body.error404 .soywd-main {
   line-height: 1.4;
   border-radius: 0.3rem;
   border: 1px solid transparent;
-  background-color: var(--wp--preset--color--muted); /* olive */
-  color: var(--wp--preset--color--cream-light);
-  font-family: 'Quicksand', ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--wp--preset--color--muted); /* secondary */
+  color: var(--wp--preset--color--on-dark);
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 180ms ease-out, color 180ms ease-out;
 }
-.soywd-form .ff-el-form-check label:hover {
-  background-color: #4b463a; /* slightly deeper olive */
+.wptpl-form .ff-el-form-check label:hover {
+  background-color: #1a1a1a; /* slightly deeper secondary */
 }
-.soywd-form .ff-el-form-check input:checked + label,
-.soywd-form .ff-el-form-check label:has(input:checked) {
-  background-color: var(--wp--preset--color--accent) !important; /* clay */
-  color: var(--wp--preset--color--cream-light) !important;
+.wptpl-form .ff-el-form-check input:checked + label,
+.wptpl-form .ff-el-form-check label:has(input:checked) {
+  background-color: var(--wp--preset--color--accent) !important; /* accent */
+  color: var(--wp--preset--color--on-dark) !important;
 }
 /* Keyboard focus ring on the active pill (the input itself is hidden). */
-.soywd-form .ff-el-form-check input:focus-visible + label,
-.soywd-form .ff-el-form-check label:has(input:focus-visible) {
-  box-shadow: 0 0 0 3px rgba(143, 106, 79, 0.3);
+.wptpl-form .ff-el-form-check input:focus-visible + label,
+.wptpl-form .ff-el-form-check label:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.3);
 }
-/* Submit — full-width clay, Urbanist uppercase (matches .soywd-btn-accent). */
-.soywd-form .ff-btn-submit {
+/* Submit — full-width accent, heading face, uppercase (matches .wptpl-btn-accent). */
+.wptpl-form .ff-btn-submit {
   width: 100%;
   border: none;
   border-radius: 0.5rem;
   padding: 0.95rem 1.5rem;
   background-color: var(--wp--preset--color--accent) !important;
-  color: var(--wp--preset--color--cream-light) !important;
-  font-family: 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+  color: var(--wp--preset--color--on-dark) !important;
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1796,15 +1595,15 @@ body.error404 .soywd-main {
   cursor: pointer;
   transition: background-color 200ms ease-out;
 }
-.soywd-form .ff-btn-submit:hover {
-  background-color: #73513c !important; /* deeper clay */
+.wptpl-form .ff-btn-submit:hover {
+  background-color: #4d4d4d !important; /* deeper accent */
 }
 /* Inline validation — keep error cues legible on the paper background. */
-.soywd-form .ff-el-is-error .ff-el-form-control {
+.wptpl-form .ff-el-is-error .ff-el-form-control {
   border-color: #b3261e;
 }
-.soywd-form .text-danger,
-.soywd-form .error {
+.wptpl-form .text-danger,
+.wptpl-form .error {
   color: #b3261e;
   font-size: 0.85rem;
   margin-top: 0.3rem;
@@ -1824,29 +1623,27 @@ body.error404 .soywd-main {
    point is to work even when WP's preset CSS doesn't load.
    --------------------------------------------------------------- */
 @layer utilities {
-  .has-primary-background-color     { background-color: #636d4d !important; }
-  .has-secondary-background-color   { background-color: #2f3328 !important; }
-  .has-accent-background-color      { background-color: #8f6a4f !important; }
-  .has-base-background-color        { background-color: #e3ded4 !important; }
-  .has-cream-light-background-color { background-color: #e6ded3 !important; }
-  .has-sage-light-background-color  { background-color: #a8b08a !important; }
-  .has-contrast-background-color    { background-color: #2f3328 !important; }
-  .has-muted-background-color       { background-color: #5c5648 !important; }
-  .has-bark-background-color        { background-color: #5e5646 !important; }
-  .has-surface-background-color     { background-color: #f0e8d9 !important; }
-  .has-white-background-color       { background-color: #ffffff !important; }
+  .has-primary-background-color      { background-color: #333333 !important; }
+  .has-primary-soft-background-color { background-color: #cccccc !important; }
+  .has-secondary-background-color    { background-color: #222222 !important; }
+  .has-accent-background-color       { background-color: #666666 !important; }
+  .has-base-background-color         { background-color: #ffffff !important; }
+  .has-on-dark-background-color      { background-color: #e6e6e6 !important; }
+  .has-contrast-background-color     { background-color: #333333 !important; }
+  .has-muted-background-color        { background-color: #999999 !important; }
+  .has-surface-background-color      { background-color: #f7f7f7 !important; }
+  .has-white-background-color        { background-color: #ffffff !important; }
 
-  .has-primary-color     { color: #636d4d !important; }
-  .has-secondary-color   { color: #2f3328 !important; }
-  .has-accent-color      { color: #8f6a4f !important; }
-  .has-base-color        { color: #e3ded4 !important; }
-  .has-cream-light-color { color: #e6ded3 !important; }
-  .has-sage-light-color  { color: #a8b08a !important; }
-  .has-contrast-color    { color: #2f3328 !important; }
-  .has-muted-color       { color: #5c5648 !important; }
-  .has-bark-color        { color: #5e5646 !important; }
-  .has-surface-color     { color: #f0e8d9 !important; }
-  .has-white-color       { color: #ffffff !important; }
+  .has-primary-color      { color: #333333 !important; }
+  .has-primary-soft-color { color: #cccccc !important; }
+  .has-secondary-color    { color: #222222 !important; }
+  .has-accent-color       { color: #666666 !important; }
+  .has-base-color         { color: #ffffff !important; }
+  .has-on-dark-color      { color: #e6e6e6 !important; }
+  .has-contrast-color     { color: #333333 !important; }
+  .has-muted-color        { color: #999999 !important; }
+  .has-surface-color      { color: #f7f7f7 !important; }
+  .has-white-color        { color: #ffffff !important; }
 }
 
 /* ===============================================================
@@ -1874,16 +1671,16 @@ body.error404 .soywd-main {
    =============================================================== */
 
 /* --- Vertical rhythm: section bands + the big block paddings ----- */
-/* `.soywd-section` (component class) and the `py-[6.25rem]` utility
+/* `.wptpl-section` (component class) and the `py-[6.25rem]` utility
    (hero split, steps photo variant, cta-banner) all carry the 100px
    desktop rhythm; shrink both together so every band steps down in
    sync. */
 @media (max-width: 1023px) {
-  .soywd-section { padding-top: 72px; padding-bottom: 72px; }
+  .wptpl-section { padding-top: 72px; padding-bottom: 72px; }
   .py-\[6\.25rem\] { padding-top: 72px; padding-bottom: 72px; }
 }
 @media (max-width: 767px) {
-  .soywd-section { padding-top: 48px; padding-bottom: 48px; }
+  .wptpl-section { padding-top: 48px; padding-bottom: 48px; }
   .py-\[6\.25rem\] { padding-top: 48px; padding-bottom: 48px; }
 }
 
@@ -1894,14 +1691,14 @@ body.error404 .soywd-main {
    same side padding. Tablet and desktop keep the fluid clamp. */
 @media (max-width: 767px) {
   :root {
-    --soywd-gutter: 23px;
+    --wptpl-gutter: 23px;
   }
 }
 
 /* --- Mobile: normalize full-width section spacing ---------------- */
 /* Full-width section bands carry their own inline side + vertical padding
-   (e.g. the About intro band: padding:5rem 2rem; the Fees cover bands:
-   padding:6.25rem 2rem) that ignores the mobile gutter and the section rhythm.
+   (e.g. padding:5rem 2rem or padding:6.25rem 2rem, typed into the block's
+   dimensions panel) that ignores the mobile gutter and the section rhythm.
    Normalize every such section so the whole site shares one mobile spacing:
    23px sides (the gutter) and 48px top/bottom. Covers BOTH block types used for
    section bands — core Group and core Cover — since the page builds sections
@@ -1910,8 +1707,8 @@ body.error404 .soywd-main {
 @media (max-width: 767px) {
   .wp-block-group.alignfull[style*="padding-left"],
   .wp-block-cover.alignfull[style*="padding-left"] {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
   .wp-block-group.alignfull[style*="padding-top"],
   .wp-block-cover.alignfull[style*="padding-top"] {
@@ -1919,12 +1716,12 @@ body.error404 .soywd-main {
     padding-bottom: 48px !important;
   }
   /* Full-width Cover bands whose content sits in a `has-global-padding` inner
-     container (the About "Modalities" cover) get side padding from WordPress
-     core defaults (~16px) that the inline-padding rule doesn't reach. To land
-     on exactly the 23px gutter regardless of whether that padding sits on the
-     cover or the inner, zero the cover's side padding and put a single gutter
-     on the inner. Scoped by the has-global-padding inner, so the Fees covers
-     (side padding inline on the cover, plain inner) are untouched. */
+     container get side padding from WordPress core defaults (~16px) that the
+     inline-padding rule doesn't reach. To land on exactly the 23px gutter
+     regardless of whether that padding sits on the cover or the inner, zero the
+     cover's side padding and put a single gutter on the inner. Scoped by the
+     has-global-padding inner, so covers with the side padding inline on the
+     cover (and a plain inner) are untouched. */
   .wp-block-cover.alignfull:has(
       > .wp-block-cover__inner-container.has-global-padding
     ) {
@@ -1933,8 +1730,8 @@ body.error404 .soywd-main {
   }
   .wp-block-cover.alignfull
     > .wp-block-cover__inner-container.has-global-padding {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
 }
 
@@ -1942,10 +1739,10 @@ body.error404 .soywd-main {
 /* The mobile pass pins every full-width band's side padding to the gutter so
    the whole site shares one side margin; the tablet pass was deferred (see the
    note on the hero column below). Without it, bands keep their DESKTOP inline
-   side padding on a ~800px tablet: the About "My Story" band stays at 100px
-   (crushing the copy), Modalities at 50px, and the various full-width
-   Group/Cover bands keep 2rem/5rem/6.25rem — so sections don't line up with
-   each other. Pin them all to `var(--soywd-gutter)` (the fluid clamp, ~32px at
+   side padding on a ~800px tablet — a band authored at 100px stays at 100px and
+   crushes the copy, while the various full-width Group/Cover bands keep
+   2rem/5rem/6.25rem, so sections don't line up with each other. Pin them all to
+   `var(--wptpl-gutter)` (the fluid clamp, ~32px at
    tablet) between md and desktop, mirroring the mobile rules but touching ONLY
    the horizontal axis — vertical padding stays on the 72px rules. Desktop
    (≥1024) keeps the intentional wide insets. Reuses the same proven selectors
@@ -1954,11 +1751,11 @@ body.error404 .soywd-main {
   /* Full-width Group/Cover bands with inline side padding. */
   .wp-block-group.alignfull[style*="padding-left"],
   .wp-block-cover.alignfull[style*="padding-left"] {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
-  /* Full-width Cover whose content sits in a has-global-padding inner (About
-     "Modalities" cover): zero the cover's sides, gutter on the inner. */
+  /* Full-width Cover whose content sits in a has-global-padding inner: zero
+     the cover's sides, gutter on the inner. */
   .wp-block-cover.alignfull:has(
       > .wp-block-cover__inner-container.has-global-padding
     ) {
@@ -1967,34 +1764,15 @@ body.error404 .soywd-main {
   }
   .wp-block-cover.alignfull
     > .wp-block-cover__inner-container.has-global-padding {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
   /* Stacked hero text column (the `padding-left:max(...)` inline). Once the
      hero stacks on tablet the desktop container-aligning padding no longer
      applies; pin both sides to the gutter like every other section. */
-  .soywd-hero [style*="padding-left:max"] {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
-  }
-  /* About » "My Story" band (inline 100px sides). */
-  .wp-block-group[style*="padding-left:100px"] {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
-  }
-  /* About » "Modalities" card — fill the section width on tablet. The base rule
-     caps the card at 600px and centers it, which on a ~800px tablet leaves a
-     wide empty margin on each side. Drop the cap so the accent card — and its
-     inner content column + the `soywd-sep-wide` dividers (`> *`, capped at
-     500px) — span the section width; the gutter stays as the inner side
-     padding. Desktop keeps the 600/500px centered card. */
-  .soywd-modalities-card.soywd-modalities-card {
-    max-width: none;
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
-  }
-  .soywd-modalities-card.soywd-modalities-card > * {
-    max-width: none;
+  .wptpl-hero [style*="padding-left:max"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
 }
 
@@ -2014,21 +1792,21 @@ body.error404 .soywd-main {
   }
 }
 
-/* The CTA banner (soywd/cta-banner) renders its own side padding as a plain
+/* The CTA banner (wptpl/cta-banner) renders its own side padding as a plain
    Tailwind class (`px-6` = 24px) baked into render.php, not an inline style —
-   so it's disconnected from `--soywd-gutter` and doesn't match the rest of
+   so it's disconnected from `--wptpl-gutter` and doesn't match the rest of
    the site's side spacing. Tie it to the gutter instead. Unlayered, so the
    two-class selector beats the compiled `.px-6` utility without `!important`. */
 @media (max-width: 1023px) {
-  .soywd-cta-banner.px-6 {
-    padding-left: var(--soywd-gutter);
-    padding-right: var(--soywd-gutter);
+  .wptpl-cta-banner.px-6 {
+    padding-left: var(--wptpl-gutter);
+    padding-right: var(--wptpl-gutter);
   }
 }
 
 /* --- Mobile + tablet: full-bleed the card grids + FAQ ---------- */
 /* The service/guide feature-card grids and the FAQ list sit in
-   `.soywd-container-md` / `.soywd-container-narrow`, which add the side
+   `.wptpl-container-md` / `.wptpl-container-narrow`, which add the side
    gutter. On a phone that gutter eats into the already-narrow content — and
    when the FAQ sits inside a padded section band it doubles up (section
    gutter + container gutter). Drop the container gutter so these blocks run
@@ -2046,8 +1824,8 @@ body.error404 .soywd-main {
    1200/760px centering does. (This is the same thing the client hand-fixed with
    an inline `padding-left:0` on one of the guide-card rows.) */
 @media (max-width: 1023px) {
-  .home .soywd-container-md:has(.soywd-feature-card),
-  .soywd-faq.soywd-container-narrow {
+  .home .wptpl-container-md:has(.wptpl-feature-card),
+  .wptpl-faq.wptpl-container-narrow {
     padding-inline: 0;
   }
 }
@@ -2058,31 +1836,31 @@ body.error404 .soywd-main {
    shadow, so they read as raised, tappable buttons instead of spread-out
    labels. Their flex/column containers (hero, cta-banner, mobile menu) already
    wrap or stack, so width:100% puts one button per row. The `-*` variants
-   carry the button class via @apply, so target them (and the bare `.soywd-btn`
-   used by the cream cta-banner variant, plus the Fluent Forms submit). */
+   carry the button class via @apply, so target them (and the bare `.wptpl-btn`
+   used by the canvas cta-banner variant, plus the Fluent Forms submit). */
 @media (max-width: 767px) {
-  .soywd-btn,
-  .soywd-btn-primary,
-  .soywd-btn-secondary,
-  .soywd-btn-accent,
-  .soywd-btn-outline,
-  .soywd-btn-photo,
-  .soywd-form .ff-btn-submit {
+  .wptpl-btn,
+  .wptpl-btn-primary,
+  .wptpl-btn-secondary,
+  .wptpl-btn-accent,
+  .wptpl-btn-outline,
+  .wptpl-btn-photo,
+  .wptpl-form .ff-btn-submit {
     width: 100%;
-    box-shadow: 0 4px 12px rgba(47, 51, 40, 0.28);
+    box-shadow: 0 4px 12px rgba(34, 34, 34, 0.28);
   }
 }
 /* Tablet: keep buttons auto-width (there's room) but give them the same
    pronounced shadow as mobile so they still read clearly as raised buttons. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-btn,
-  .soywd-btn-primary,
-  .soywd-btn-secondary,
-  .soywd-btn-accent,
-  .soywd-btn-outline,
-  .soywd-btn-photo,
-  .soywd-form .ff-btn-submit {
-    box-shadow: 0 4px 12px rgba(47, 51, 40, 0.28);
+  .wptpl-btn,
+  .wptpl-btn-primary,
+  .wptpl-btn-secondary,
+  .wptpl-btn-accent,
+  .wptpl-btn-outline,
+  .wptpl-btn-photo,
+  .wptpl-form .ff-btn-submit {
+    box-shadow: 0 4px 12px rgba(34, 34, 34, 0.28);
   }
 }
 
@@ -2146,13 +1924,13 @@ body.error404 .soywd-main {
    and mobile the columns stack and the image moves ABOVE the copy
    (matches the wireframes and the common mobile hero pattern), with a
    shorter image so it doesn't swallow a whole screen. Scoped to
-   `.soywd-hero` so no other grid/height is affected. */
+   `.wptpl-hero` so no other grid/height is affected. */
 @media (max-width: 1023px) {
-  .soywd-hero .md\:grid-cols-2 { grid-template-columns: 1fr; }
-  .soywd-hero .min-h-\[520px\] { min-height: 380px; order: -1; }
+  .wptpl-hero .md\:grid-cols-2 { grid-template-columns: 1fr; }
+  .wptpl-hero .min-h-\[520px\] { min-height: 380px; order: -1; }
 }
 @media (max-width: 767px) {
-  .soywd-hero .min-h-\[520px\] { min-height: 260px; }
+  .wptpl-hero .min-h-\[520px\] { min-height: 260px; }
 }
 
 /* Hero text column: match the side gutter on mobile. The split and centered
@@ -2167,12 +1945,12 @@ body.error404 .soywd-main {
 
    Matched by that inline style, NOT by `.py-[6.25rem]`: the overlay variant
    (background image) also uses `.py-[6.25rem]` but takes its side padding from
-   an inner `.soywd-container` (already the gutter), so matching the class
+   an inner `.wptpl-container` (already the gutter), so matching the class
    would double-pad it. Desktop keeps the container-aligning padding. */
 @media (max-width: 767px) {
-  .soywd-hero [style*="padding-left:max"] {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
+  .wptpl-hero [style*="padding-left:max"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
 }
 
@@ -2182,14 +1960,14 @@ body.error404 .soywd-main {
    centered column instead. Scoped to the tight band so the vertical
    bio / credentials checklists elsewhere are untouched. */
 @media (max-width: 767px) {
-  .soywd-section-tight .soywd-checklist ul {
+  .wptpl-section-tight .wptpl-checklist ul {
     flex-direction: column;
     gap: 0.5rem;
   }
   /* Each credential shrinks to its content and centers; text-align keeps a
      wrapped label's second line ("…LIFE TRANSITIONS") centered too, instead
      of falling back to the left edge. */
-  .soywd-section-tight .soywd-checklist li {
+  .wptpl-section-tight .wptpl-checklist li {
     text-align: center;
   }
 }
@@ -2207,18 +1985,18 @@ body.error404 .soywd-main {
    straight from one column (mobile) to four at md (768) — four columns crammed
    across a ~800px tablet, the same problem the 4-up card rows had. Re-lay it as
    2×2 between md and desktop so the brand block and the three link/info columns
-   get room to breathe. Scoped to `.soywd-footer` so only the footer grid is
+   get room to breathe. Scoped to `.wptpl-footer` so only the footer grid is
    affected; desktop (≥1024) keeps the 4-across layout. The doubled selector
-   (`.soywd-footer .md\:grid-cols-4`) beats Tailwind's `md:grid-cols-4`. */
+   (`.wptpl-footer .md\:grid-cols-4`) beats Tailwind's `md:grid-cols-4`. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-footer .md\:grid-cols-4 {
+  .wptpl-footer .md\:grid-cols-4 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* --- Tablet: 4-up card rows become 2×2 -------------------------- */
-/* A row of four columns (the Home "Therapy that meets you" service grids)
-   stays 4-across from 782px up, which crams four cards into a ~800px tablet.
+/* A row of four columns (the service / card grids) stays 4-across from 782px
+   up, which crams four cards into a ~800px tablet.
    Re-lay any exactly-four-column row as a 2×2 CSS grid between md and desktop.
    `:has(…nth-child(4)):not(:has(…nth-child(5)))` matches rows with exactly
    four columns, so 2- and 3-column rows are left alone. Using grid (not flex
@@ -2236,10 +2014,9 @@ body.error404 .soywd-main {
 
 /* --- Tablet: 3-up card rows become 2 + 1 ------------------------ */
 /* Three columns across a ~800px tablet leaves each card ~236px wide — far
-   narrower than the ~360px they get on desktop — so titles wrap mid-word
-   ("Health Change / s", "Couples Reconne / cting"). Re-lay any exactly-three-
-   column row (Home's "Find the season" and "Free guides") as a 2-column grid,
-   which puts each card back at ~360px so text wraps like it does on desktop.
+   narrower than the ~360px they get on desktop — so multi-word titles wrap
+   mid-word. Re-lay any exactly-three-column row as a 2-column grid, which puts
+   each card back at ~360px so text wraps like it does on desktop.
    The odd third card centers in its own row instead of hugging the left. Matches
    rows with exactly three columns, so 2-column rows (the bio) and the 4-up
    service grids are left to their own rules. Desktop (≥1024) keeps 3-across. */
@@ -2266,9 +2043,9 @@ body.error404 .soywd-main {
   /* In that 2+1 grid, a row of image-pop cards (the guides) needs a wider row
      gap so the third card's overhanging image (~15px) clears the row above —
      same overhang fix as on mobile, which only reached ≤781px. The extra
-     `:has(.soywd-image-pop)` bumps specificity above the generic grid rule so
+     `:has(.wptpl-image-pop)` bumps specificity above the generic grid rule so
      this row-gap wins. */
-  .wp-block-columns:has(.soywd-image-pop):has(> .wp-block-column:nth-child(3)):not(
+  .wp-block-columns:has(.wptpl-image-pop):has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     ) {
     row-gap: 40px;
@@ -2277,7 +2054,7 @@ body.error404 .soywd-main {
 
 /* --- Mobile: clearance for cards whose imagery overhangs the top - */
 /* Two block styles let a piece overhang the top edge of the card: the steps
-   number circle (overhangs ~40px) and the `soywd-image-pop` image (~30px).
+   number circle (overhangs ~40px) and the `wptpl-image-pop` image (~30px).
    When these cards stack on a phone the overhang pokes into the card above,
    because the normal inter-card gap is smaller than the overhang. Give each
    stacked card enough top clearance for its own overhang — two values, one per
@@ -2286,13 +2063,13 @@ body.error404 .soywd-main {
 @media (max-width: 767px) {
   /* Steps grid stacks to one column here; widen the row gap so the number
      circle clears the previous card. */
-  .soywd-steps .grid {
+  .wptpl-steps .grid {
     row-gap: 3.5rem;
   }
 }
 
 /* --- Tablet: 3-up steps grid becomes 2 + 1 --------------------- */
-/* The `soywd/steps` block renders `grid grid-cols-1 md:grid-cols-3`, so three
+/* The `wptpl/steps` block renders `grid grid-cols-1 md:grid-cols-3`, so three
    numbered steps sit in one row from md up. On a ~800px tablet that crams the
    bordered cards and their copy into ~237px columns. Re-lay them as a 2-column
    grid with the third step centered on its own row below — the same 2 + 1
@@ -2304,11 +2081,11 @@ body.error404 .soywd-main {
    the 3-col variant so 2-/4-step blocks keep their own layout. Desktop (≥1024)
    keeps the 3-across row. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-steps .grid.md\:grid-cols-3 {
+  .wptpl-steps .grid.md\:grid-cols-3 {
     grid-template-columns: 1fr 1fr;
     row-gap: 4rem;
   }
-  .soywd-steps .grid.md\:grid-cols-3 > :nth-child(3):last-child {
+  .wptpl-steps .grid.md\:grid-cols-3 > :nth-child(3):last-child {
     grid-column: 1 / -1;
     /* Explicit width (not max-width): with `margin-inline: auto` a max-width item
        shrinks to its content instead of filling one column, so it read narrower
@@ -2326,26 +2103,8 @@ body.error404 .soywd-main {
    interacted unevenly with the flex row-gap (one gap ended up 51px, the next
    9px). Horizontal layouts (≥782px) are a single row, so row-gap is inert. */
 @media (max-width: 781px) {
-  .wp-block-columns:has(.soywd-image-pop) {
+  .wp-block-columns:has(.wptpl-image-pop) {
     row-gap: 40px;
-  }
-}
-
-/* --- Mobile: services rows stack as full-width cards ------------- */
-/* The `.soywd-services-carousel` rows (the service offerings — Home's
-   "Therapy that meets you" and the service-page listings) used to become
-   horizontal swipe carousels on a phone. Carousels hurt discoverability:
-   people don't reliably swipe and only one card shows at a time — the wrong
-   trade-off for service links we want found and clicked. It's no better for
-   SEO either (every card and link is already in the HTML in both layouts), so
-   the only real difference is UX, and stacking wins. On mobile the rows fall
-   back to WordPress's default column stacking — one full-width card per row,
-   every service visible in a single vertical scroll — with a comfortable
-   row-gap. Tablet/desktop keep their multi-up layout. (This retires the
-   scroll-snap carousel and its carousel.js pagination dots.) */
-@media (max-width: 767px) {
-  .soywd-services-carousel.wp-block-columns {
-    row-gap: 1.5rem;
   }
 }
 
@@ -2356,32 +2115,32 @@ body.error404 .soywd-main {
    under the full-width image. Service-page heroes use `is-intro-wide` (a higher-
    specificity rule) and keep their own width. Desktop split hero is untouched. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-hero__subtitle {
+  .wptpl-hero__subtitle {
     max-width: 42rem;
   }
 }
 
 /* --- Tablet: shrink + center the bio portrait ------------------- */
-/* `.soywd-portrait-fill` stretches the image to fill its column (width + height
+/* `.wptpl-portrait-fill` stretches the image to fill its column (width + height
    100%, object-fit:cover from the ≥782 rule). On a tablet that made the
    portrait dominate its column as a tall ~380px strip. Give it a smaller fixed
    size and center it horizontally in the column so it reads as a tidy portrait
    beside the copy rather than a full-width block. It still crops via the
    object-fit:cover already set above. Desktop keeps the fill. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-portrait-fill {
+  .wptpl-portrait-fill {
     width: 280px;
     max-width: 100%;
     height: 360px;
     margin-inline: auto;
   }
-  .soywd-portrait-fill img {
+  .wptpl-portrait-fill img {
     width: 100%;
     height: 100%;
   }
   /* Pin the portrait to the top of its (taller) row so it sits beside the
      name/intro, instead of floating to the middle if the text column grows. */
-  .wp-block-column:has(.soywd-portrait-fill) {
+  .wp-block-column:has(.wptpl-portrait-fill) {
     align-self: flex-start;
   }
 }
@@ -2397,7 +2156,7 @@ body.error404 .soywd-main {
    6.25rem (theme.json fluid:false), so every band using it for top/bottom
    padding stays 100px on a phone. Shrink the preset itself at the tablet/mobile
    breakpoints so ALL sections using it step down together — same rhythm as
-   `.soywd-section` (72/48). `!important` wins the custom-property cascade over
+   `.wptpl-section` (72/48). `!important` wins the custom-property cascade over
    WP's global-styles definition. */
 @media (max-width: 1023px) {
   :root { --wp--preset--spacing--50: 72px !important; }
@@ -2406,84 +2165,25 @@ body.error404 .soywd-main {
   :root { --wp--preset--spacing--50: 48px !important; }
 }
 
-/* 2) About » "My Story" band. 100px left/right inline padding crushes the copy
-   into a narrow strip on a phone. It's a full-width colored band, so its side
-   padding IS the only thing holding the text off the colored edge — don't zero
-   it. Pin it to the mobile gutter (20px) so the copy lines up with every other
-   section's side padding. */
-@media (max-width: 767px) {
-  .wp-block-group[style*="padding-left:100px"] {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
-  }
-}
-
-/* 3) Fixed-width 2-col hero rows (About hero portrait = 440px column; the
-   guide-landing lead form = 400px column). A fixed image/form column beside the
-   text gets cramped on a tablet (the row doesn't stack until 782px). Stack it
-   below desktop with the fixed column on top (source order already puts the
-   About portrait first; the guide copy falls above its form), matched by the
-   fixed-width column so other 2-col rows are untouched. Also trim the About
-   hero's 5rem band padding on a phone (below). */
-@media (max-width: 1023px) {
-  .wp-block-columns:has(> .wp-block-column[style*="440px"]),
-  .wp-block-columns:has(> .wp-block-column[style*="400px"]) {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  .wp-block-columns:has(> .wp-block-column[style*="440px"])
-    > .wp-block-column[style*="440px"],
-  .wp-block-columns:has(> .wp-block-column[style*="400px"])
-    > .wp-block-column[style*="400px"] {
-    max-width: 440px;
-    margin-inline: auto;
-  }
-}
-@media (max-width: 767px) {
-  .wp-block-group.is-style-overlay-primary {
-    padding-top: 48px !important;
-    padding-bottom: 48px !important;
-  }
-  /* Shrink + center the portrait placeholder (white rounded box, min-height
-     460px in the 440px column) so it doesn't dominate the stacked mobile
-     layout above the copy. */
-  .is-style-overlay-primary [style*="min-height:460px"] {
-    min-height: 300px !important;
-    max-width: 300px;
-    margin-inline: auto;
-  }
-}
-
 /* --- Mobile: let forced-break headings wrap naturally ----------- */
-/* Centered CTA-style headings hard-code a `<br>` for their desktop line break
-   (e.g. "Whatever season you are in, / I would love to hear about it."). On a
-   phone that break lands awkwardly; hide the `<br>` so the copy wraps to the
-   column width instead. Exclude `.soywd-br-mobile` — that one is an intentional
+/* Centered CTA-style headings hard-code a `<br>` for their desktop line break.
+   On a phone that break lands awkwardly; hide the `<br>` so the copy wraps to the
+   column width instead. Exclude `.wptpl-br-mobile` — that one is an intentional
    phone-only break and must stay visible here. */
 @media (max-width: 767px) {
-  h2.max-w-3xl br:not(.soywd-br-mobile) {
+  h2.max-w-3xl br:not(.wptpl-br-mobile) {
     display: none;
   }
 }
 
-/* 4) About » "How to start" steps. The numbered circle overhangs each card's
-   top; when the columns stack on a phone it pokes into the card above. The
-   existing clearance rule only covers the `.grid` (home) variant — the About
-   steps use `.wp-block-columns`, so give that its own row-gap. */
+/* 4) Steps built by hand as core columns. The numbered circle overhangs each
+   card's top; when the columns stack on a phone it pokes into the card above.
+   The existing clearance rule only covers the `.grid` (wptpl/steps block)
+   variant — hand-built steps use `.wp-block-columns`, so give that its own
+   row-gap. */
 @media (max-width: 767px) {
-  .soywd-steps .wp-block-columns {
+  .wptpl-steps .wp-block-columns {
     row-gap: 3.5rem;
-  }
-}
-
-/* 5) About » Modalities band. 50px inline side padding is a touch tight on a
-   phone; pin it to the mobile gutter (20px) so its copy lines up with every
-   other section's side padding. */
-@media (max-width: 767px) {
-  .soywd-modalities-card.soywd-modalities-card {
-    padding-left: var(--soywd-gutter) !important;
-    padding-right: var(--soywd-gutter) !important;
   }
 }
 
@@ -2491,10 +2191,10 @@ body.error404 .soywd-main {
    In the tablet 2+1 layout the lone third step card sits in row 2, and its
    number circle overhangs its top by ~2.5rem, poking into the row above. Widen
    the row gap so it clears — the same overhang fix already applied for stacked
-   (mobile) steps and for image-pop rows. Scoped to `.soywd-steps` so only step
+   (mobile) steps and for image-pop rows. Scoped to `.wptpl-steps` so only step
    grids get the wider row gap. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-steps .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
+  .wptpl-steps .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     ) {
     row-gap: 4rem;
@@ -2502,13 +2202,13 @@ body.error404 .soywd-main {
 }
 
 /* ===============================================================
-   Service subpages (Postpartum, Anxiety, Depression … shared template)
+   Service subpages (one shared template per service)
    Inline 100px vertical paddings and a tall steps top don't shrink, and
    the label+checklist rows shouldn't be reshaped like card grids.
    =============================================================== */
 
-/* 1) Inline literal 100px top/bottom padding (the FAQ's top, Related-services'
-   top+bottom) stays 100px on small screens while the class-driven side shrinks
+/* 1) Inline literal 100px top/bottom padding (e.g. an FAQ or related-links
+   band) stays 100px on small screens while the class-driven side shrinks
    — asymmetric and too tall. Step any inline 100px vertical padding down at the
    section breakpoints. (Horizontal 100px padding is handled separately.) */
 @media (max-width: 1023px) {
@@ -2528,10 +2228,10 @@ body.error404 .soywd-main {
    shrink, so on a phone the top dwarfs the reduced bottom. Step it down while
    keeping ~35px over the base band padding for the circle. */
 @media (max-width: 1023px) {
-  .soywd-steps.soywd-steps-pad-top { padding-top: 104px; }
+  .wptpl-steps.wptpl-steps-pad-top { padding-top: 104px; }
 }
 @media (max-width: 767px) {
-  .soywd-steps.soywd-steps-pad-top { padding-top: 84px; }
+  .wptpl-steps.wptpl-steps-pad-top { padding-top: 84px; }
 }
 
 /* 3) Label + checklist rows (Symptoms / "This is for you if"): three columns —
@@ -2540,12 +2240,12 @@ body.error404 .soywd-main {
    centered below). Keep their natural columns by restoring the flex layout for
    any 3-col row that contains a checklist. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .wp-block-columns:has(.soywd-checklist):has(> .wp-block-column:nth-child(3)):not(
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     ) {
     display: flex;
   }
-  .wp-block-columns:has(.soywd-checklist):has(> .wp-block-column:nth-child(3)):not(
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     )
     > .wp-block-column:nth-child(3):last-child {
@@ -2563,12 +2263,12 @@ body.error404 .soywd-main {
    little breathing room under the label heading. Scoped to the 3-col checklist
    rows (same selector as the tablet rule) so other stacks are untouched. */
 @media (max-width: 767px) {
-  .wp-block-columns:has(.soywd-checklist):has(> .wp-block-column:nth-child(3)):not(
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     ) {
     row-gap: 0.5rem;
   }
-  .wp-block-columns:has(.soywd-checklist):has(> .wp-block-column:nth-child(3)):not(
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     )
     > .wp-block-column:first-child {
@@ -2576,18 +2276,18 @@ body.error404 .soywd-main {
   }
 }
 
-/* Content sections wrap their columns in a `.soywd-container-md` inside the
-   `.soywd-section` band. The band already supplies the side gutter, so the
+/* Content sections wrap their columns in a `.wptpl-container-md` inside the
+   `.wptpl-section` band. The band already supplies the side gutter, so the
    inner container's gutter doubles it (section gutter + container gutter). Some
    pages zero the container inline (padding:0) and some don't, so the doubling
    is inconsistent between otherwise-identical sections. Drop the inner
    container's gutter whenever such a container sits inside a section band, so
    the content lands on the single section gutter (no doubling). Covers the
    service-page checklist rows and the Contact form section. Requiring the
-   `.soywd-section` ancestor means this never full-bleeds a standalone
+   `.wptpl-section` ancestor means this never full-bleeds a standalone
    container — worst case the content rests on the section gutter. */
-.soywd-section .soywd-container-md:has(.soywd-checklist),
-.soywd-section .soywd-container-md:has(.soywd-form) {
+.wptpl-section .wptpl-container-md:has(.wptpl-checklist),
+.wptpl-section .wptpl-container-md:has(.wptpl-form) {
   padding-inline: 0;
 }
 
@@ -2597,7 +2297,7 @@ body.error404 .soywd-main {
    tablet so it fits, and never break inside a word. Mobile stacks the column
    full-width, so it's untouched. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .soywd-heading-shrink {
+  .wptpl-heading-shrink {
     font-size: 1.5rem;
     line-height: 1.2;
     overflow-wrap: normal;
@@ -2610,36 +2310,8 @@ body.error404 .soywd-main {
    the break there. Above 782px it sits in a narrow 24% column where the two-line
    break stays. Content keeps a space before the <br> so the words don't join. */
 @media (max-width: 781px) {
-  .soywd-heading-shrink br {
+  .wptpl-heading-shrink br {
     display: none;
-  }
-}
-
-/* Related-services pills (soywd-tags-cream).
-   Mobile (≤767): stack one per row. The linked service labels vary wildly in
-   length ("Women's Health" vs "Postpartum & Maternal Mental Health"), so on a
-   narrow phone a centered wrap looks lopsided and a long pill can overflow —
-   stacking keeps it tidy.
-   Tablet (768–1023): there's room across the row, so let them WRAP and fit as
-   many per row as possible instead of one-per-line — short trios like
-   "Women's Health · Life Transitions · Couples Therapy" then sit on a single
-   row. Desktop already wraps. Scoped to the cream (related-services) variant so
-   the keyword pill rows are untouched. */
-@media (max-width: 767px) {
-  .soywd-tags-cream .flex {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-/* Center the label so a pill that wraps to two lines (a long service name)
-   stays centered instead of hugging the left, and cap the width so the longest
-   pill wraps its own text rather than overflowing. At ≤1023 so it guards both
-   the stacked phone layout and the wrapping tablet rows. */
-@media (max-width: 1023px) {
-  .soywd-tags-cream .flex a,
-  .soywd-tags-cream .flex span {
-    max-width: 100%;
-    text-align: center;
   }
 }
 
@@ -2653,16 +2325,16 @@ body.error404 .soywd-main {
 @media (min-width: 768px) and (max-width: 1023px) {
   /* Doubled class (0,2,0) so it beats Tailwind's `md:grid-cols-3` (0,1,0), which
      is emitted later in the sheet and would otherwise win on source order. */
-  .soywd-post-grid.soywd-post-grid {
+  .wptpl-post-grid.wptpl-post-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /* Featured post card carries a 7rem bottom padding for desktop emphasis, which
-   leaves a large empty clay area below the CTA on smaller screens. Trim it below
+   leaves a large empty accent area below the CTA on smaller screens. Trim it below
    desktop so the card reads balanced like the post cards under it. */
 @media (max-width: 1023px) {
-  .soywd-featured-post {
+  .wptpl-featured-post {
     padding-bottom: 2.5rem !important;
   }
 }
@@ -2673,7 +2345,7 @@ body.error404 .soywd-main {
    fixed-height (h-48, cropped) post cards below it. Give the featured image a
    consistent banner aspect on mobile so it reads as a prominent, cropped image. */
 @media (max-width: 767px) {
-  .soywd-featured-post img {
+  .wptpl-featured-post img {
     aspect-ratio: 16 / 10;
     object-fit: cover;
   }
@@ -2689,22 +2361,22 @@ body.error404 .soywd-main {
    also still toggles the active pill and filters. */
 @media (max-width: 767px) {
   /* Break the strip out of both wrapping gutters so it spans the full width. */
-  .soywd-section-sm:has(.soywd-cat-filter),
-  .soywd-container:has(.soywd-cat-filter) {
+  .wptpl-section-sm:has(.wptpl-cat-filter),
+  .wptpl-container:has(.wptpl-cat-filter) {
     padding-inline: 0;
   }
-  .soywd-cat-filter {
+  .wptpl-cat-filter {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-inline: var(--soywd-gutter);
+    padding-inline: var(--wptpl-gutter);
     scrollbar-width: none; /* hidden — the injected custom bar replaces it */
   }
-  .soywd-cat-filter::-webkit-scrollbar {
+  .wptpl-cat-filter::-webkit-scrollbar {
     display: none;
   }
-  .soywd-cat-filter__pill {
+  .wptpl-cat-filter__pill {
     flex: 0 0 auto;
   }
 }
@@ -2713,22 +2385,22 @@ body.error404 .soywd-main {
    blog-filter.js after the pill row. Native mobile scrollbars are overlay
    (hidden at rest), so a drawn bar keeps the row's scrollability obvious. The
    script hides it whenever the row doesn't overflow (e.g. desktop, where the
-   pills wrap). Cream on the primary-green band via color-mix so it stays on the
+   pills wrap). Canvas on the primary-green band via color-mix so it stays on the
    palette. */
-.soywd-cat-scrollbar {
-  padding: 0.55rem var(--soywd-gutter) 0.1rem;
+.wptpl-cat-scrollbar {
+  padding: 0.55rem var(--wptpl-gutter) 0.1rem;
 }
-.soywd-cat-scrollbar__track {
+.wptpl-cat-scrollbar__track {
   position: relative;
   height: 4px;
   border-radius: 999px;
   background: color-mix(
     in srgb,
-    var(--wp--preset--color--cream-light) 22%,
+    var(--wp--preset--color--on-dark) 22%,
     transparent
   );
 }
-.soywd-cat-scrollbar__thumb {
+.wptpl-cat-scrollbar__thumb {
   position: absolute;
   top: 0;
   left: 0;
@@ -2736,13 +2408,13 @@ body.error404 .soywd-main {
   border-radius: 999px;
   background: color-mix(
     in srgb,
-    var(--wp--preset--color--cream-light) 85%,
+    var(--wp--preset--color--on-dark) 85%,
     transparent
   );
   cursor: grab;
   touch-action: none;
 }
-.soywd-cat-scrollbar__thumb:active {
+.wptpl-cat-scrollbar__thumb:active {
   cursor: grabbing;
 }
 
@@ -2752,8 +2424,8 @@ body.error404 .soywd-main {
    full-bleed treatment as the homepage card rows — extended to ≤1023 because the
    doubled gutter reads as wrong/too-much padding on tablet too. */
 @media (max-width: 1023px) {
-  .soywd-container-md:has(.soywd-featured-post),
-  .soywd-container:has(.soywd-post-grid) {
+  .wptpl-container-md:has(.wptpl-featured-post),
+  .wptpl-container:has(.wptpl-post-grid) {
     padding-inline: 0;
   }
 }
@@ -2761,7 +2433,7 @@ body.error404 .soywd-main {
    guide-cards row, which is hidden on phones — drop the now-dead margin. On
    tablet the guide-cards row is visible, so keep the separation. */
 @media (max-width: 767px) {
-  .soywd-post-grid {
+  .wptpl-post-grid {
     margin-bottom: 0 !important;
   }
 }
@@ -2772,17 +2444,17 @@ body.error404 .soywd-main {
    width. Matched by the column that holds the form, so only this section stacks;
    mobile already stacks and desktop keeps the side-by-side split. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .wp-block-columns:has(> .wp-block-column .soywd-form) {
+  .wp-block-columns:has(> .wp-block-column .wptpl-form) {
     flex-direction: column;
   }
-  .wp-block-columns:has(> .wp-block-column .soywd-form) > .wp-block-column {
+  .wp-block-columns:has(> .wp-block-column .wptpl-form) > .wp-block-column {
     flex-basis: auto !important;
   }
   /* The Practice-Info column holds only a couple of short rows, so once stacked
      it looks empty at full width. Cap and centre it (the column WITHOUT the
      form) so it reads as a tidy info card under the full-width form. */
-  .wp-block-columns:has(> .wp-block-column .soywd-form)
-    > .wp-block-column:not(:has(.soywd-form)) {
+  .wp-block-columns:has(> .wp-block-column .wptpl-form)
+    > .wp-block-column:not(:has(.wptpl-form)) {
     max-width: 480px;
     margin-inline: auto;
   }
@@ -2791,7 +2463,7 @@ body.error404 .soywd-main {
 /* ===============================================================
    Motion — subtle scroll-reveal + micro-interactions
    ---------------------------------------------------------------
-   Everything here is gated on `html.soywd-anim-ready`, a class added by a
+   Everything here is gated on `html.wptpl-anim-ready`, a class added by a
    tiny inline <head> bootstrap (inc/enqueue.php) ONLY when the browser
    supports IntersectionObserver and the user hasn't asked for reduced
    motion. So with JS off, an old browser, reduced motion, or a script
@@ -2802,15 +2474,15 @@ body.error404 .soywd-main {
    script (inc/enqueue.php) — the JS observes the same elements and toggles
    `.is-visible` as they scroll into view.
    =============================================================== */
-html.soywd-anim-ready :is(
-    .soywd-section-header,
-    .soywd-feature-card,
-    .soywd-checklist,
-    .soywd-faq,
-    .soywd-tag-list,
-    .soywd-hero__subtitle,
-    .soywd-steps .wp-block-column,
-    .soywd-steps .grid > *
+html.wptpl-anim-ready :is(
+    .wptpl-section-header,
+    .wptpl-feature-card,
+    .wptpl-checklist,
+    .wptpl-faq,
+    .wptpl-tag-list,
+    .wptpl-hero__subtitle,
+    .wptpl-steps .wp-block-column,
+    .wptpl-steps .grid > *
   ) {
   opacity: 0;
   transform: translateY(8px);
@@ -2820,15 +2492,15 @@ html.soywd-anim-ready :is(
     transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
-html.soywd-anim-ready :is(
-    .soywd-section-header,
-    .soywd-feature-card,
-    .soywd-checklist,
-    .soywd-faq,
-    .soywd-tag-list,
-    .soywd-hero__subtitle,
-    .soywd-steps .wp-block-column,
-    .soywd-steps .grid > *
+html.wptpl-anim-ready :is(
+    .wptpl-section-header,
+    .wptpl-feature-card,
+    .wptpl-checklist,
+    .wptpl-faq,
+    .wptpl-tag-list,
+    .wptpl-hero__subtitle,
+    .wptpl-steps .wp-block-column,
+    .wptpl-steps .grid > *
   ).is-visible {
   opacity: 1;
   transform: none;
@@ -2839,28 +2511,28 @@ html.soywd-anim-ready :is(
    the same instant is what reads as "robotic". Delay each one a little more
    than the last so the row settles in sequence (left to right). Kept slow and
    soft to match the calmer reveal above. */
-html.soywd-anim-ready
+html.wptpl-anim-ready
   .wp-block-columns
   > .wp-block-column:nth-child(2)
-  .soywd-feature-card,
-html.soywd-anim-ready .soywd-steps .wp-block-column:nth-child(2),
-html.soywd-anim-ready .soywd-steps .grid > *:nth-child(2) {
+  .wptpl-feature-card,
+html.wptpl-anim-ready .wptpl-steps .wp-block-column:nth-child(2),
+html.wptpl-anim-ready .wptpl-steps .grid > *:nth-child(2) {
   transition-delay: 0.12s;
 }
-html.soywd-anim-ready
+html.wptpl-anim-ready
   .wp-block-columns
   > .wp-block-column:nth-child(3)
-  .soywd-feature-card,
-html.soywd-anim-ready .soywd-steps .wp-block-column:nth-child(3),
-html.soywd-anim-ready .soywd-steps .grid > *:nth-child(3) {
+  .wptpl-feature-card,
+html.wptpl-anim-ready .wptpl-steps .wp-block-column:nth-child(3),
+html.wptpl-anim-ready .wptpl-steps .grid > *:nth-child(3) {
   transition-delay: 0.24s;
 }
-html.soywd-anim-ready
+html.wptpl-anim-ready
   .wp-block-columns
   > .wp-block-column:nth-child(4)
-  .soywd-feature-card,
-html.soywd-anim-ready .soywd-steps .wp-block-column:nth-child(n + 4),
-html.soywd-anim-ready .soywd-steps .grid > *:nth-child(n + 4) {
+  .wptpl-feature-card,
+html.wptpl-anim-ready .wptpl-steps .wp-block-column:nth-child(n + 4),
+html.wptpl-anim-ready .wptpl-steps .grid > *:nth-child(n + 4) {
   transition-delay: 0.36s;
 }
 
@@ -2869,31 +2541,31 @@ html.soywd-anim-ready .soywd-steps .grid > *:nth-child(n + 4) {
    tap on mobile doesn't leave a card stuck in the hovered state; buttons get
    a quick press on `:active`, which reads as tactile feedback on touch. */
 @media (prefers-reduced-motion: no-preference) {
-  .soywd-feature-card {
+  .wptpl-feature-card {
     transition: transform 0.35s ease-out, box-shadow 0.35s ease-out;
   }
-  .soywd-btn,
-  .soywd-btn-accent,
-  .soywd-btn-primary,
-  .soywd-btn-secondary,
-  .soywd-btn-outline,
-  .soywd-btn-photo {
+  .wptpl-btn,
+  .wptpl-btn-accent,
+  .wptpl-btn-primary,
+  .wptpl-btn-secondary,
+  .wptpl-btn-outline,
+  .wptpl-btn-photo {
     transition: background-color 0.2s ease-out, color 0.2s ease-out,
       border-color 0.2s ease-out, box-shadow 0.2s ease-out,
       transform 0.1s ease-out;
   }
-  .soywd-btn:active,
-  .soywd-btn-accent:active,
-  .soywd-btn-primary:active,
-  .soywd-btn-secondary:active,
-  .soywd-btn-outline:active,
-  .soywd-btn-photo:active {
+  .wptpl-btn:active,
+  .wptpl-btn-accent:active,
+  .wptpl-btn-primary:active,
+  .wptpl-btn-secondary:active,
+  .wptpl-btn-outline:active,
+  .wptpl-btn-photo:active {
     transform: translateY(1px);
   }
 }
 @media (prefers-reduced-motion: no-preference) and (hover: hover) {
-  .soywd-feature-card:hover {
+  .wptpl-feature-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 22px rgba(47, 51, 40, 0.1);
+    box-shadow: 0 10px 22px rgba(34, 34, 34, 0.1);
   }
 }

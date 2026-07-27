@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Soy Web Development">
-	<description>WordPress Coding Standards for the Soy Web Development theme.</description>
+<ruleset name="Therapy Theme Template">
+	<description>WordPress Coding Standards for the Therapy Theme Template.</description>
 
 	<!-- What to scan. -->
 	<file>.</file>
@@ -37,21 +37,21 @@
 	<config name="minimum_supported_wp_version" value="6.4"/>
 	<config name="testVersion" value="8.0-"/>
 
-	<!-- Theme prefix is `soywd`. -->
+	<!-- Theme prefix is `wptpl`. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="soywd"/>
-				<element value="SOYWD"/>
+				<element value="wptpl"/>
+				<element value="WPTPL"/>
 			</property>
 		</properties>
 	</rule>
 
-	<!-- Text domain check — value should be `soywd`. -->
+	<!-- Text domain check — value should be `wptpl`. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="soywd"/>
+				<element value="wptpl"/>
 			</property>
 		</properties>
 	</rule>

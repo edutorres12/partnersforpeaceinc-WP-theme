@@ -16,34 +16,34 @@ import {
 } from '@wordpress/components';
 
 const STYLE_OPTIONS = [
-	{ label: __( 'Auto (by theme / photo)', 'soywd' ), value: 'auto' },
-	{ label: __( 'Clay (accent)', 'soywd' ), value: 'accent' },
-	{ label: __( 'Sage (photo)', 'soywd' ), value: 'sage' },
-	{ label: __( 'Cream', 'soywd' ), value: 'cream' },
-	{ label: __( 'Olive (primary)', 'soywd' ), value: 'primary' },
-	{ label: __( 'Outline', 'soywd' ), value: 'outline' },
+	{ label: __( 'Auto (by theme / photo)', 'wptpl' ), value: 'auto' },
+	{ label: __( 'Accent (accent)', 'wptpl' ), value: 'accent' },
+	{ label: __( 'Primary (photo)', 'wptpl' ), value: 'soft' },
+	{ label: __( 'Canvas', 'wptpl' ), value: 'canvas' },
+	{ label: __( 'Secondary (primary)', 'wptpl' ), value: 'primary' },
+	{ label: __( 'Outline', 'wptpl' ), value: 'outline' },
 ];
 
 function resolveBtnClass( style, hasImage, isDark ) {
 	switch ( style ) {
 		case 'accent':
-			return 'soywd-btn-accent';
-		case 'sage':
-			return 'soywd-btn-photo';
-		case 'cream':
-			return 'soywd-btn bg-cream text-contrast';
+			return 'wptpl-btn-accent';
+		case 'soft':
+			return 'wptpl-btn-photo';
+		case 'canvas':
+			return 'wptpl-btn bg-canvas text-contrast';
 		case 'primary':
-			return 'soywd-btn-primary';
+			return 'wptpl-btn-primary';
 		case 'outline':
-			return 'soywd-btn-outline';
+			return 'wptpl-btn-outline';
 		default:
 			if ( hasImage ) {
-				return 'soywd-btn-photo';
+				return 'wptpl-btn-photo';
 			}
 			if ( isDark ) {
-				return 'soywd-btn bg-cream text-contrast';
+				return 'wptpl-btn bg-canvas text-contrast';
 			}
-			return 'soywd-btn-primary';
+			return 'wptpl-btn-primary';
 	}
 }
 
@@ -78,9 +78,9 @@ export default function Edit( { attributes, setAttributes } ) {
 	} else if ( isDark ) {
 		bgClass = 'bg-secondary text-white';
 	} else {
-		bgClass = 'bg-cream text-contrast';
+		bgClass = 'bg-canvas text-contrast';
 	}
-	const wrapperClass = `soywd-cta-banner relative text-center py-[6.25rem] px-6 overflow-hidden ${ bgClass }`;
+	const wrapperClass = `wptpl-cta-banner relative text-center py-[6.25rem] px-6 overflow-hidden ${ bgClass }`;
 	const blockProps = useBlockProps( { className: wrapperClass } );
 
 	const btnClass = resolveBtnClass( ctaStyle, hasImage, isDark );
@@ -90,7 +90,7 @@ export default function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Background image', 'soywd' ) }
+					title={ __( 'Background image', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<MediaUploadCheck>
@@ -105,8 +105,8 @@ export default function Edit( { attributes, setAttributes } ) {
 							render={ ( { open } ) => (
 								<Button variant="secondary" onClick={ open }>
 									{ backgroundImageUrl
-										? __( 'Change image', 'soywd' )
-										: __( 'Select image', 'soywd' ) }
+										? __( 'Change image', 'wptpl' )
+										: __( 'Select image', 'wptpl' ) }
 								</Button>
 							) }
 						/>
@@ -123,11 +123,11 @@ export default function Edit( { attributes, setAttributes } ) {
 							}
 							style={ { marginLeft: 8 } }
 						>
-							{ __( 'Remove', 'soywd' ) }
+							{ __( 'Remove', 'wptpl' ) }
 						</Button>
 					) }
 					<RangeControl
-						label={ __( 'Overlay opacity', 'soywd' ) }
+						label={ __( 'Overlay opacity', 'wptpl' ) }
 						value={ overlayOpacity }
 						min={ 0 }
 						max={ 0.9 }
@@ -137,32 +137,32 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Primary CTA', 'soywd' ) } initialOpen>
+				<PanelBody title={ __( 'Primary CTA', 'wptpl' ) } initialOpen>
 					<TextControl
-						label={ __( 'Button text', 'soywd' ) }
+						label={ __( 'Button text', 'wptpl' ) }
 						value={ ctaText }
 						onChange={ ( v ) => setAttributes( { ctaText: v } ) }
 					/>
 					<TextControl
-						label={ __( 'Button URL', 'soywd' ) }
+						label={ __( 'Button URL', 'wptpl' ) }
 						value={ ctaUrl }
 						onChange={ ( v ) => setAttributes( { ctaUrl: v } ) }
 					/>
 					<SelectControl
-						label={ __( 'Button color', 'soywd' ) }
+						label={ __( 'Button color', 'wptpl' ) }
 						value={ ctaStyle }
 						options={ STYLE_OPTIONS }
 						onChange={ ( v ) => setAttributes( { ctaStyle: v } ) }
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Secondary CTA', 'soywd' ) }
+					title={ __( 'Secondary CTA', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<TextControl
 						label={ __(
 							'Button text (leave empty to hide)',
-							'soywd'
+							'wptpl'
 						) }
 						value={ secondaryCtaText }
 						onChange={ ( v ) =>
@@ -170,14 +170,14 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 					<TextControl
-						label={ __( 'Button URL', 'soywd' ) }
+						label={ __( 'Button URL', 'wptpl' ) }
 						value={ secondaryCtaUrl }
 						onChange={ ( v ) =>
 							setAttributes( { secondaryCtaUrl: v } )
 						}
 					/>
 					<SelectControl
-						label={ __( 'Button color', 'soywd' ) }
+						label={ __( 'Button color', 'wptpl' ) }
 						value={ secondaryCtaStyle }
 						options={ STYLE_OPTIONS }
 						onChange={ ( v ) =>
@@ -185,22 +185,22 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 					/>
 					<TextControl
-						label={ __( 'Text color (hex, optional)', 'soywd' ) }
+						label={ __( 'Text color (hex, optional)', 'wptpl' ) }
 						value={ secondaryCtaTextColor }
 						onChange={ ( v ) =>
 							setAttributes( { secondaryCtaTextColor: v } )
 						}
 					/>
 					<SelectControl
-						label={ __( 'Buttons layout', 'soywd' ) }
+						label={ __( 'Buttons layout', 'wptpl' ) }
 						value={ buttonLayout }
 						options={ [
 							{
-								label: __( 'Side by side', 'soywd' ),
+								label: __( 'Side by side', 'wptpl' ),
 								value: 'row',
 							},
 							{
-								label: __( 'Stacked', 'soywd' ),
+								label: __( 'Stacked', 'wptpl' ),
 								value: 'column',
 							},
 						] }
@@ -210,19 +210,19 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Theme', 'soywd' ) }
+					title={ __( 'Theme', 'wptpl' ) }
 					initialOpen={ false }
 				>
 					<SelectControl
-						label={ __( 'Theme', 'soywd' ) }
+						label={ __( 'Theme', 'wptpl' ) }
 						value={ theme }
 						options={ [
 							{
-								label: __( 'Dark (closing CTA)', 'soywd' ),
+								label: __( 'Dark (closing CTA)', 'wptpl' ),
 								value: 'dark',
 							},
 							{
-								label: __( 'Light (book directly)', 'soywd' ),
+								label: __( 'Light (book directly)', 'wptpl' ),
 								value: 'light',
 							},
 						] }
@@ -230,26 +230,26 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Text colors', 'soywd' ) }
+					title={ __( 'Text colors', 'wptpl' ) }
 					initialOpen={ false }
 					colorSettings={ [
 						{
 							value: headlineColor,
 							onChange: ( v ) =>
 								setAttributes( { headlineColor: v || '' } ),
-							label: __( 'Headline color', 'soywd' ),
+							label: __( 'Headline color', 'wptpl' ),
 						},
 						{
 							value: bodyColor,
 							onChange: ( v ) =>
 								setAttributes( { bodyColor: v || '' } ),
-							label: __( 'Text color', 'soywd' ),
+							label: __( 'Text color', 'wptpl' ),
 						},
 						{
 							value: eyebrowColor,
 							onChange: ( v ) =>
 								setAttributes( { eyebrowColor: v || '' } ),
-							label: __( 'Eyebrow color', 'soywd' ),
+							label: __( 'Eyebrow color', 'wptpl' ),
 						},
 					] }
 				/>
@@ -282,7 +282,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						value={ eyebrow }
 						onChange={ ( v ) => setAttributes( { eyebrow: v } ) }
-						placeholder={ __( 'Eyebrow (optional)', 'soywd' ) }
+						placeholder={ __( 'Eyebrow (optional)', 'wptpl' ) }
 					/>
 					<RichText
 						tagName="h2"
@@ -292,7 +292,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						}
 						value={ headline }
 						onChange={ ( v ) => setAttributes( { headline: v } ) }
-						placeholder={ __( 'Headline…', 'soywd' ) }
+						placeholder={ __( 'Headline…', 'wptpl' ) }
 					/>
 					<RichText
 						tagName="p"
@@ -302,7 +302,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						style={ bodyColor ? { color: bodyColor } : undefined }
 						value={ text }
 						onChange={ ( v ) => setAttributes( { text: v } ) }
-						placeholder={ __( 'Supporting text…', 'soywd' ) }
+						placeholder={ __( 'Supporting text…', 'wptpl' ) }
 					/>
 					<div
 						className={ `mt-6 flex gap-3 justify-center ${

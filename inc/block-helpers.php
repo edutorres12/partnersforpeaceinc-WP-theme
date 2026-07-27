@@ -12,7 +12,7 @@
  * the same context (still use esc_attr() when interpolating into an
  * attribute, esc_url() when re-emitting as an href, etc.).
  *
- * @package soywd
+ * @package wptpl
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,26 +20,26 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Default protocols allowed for block CTAs / link attributes.
  */
-const SOYWD_LINK_PROTOCOLS = array( 'http', 'https', 'mailto', 'tel' );
+const WPTPL_LINK_PROTOCOLS = array( 'http', 'https', 'mailto', 'tel' );
 
 /**
  * Rich text fields edited with <RichText> in the editor → wp_kses_post.
  */
-function soywd_attr_html( array $attrs, string $key, string $default = '' ): string {
+function wptpl_attr_html( array $attrs, string $key, string $default = '' ): string {
 	return isset( $attrs[ $key ] ) ? wp_kses_post( (string) $attrs[ $key ] ) : $default;
 }
 
 /**
  * Plain text → sanitize_text_field (strips tags, normalizes whitespace).
  */
-function soywd_attr_text( array $attrs, string $key, string $default = '' ): string {
+function wptpl_attr_text( array $attrs, string $key, string $default = '' ): string {
 	return isset( $attrs[ $key ] ) ? sanitize_text_field( (string) $attrs[ $key ] ) : $default;
 }
 
 /**
  * URL with protocols restricted to http/https/mailto/tel by default.
  */
-function soywd_attr_url( array $attrs, string $key, string $default = '', array $protocols = SOYWD_LINK_PROTOCOLS ): string {
+function wptpl_attr_url( array $attrs, string $key, string $default = '', array $protocols = WPTPL_LINK_PROTOCOLS ): string {
 	if ( ! isset( $attrs[ $key ] ) ) {
 		return $default;
 	}
@@ -50,7 +50,7 @@ function soywd_attr_url( array $attrs, string $key, string $default = '', array 
  * Hex color via sanitize_hex_color; returns '' (not null) on invalid input
  * so callers can simply test with empty checks.
  */
-function soywd_attr_color( array $attrs, string $key, string $default = '' ): string {
+function wptpl_attr_color( array $attrs, string $key, string $default = '' ): string {
 	if ( ! isset( $attrs[ $key ] ) ) {
 		return $default;
 	}
@@ -61,7 +61,7 @@ function soywd_attr_color( array $attrs, string $key, string $default = '' ): st
 /**
  * Clamped float for overlay opacity / similar.
  */
-function soywd_attr_float( array $attrs, string $key, float $min, float $max, float $default ): float {
+function wptpl_attr_float( array $attrs, string $key, float $min, float $max, float $default ): float {
 	if ( ! isset( $attrs[ $key ] ) ) {
 		return $default;
 	}
@@ -71,7 +71,7 @@ function soywd_attr_float( array $attrs, string $key, float $min, float $max, fl
 /**
  * Clamped integer for column counts / heading levels / item caps.
  */
-function soywd_attr_int( array $attrs, string $key, int $min, int $max, int $default ): int {
+function wptpl_attr_int( array $attrs, string $key, int $min, int $max, int $default ): int {
 	if ( ! isset( $attrs[ $key ] ) ) {
 		return $default;
 	}
@@ -81,7 +81,7 @@ function soywd_attr_int( array $attrs, string $key, int $min, int $max, int $def
 /**
  * Enum: return the value if it's in $allowed (strict), otherwise $default.
  */
-function soywd_attr_enum( array $attrs, string $key, array $allowed, string $default ): string {
+function wptpl_attr_enum( array $attrs, string $key, array $allowed, string $default ): string {
 	if ( isset( $attrs[ $key ] ) && in_array( $attrs[ $key ], $allowed, true ) ) {
 		return (string) $attrs[ $key ];
 	}
@@ -91,7 +91,7 @@ function soywd_attr_enum( array $attrs, string $key, array $allowed, string $def
 /**
  * Repeatable items → array (empty array if missing or not an array).
  */
-function soywd_attr_array( array $attrs, string $key ): array {
+function wptpl_attr_array( array $attrs, string $key ): array {
 	return isset( $attrs[ $key ] ) && is_array( $attrs[ $key ] ) ? $attrs[ $key ] : array();
 }
 
@@ -99,7 +99,7 @@ function soywd_attr_array( array $attrs, string $key ): array {
  * Bool with explicit default. Matches Gutenberg's own truthy semantics:
  * any non-empty value (true, 1, '1', 'yes', etc.) is treated as true.
  */
-function soywd_attr_bool( array $attrs, string $key, bool $default = false ): bool {
+function wptpl_attr_bool( array $attrs, string $key, bool $default = false ): bool {
 	if ( ! array_key_exists( $key, $attrs ) ) {
 		return $default;
 	}
@@ -113,12 +113,12 @@ function soywd_attr_bool( array $attrs, string $key, bool $default = false ): bo
  * Only resolves URLs that live under the theme. WordPress Media Library
  * uploads are left to WP / image-optimization plugins.
  */
-function soywd_webp_variant( string $url ): ?string {
+function wptpl_webp_variant( string $url ): ?string {
 	if ( '' === $url ) {
 		return null;
 	}
 
-	$theme_uri = SOYWD_THEME_URI;
+	$theme_uri = WPTPL_THEME_URI;
 	if ( 0 !== strpos( $url, $theme_uri ) ) {
 		return null;
 	}
@@ -129,7 +129,7 @@ function soywd_webp_variant( string $url ): ?string {
 
 	$relative   = substr( $url, strlen( $theme_uri ) );
 	$webp_rel   = preg_replace( '/\.(jpe?g|png)(\?.*)?$/i', '.webp$2', $relative );
-	$webp_path  = SOYWD_THEME_DIR . $webp_rel;
+	$webp_path  = WPTPL_THEME_DIR . $webp_rel;
 	$query_pos  = strpos( $webp_path, '?' );
 	$check_path = false !== $query_pos ? substr( $webp_path, 0, $query_pos ) : $webp_path;
 
@@ -151,7 +151,7 @@ function soywd_webp_variant( string $url ): ?string {
  *     @type bool   $aria_hidden Adds aria-hidden="true" to <img> when true.
  * }
  */
-function soywd_render_picture( array $args ): string {
+function wptpl_render_picture( array $args ): string {
 	$src   = isset( $args['src'] ) ? (string) $args['src'] : '';
 	$alt   = isset( $args['alt'] ) ? (string) $args['alt'] : '';
 	$class = isset( $args['class'] ) ? (string) $args['class'] : '';
@@ -182,7 +182,7 @@ function soywd_render_picture( array $args ): string {
 		$img_attrs .= ' aria-hidden="true"';
 	}
 
-	$webp = soywd_webp_variant( $src );
+	$webp = wptpl_webp_variant( $src );
 	if ( null === $webp ) {
 		return '<img ' . $img_attrs . ' />';
 	}
@@ -201,12 +201,12 @@ function soywd_render_picture( array $args ): string {
  *
  * @return int Post ID, or 0 when there are no published posts yet.
  */
-function soywd_blog_featured_id(): int {
-	$soywd_sticky = get_option( 'sticky_posts' );
-	if ( ! empty( $soywd_sticky ) && is_array( $soywd_sticky ) ) {
-		$soywd_q = new WP_Query(
+function wptpl_blog_featured_id(): int {
+	$wptpl_sticky = get_option( 'sticky_posts' );
+	if ( ! empty( $wptpl_sticky ) && is_array( $wptpl_sticky ) ) {
+		$wptpl_q = new WP_Query(
 			array(
-				'post__in'            => $soywd_sticky,
+				'post__in'            => $wptpl_sticky,
 				'posts_per_page'      => 1,
 				'orderby'             => 'date',
 				'order'               => 'DESC',
@@ -215,12 +215,12 @@ function soywd_blog_featured_id(): int {
 				'no_found_rows'       => true,
 			)
 		);
-		if ( ! empty( $soywd_q->posts ) ) {
-			return (int) $soywd_q->posts[0]->ID;
+		if ( ! empty( $wptpl_q->posts ) ) {
+			return (int) $wptpl_q->posts[0]->ID;
 		}
 	}
 
-	$soywd_recent = get_posts(
+	$wptpl_recent = get_posts(
 		array(
 			'posts_per_page' => 1,
 			'post_status'    => 'publish',
@@ -228,5 +228,5 @@ function soywd_blog_featured_id(): int {
 		)
 	);
 
-	return $soywd_recent ? (int) $soywd_recent[0]->ID : 0;
+	return $wptpl_recent ? (int) $wptpl_recent[0]->ID : 0;
 }

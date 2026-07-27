@@ -1,9 +1,9 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "soywd/post-grid",
+  "name": "wptpl/post-grid",
   "title": "Post grid",
-  "category": "soywd",
+  "category": "wptpl",
   "icon": "grid-view",
   "description": "A responsive grid of the most recent blog posts, rendered as brand cards. Fills itself as posts are published.",
   "keywords": [
@@ -13,7 +13,7 @@
     "recent"
   ],
   "version": "0.1.0",
-  "textdomain": "soywd",
+  "textdomain": "wptpl",
   "supports": {
     "html": false,
     "anchor": true,
