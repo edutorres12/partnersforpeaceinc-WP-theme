@@ -1,0 +1,7 @@
+.soywd-feature-card {
+	transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+.soywd-feature-card:hover {
+	transform: translateY(-2px);
+}

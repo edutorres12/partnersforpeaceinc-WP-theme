@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- two interlocking hearts / souls connecting -->
+  <path d="M22 22c-3-3-9-3-12 0s-3 9 0 12L22 46l12-12c3-3 3-9 0-12s-9-3-12 0z"/>
+  <path d="M42 22c-3-3-9-3-12 0s-3 9 0 12l12 12 12-12c3-3 3-9 0-12s-9-3-12 0z" opacity="0.7"/>
+  <!-- small star at center -->
+  <circle cx="32" cy="33" r="1.6" fill="currentColor" stroke="none"/>
+</svg>

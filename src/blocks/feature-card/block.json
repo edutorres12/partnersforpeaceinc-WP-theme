@@ -1,0 +1,86 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "soywd/feature-card",
+	"title": "Feature card",
+	"category": "soywd",
+	"icon": "id",
+	"description": "Versatile card: icon or image, eyebrow, title, description and optional CTA.",
+	"keywords": [ "card", "feature", "service", "guide" ],
+	"version": "0.2.0",
+	"textdomain": "soywd",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"className": true,
+		"customClassName": true,
+		"spacing": { "padding": true, "margin": true },
+		"color": { "background": true, "text": true }
+	},
+	"attributes": {
+		"icon": { "type": "string", "default": "" },
+		"eyebrow": { "type": "string", "default": "" },
+		"title": { "type": "string", "default": "Card title" },
+		"text": {
+			"type": "string",
+			"default": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+		},
+		"titleRight": { "type": "string", "default": "" },
+		"textRight": { "type": "string", "default": "" },
+		"imageUrl": { "type": "string", "default": "" },
+		"imageAlt": { "type": "string", "default": "" },
+		"showImage": { "type": "boolean", "default": true },
+		"tags": { "type": "array", "default": [] },
+		"ctaText": { "type": "string", "default": "" },
+		"ctaUrl": { "type": "string", "default": "" },
+		"ctaStyle": {
+			"type": "string",
+			"default": "button",
+			"enum": [ "button", "arrow" ]
+		},
+		"centered": { "type": "boolean", "default": false },
+		"layout": {
+			"type": "string",
+			"default": "vertical",
+			"enum": [ "vertical", "horizontal-header", "bilingual" ]
+		},
+		"bordered": { "type": "boolean", "default": true },
+		"transparent": { "type": "boolean", "default": false },
+		"halfWidthCentered": { "type": "boolean", "default": false },
+		"iconImageUrl": { "type": "string", "default": "" },
+		"imageOverlayColor": {
+			"type": "string",
+			"default": "",
+			"enum": [
+				"",
+				"primary",
+				"secondary",
+				"accent",
+				"base",
+				"cream-light",
+				"contrast",
+				"muted",
+				"surface",
+				"white"
+			]
+		},
+		"imageOverlayOpacity": {
+			"type": "number",
+			"default": 0.25,
+			"minimum": 0,
+			"maximum": 1
+		},
+		"backgroundImageUrl": { "type": "string", "default": "" },
+		"backgroundImageAlt": { "type": "string", "default": "" },
+		"titleColor": { "type": "string", "default": "" },
+		"headingLevel": {
+			"type": "number",
+			"default": 3,
+			"minimum": 2,
+			"maximum": 4
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

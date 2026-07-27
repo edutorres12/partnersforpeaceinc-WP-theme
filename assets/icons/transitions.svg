@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- winding path, river-like, representing a journey through transitions -->
+  <path d="M6 14c8 0 8 10 16 10s8-10 16-10 8 10 16 10"/>
+  <path d="M6 32c8 0 8 10 16 10s8-10 16-10 8 10 16 10"/>
+  <path d="M6 50c8 0 8 10 16 10s8-10 16-10"/>
+  <!-- small leaves / waypoints -->
+  <circle cx="22" cy="24" r="1.2" fill="currentColor" stroke="none"/>
+  <circle cx="38" cy="14" r="1.2" fill="currentColor" stroke="none"/>
+  <circle cx="22" cy="42" r="1.2" fill="currentColor" stroke="none"/>
+</svg>

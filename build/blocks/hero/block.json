@@ -1,0 +1,133 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "soywd/hero",
+  "title": "Hero",
+  "category": "soywd",
+  "icon": "cover-image",
+  "description": "Hero section with eyebrow, title, subtitle, primary + secondary CTA, and microcopy.",
+  "keywords": [
+    "hero",
+    "banner",
+    "intro"
+  ],
+  "version": "0.2.0",
+  "textdomain": "soywd",
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "className": true,
+    "customClassName": true,
+    "spacing": {
+      "padding": true,
+      "margin": [
+        "top",
+        "bottom"
+      ]
+    },
+    "color": {
+      "background": true,
+      "text": true,
+      "link": true
+    }
+  },
+  "attributes": {
+    "eyebrow": {
+      "type": "string",
+      "default": ""
+    },
+    "title": {
+      "type": "string",
+      "default": "Your headline here"
+    },
+    "subtitle": {
+      "type": "string",
+      "default": "Descriptive subtitle for the hero."
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "Primary CTA"
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": "#book"
+    },
+    "secondaryCtaText": {
+      "type": "string",
+      "default": ""
+    },
+    "secondaryCtaUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "microcopy": {
+      "type": "string",
+      "default": ""
+    },
+    "headingLevel": {
+      "type": "number",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 2
+    },
+    "layout": {
+      "type": "string",
+      "default": "split",
+      "enum": [
+        "split",
+        "centered"
+      ]
+    },
+    "alignment": {
+      "type": "string",
+      "default": "left",
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ]
+    },
+    "imageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "imageAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "backgroundImageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "backgroundImageAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "overlayOpacity": {
+      "type": "number",
+      "default": 0.5,
+      "minimum": 0,
+      "maximum": 1
+    },
+    "overlayColor": {
+      "type": "string",
+      "default": ""
+    },
+    "titleColor": {
+      "type": "string",
+      "default": ""
+    },
+    "subtitleColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

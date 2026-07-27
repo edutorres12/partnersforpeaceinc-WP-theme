@@ -1,0 +1,54 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "soywd/checklist",
+	"title": "Checklist",
+	"category": "soywd",
+	"icon": "yes-alt",
+	"description": "List of items with a ✓ icon. Covers both checklist and trust bar layouts.",
+	"keywords": [ "checklist", "list", "trust", "bullets" ],
+	"version": "0.1.0",
+	"textdomain": "soywd",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"className": true,
+		"spacing": { "padding": true, "margin": true },
+		"color": { "background": true, "text": true }
+	},
+	"attributes": {
+		"items": {
+			"type": "array",
+			"default": [
+				{ "text": "Item 1" },
+				{ "text": "Item 2" },
+				{ "text": "Item 3" }
+			]
+		},
+		"direction": {
+			"type": "string",
+			"default": "vertical",
+			"enum": [ "vertical", "horizontal" ]
+		},
+		"columns": {
+			"type": "number",
+			"default": 1,
+			"minimum": 1,
+			"maximum": 4
+		},
+		"theme": {
+			"type": "string",
+			"default": "light",
+			"enum": [ "light", "dark" ]
+		},
+		"iconStyle": {
+			"type": "string",
+			"default": "check",
+			"enum": [ "check", "plus", "dot", "none" ]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

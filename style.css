@@ -1,0 +1,15 @@
+/*
+Theme Name: Soy Web Development
+Theme URI: https://github.com/edutorres12/soy-web-development
+Author: Soy Web Development
+Description: Tema custom de WordPress con Tailwind CSS y bloques personalizados de Gutenberg. Editable desde el page editor sin tocar código.
+Version: 0.1.0
+Requires at least: 6.4
+Tested up to: 6.6
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: soywd
+*/
+
+/* El CSS del tema se compila desde src/tailwind.css a build/tailwind.css. */

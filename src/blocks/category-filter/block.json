@@ -1,0 +1,22 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "soywd/category-filter",
+	"title": "Category filter",
+	"category": "soywd",
+	"icon": "filter",
+	"description": "Pills for every post category (plus “All”). Clicking one filters the post grid on the same page — no reload.",
+	"keywords": [ "blog", "filter", "category", "pills" ],
+	"version": "0.1.0",
+	"textdomain": "soywd",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"className": true,
+		"spacing": { "margin": true, "padding": true }
+	},
+	"attributes": {},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

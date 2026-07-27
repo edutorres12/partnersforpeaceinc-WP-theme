@@ -1,0 +1,60 @@
+name: Deploy
+
+# Builds the theme from source on every push to main and force-pushes the
+# resulting tree (source + fresh build/) to the `deploy` branch. Hostinger
+# can then point its automatic git pull at `deploy` instead of `main`, so
+# editing files in src/ or PHP no longer requires running `npm run build`
+# locally before pushing.
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+concurrency:
+    group: deploy
+    cancel-in-progress: true
+
+jobs:
+    build-and-publish:
+        name: Build + publish to deploy branch
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  # Need the full history so the force-push to deploy can fast-forward
+                  # cleanly from main rather than create an orphan commit each run.
+                  fetch-depth: 0
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Install npm dependencies
+              run: npm ci
+
+            - name: Build assets
+              run: npm run build
+
+            - name: Publish to deploy branch
+              run: |
+                  git config user.name  "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                  # Stage the freshly built artifacts and amend them onto the current
+                  # main HEAD. We push HEAD to `deploy` with --force so it always
+                  # mirrors `main` plus the latest build/.
+                  git add -A build/
+                  if git diff --cached --quiet; then
+                    echo "build/ unchanged; pushing main HEAD to deploy."
+                  else
+                    git commit -m "ci: rebuild assets [skip ci]"
+                  fi
+                  git push --force origin HEAD:refs/heads/deploy

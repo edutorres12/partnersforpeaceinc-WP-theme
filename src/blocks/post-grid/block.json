@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "soywd/post-grid",
+	"title": "Post grid",
+	"category": "soywd",
+	"icon": "grid-view",
+	"description": "A responsive grid of the most recent blog posts, rendered as brand cards. Fills itself as posts are published.",
+	"keywords": [ "blog", "posts", "grid", "recent" ],
+	"version": "0.1.0",
+	"textdomain": "soywd",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"className": true,
+		"spacing": { "margin": true, "padding": true }
+	},
+	"attributes": {
+		"count": { "type": "number", "default": 0 }
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

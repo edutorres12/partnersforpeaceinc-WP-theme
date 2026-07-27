@@ -1,0 +1,62 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [main]
+    push:
+        branches: [main]
+
+permissions:
+    contents: read
+
+jobs:
+    lint-and-build:
+        name: Lint + build
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.0'
+                  tools: composer:v2
+                  coverage: none
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Install npm dependencies
+              run: npm ci
+
+            - name: Install Composer dependencies
+              run: composer install --no-interaction --prefer-dist --no-progress
+
+            - name: Lint PHP (PHPCS)
+              run: composer phpcs
+
+            - name: Lint JS
+              run: npm run lint:js
+
+            - name: Verify design tokens are aligned (theme.json ↔ tailwind.config)
+              run: npm run check:tokens
+
+            - name: Build assets
+              run: npm run build
+
+            - name: Verify build/ is up to date
+              # Catches the "forgot to commit build/ after editing src/" mistake
+              # while build/ is still committed to the repo. Once deploy moves to a
+              # build-on-deploy workflow (see build-deploy.yml) this check becomes
+              # informational and can be deleted along with build/ from main.
+              run: |
+                  if [ -n "$(git status --porcelain build/)" ]; then
+                    echo "::error::build/ is out of date — run 'npm run build' locally and commit the result."
+                    git diff --stat build/
+                    exit 1
+                  fi

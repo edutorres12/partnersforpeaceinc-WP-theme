@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #d8d8d8; color: #333; }
+
+  .wrap { max-width: 1760px; margin: 20px auto; display: flex; gap: 0; align-items: flex-start; }
+  .page { width: 1400px; background: #fff; border: 2px solid #888; flex-shrink: 0; }
+  .sidebar { width: 320px; position: relative; }
+
+  .row { border-top: 1px solid #ddd; padding: 40px; }
+  .row:first-child { border-top: none; }
+  .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
+  .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  .btn-o { display: inline-block; border: 1.5px solid #333; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  h1 { font-size: 44px; font-weight: 700; line-height: 1.2; }
+  h2 { font-size: 32px; font-weight: 700; }
+  h3 { font-size: 20px; font-weight: 700; }
+  .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
+  .txt { font-size: 16px; color: #999; line-height: 1.5; }
+  .circle { width: 40px; height: 40px; border: 1.5px solid #999; border-radius: 50%; }
+  .num { width: 40px; height: 40px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; }
+  .tag { display: inline-block; border: 1.5px solid #999; padding: 5px 14px; font-size: 14px; color: #666; border-radius: 20px; }
+
+  .n {
+    position: absolute;
+    left: 20px;
+    width: 290px;
+    background: #fef9e7;
+    border: 1px solid #f0e6a0;
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #8a7a2e;
+    line-height: 1.5;
+  }
+  .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="page">
+
+  <!-- 1. HEADER -->
+  <div class="row" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+    <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 44px; height: 44px; border: 1.5px solid #999;"></div><strong style="font-size: 18px;">Logo</strong></div>
+    <div style="display: flex; gap: 16px; align-items: center; font-size: 16px; color: #999;"><span>About</span><span>Services</span><span>Resources &#9662;</span><span>Blog</span><span>Fees</span><span>Contact</span><span style="border: 1px solid #ccc; padding: 4px 10px;">EN | FA</span><span class="btn" style="font-size: 15px; padding: 10px 22px;">Primary CTA</span></div>
+  </div>
+
+  <!-- 2. HERO -->
+  <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; padding: 0;">
+    <div style="padding: 64px 40px;">
+      <div class="sub">Niche + location identifier</div>
+      <h1 style="margin-top: 10px;">Warm, hopeful headline</h1>
+      <p class="txt" style="margin-top: 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <div style="display: flex; gap: 8px; margin-top: 14px;"><span class="btn">Primary CTA</span><span class="btn-o">Secondary CTA</span></div>
+      <p style="margin-top: 12px; font-size: 14px; color: #999;">Free 15-minute consultation &middot; No commitment &middot; Virtual sessions</p>
+    </div>
+    <div class="x" style="min-height: 440px; border-left: 1px solid #ddd;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Hero image</span></div>
+  </div>
+
+  <!-- 3. TRUST BAR -->
+  <div style="background: #333; color: #fff; display: flex; justify-content: center; gap: 28px; padding: 16px; font-size: 14px;"><span>✓ License info</span><span>✓ Years experience</span><span>✓ Specialization</span><span>✓ Languages</span></div>
+
+  <!-- 4. EMPATHY -->
+  <div class="row" style="background: #f7f7f7; text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="sub" style="margin-bottom: 6px;">Validating subheading</div>
+      <h2>Empathetic headline</h2>
+      <p class="txt" style="margin: 6px auto 20px; max-width: 900px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+        <div style="border: 1.5px solid #ccc; padding: 32px 20px; background: #fff;"><div class="circle" style="margin: 0 auto 10px;"></div><h3>Pain point 1</h3><p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod.</p></div>
+        <div style="border: 1.5px solid #ccc; padding: 32px 20px; background: #fff;"><div class="circle" style="margin: 0 auto 10px;"></div><h3>Pain point 2</h3><p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod.</p></div>
+        <div style="border: 1.5px solid #ccc; padding: 32px 20px; background: #fff;"><div class="circle" style="margin: 0 auto 10px;"></div><h3>Pain point 3</h3><p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SERVICES -->
+  <div class="row" style="text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="sub" style="margin-bottom: 6px;">Services intro</div>
+      <h2>Services headline</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 20px;">
+        <div style="border: 1.5px solid #ccc;"><div class="x" style="height: 160px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1;">Image</span></div><div style="padding: 14px; text-align: left;"><div class="sub">Category tag</div><h3 style="margin-top: 4px;">Service 1</h3><p class="txt" style="margin-top: 4px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p></div></div>
+        <div style="border: 1.5px solid #ccc;"><div class="x" style="height: 160px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1;">Image</span></div><div style="padding: 14px; text-align: left;"><div class="sub">Category tag</div><h3 style="margin-top: 4px;">Service 2</h3><p class="txt" style="margin-top: 4px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p></div></div>
+        <div style="border: 1.5px solid #ccc;"><div class="x" style="height: 160px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1;">Image</span></div><div style="padding: 14px; text-align: left;"><div class="sub">Category tag</div><h3 style="margin-top: 4px;">Service 3</h3><p class="txt" style="margin-top: 4px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. AREAS -->
+  <div class="row" style="background: #f7f7f7; text-align: center;">
+    <h2 style="margin-bottom: 16px;">Specialties headline</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 900px; margin: 0 auto;"><span class="tag">Specialty 1</span><span class="tag">Specialty 2</span><span class="tag">Specialty 3</span><span class="tag">Specialty 4</span><span class="tag">Specialty 5</span><span class="tag">Specialty 6</span><span class="tag">Specialty 7</span><span class="tag">Specialty 8</span><span class="tag">Specialty 9</span><span class="tag">Specialty 10</span><span class="tag">Specialty 11</span><span class="tag">Specialty 12</span><span class="tag">Specialty 13</span><span class="tag">Specialty 14</span></div>
+  </div>
+
+  <!-- 7. ABOUT -->
+  <div class="row">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr; gap: 24px;">
+      <div class="x" style="height: 360px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Photo</span></div>
+      <div>
+        <h2>Name + credentials</h2>
+        <p class="txt" style="margin-top: 8px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p class="txt" style="margin-top: 6px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p class="txt" style="margin-top: 6px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.</p>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0;"><span style="font-size: 13px; border: 1px solid #ccc; padding: 5px 14px; background: #f7f7f7;">✓ Credential</span><span style="font-size: 13px; border: 1px solid #ccc; padding: 5px 14px; background: #f7f7f7;">✓ Credential</span><span style="font-size: 13px; border: 1px solid #ccc; padding: 5px 14px; background: #f7f7f7;">✓ Credential</span><span style="font-size: 13px; border: 1px solid #ccc; padding: 5px 14px; background: #f7f7f7;">✓ Credential</span></div>
+        <span class="btn-o" style="font-size: 15px; padding: 10px 22px;">Secondary CTA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. STEPS -->
+  <div class="row" style="background: #f2f2f2; text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="sub" style="margin-bottom: 6px;">Reassuring subheading</div>
+      <h2>How to get started headline</h2>
+      <p class="txt" style="margin: 6px auto 20px;">Lorem ipsum dolor sit amet consectetur.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div><div class="num" style="margin: 0 auto 10px;">1</div><h3>Step 1</h3><p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p></div>
+        <div><div class="num" style="margin: 0 auto 10px;">2</div><h3>Step 2</h3><p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p></div>
+        <div><div class="num" style="margin: 0 auto 10px;">3</div><h3>Step 3</h3><p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p></div>
+      </div>
+      <span class="btn">Primary CTA</span>
+      <p style="margin-top: 12px; font-size: 14px; color: #999;">Free 15-minute consultation &middot; No commitment</p>
+    </div>
+  </div>
+
+  <!-- 9. FAQ -->
+  <div class="row" style="background: #f7f7f7; text-align: center;">
+    <h2 style="margin-bottom: 16px;">FAQ headline</h2>
+    <div style="max-width: 900px; margin: 0 auto; text-align: left;">
+      <div style="border-bottom: 1px solid #ddd; padding: 12px 0; display: flex; justify-content: space-between;"><span style="font-size: 18px; font-weight: 600;">Question about insurance</span><span style="color: #aaa; font-size: 24px;">+</span></div>
+      <div style="border-bottom: 1px solid #ddd; padding: 12px 0; display: flex; justify-content: space-between;"><span style="font-size: 18px; font-weight: 600;">Question about session format</span><span style="color: #aaa; font-size: 24px;">+</span></div>
+      <div style="border-bottom: 1px solid #ddd; padding: 12px 0; display: flex; justify-content: space-between;"><span style="font-size: 18px; font-weight: 600;">Question about the free consult</span><span style="color: #aaa; font-size: 24px;">+</span></div>
+      <div style="border-bottom: 1px solid #ddd; padding: 12px 0; display: flex; justify-content: space-between;"><span style="font-size: 18px; font-weight: 600;">Question about first session</span><span style="color: #aaa; font-size: 24px;">+</span></div>
+      <div style="padding: 12px 0; display: flex; justify-content: space-between;"><span style="font-size: 18px; font-weight: 600;">Question about pricing</span><span style="color: #aaa; font-size: 24px;">+</span></div>
+    </div>
+  </div>
+
+  <!-- 10. FREE GUIDES -->
+  <div class="row" style="text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="sub" style="margin-bottom: 6px;">Free resources</div>
+      <h2>Guides headline</h2>
+      <p class="txt" style="margin: 6px auto 20px; max-width: 700px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+        <div style="border: 1.5px solid #ccc; padding: 16px; text-align: left;">
+          <h3>Guide 1</h3>
+          <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur.</p>
+          <div style="margin-top: 10px;"><span class="btn">Get free guide</span></div>
+        </div>
+        <div style="border: 1.5px solid #ccc; padding: 16px; text-align: left;">
+          <h3>Guide 2</h3>
+          <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur.</p>
+          <div style="margin-top: 10px;"><span class="btn">Get free guide</span></div>
+        </div>
+        <div style="border: 1.5px solid #ccc; padding: 16px; text-align: left;">
+          <h3>Guide 3</h3>
+          <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur.</p>
+          <div style="margin-top: 10px;"><span class="btn">Get free guide</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. FINAL CTA -->
+  <div style="background: #333; color: #fff; text-align: center; padding: 64px 40px;">
+    <h2 style="color: #fff; font-size: 36px;">Emotional closing headline</h2>
+    <p class="txt" style="color: rgba(255,255,255,0.5); margin: 10px auto 20px; max-width: 600px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+    <span class="btn" style="background: #fff; color: #333;">Primary CTA</span>
+  </div>
+
+  <!-- 12. FOOTER -->
+  <div style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality · Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">⚠ Crisis disclaimer + hotline</div></div>
+      
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Links</div><div style="line-height: 2;">About<br>Services<br>Resources<br>Blog<br>Fees<br>Contact</div></div>
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Legal</div><div style="line-height: 2;">Privacy Policy<br>Terms of Service<br>Accessibility<br>Good Faith Estimate</div></div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">© 2026 Practice name</div>
+  </div>
+
+</div>
+
+<!-- SIDEBAR NOTES -->
+<div class="sidebar">
+  <div class="n" style="top: 0;"><b>1. Header</b>Primary CTA always visible. Language toggle for Farsi.</div>
+  <div class="n" style="top: 64px;"><b>2. Hero</b>Primary CTA = booking. Secondary CTA = explore content.</div>
+  <div class="n" style="top: 504px;"><b>3. Trust Bar</b>License, years of experience, specialization, languages.</div>
+  <div class="n" style="top: 552px;"><b>4. Empathy Cards</b>Visitor sees herself before seeing services.</div>
+  <div class="n" style="top: 852px;"><b>5. Service Cards</b>Therapy formats (individual, women's, couples).</div>
+  <div class="n" style="top: 1202px;"><b>6. Specialties</b>Clickable tags. Navigation to service landing pages.</div>
+  <div class="n" style="top: 1322px;"><b>7. About Preview</b>Short intro. Full story on About page.</div>
+  <div class="n" style="top: 1722px;"><b>8. How to Start</b>3 steps matching real intake flow.</div>
+  <div class="n" style="top: 2022px;"><b>9. FAQ</b>Answers doubts that stop people from reaching out.</div>
+  <div class="n" style="top: 2342px;"><b>10. Free Guides</b>Secondary goal: guide download for visitors not ready to book.</div>
+  <div class="n" style="top: 2592px;"><b>11. Final CTA</b>Different emotional angle than the hero.</div>
+  <div class="n" style="top: 2772px;"><b>12. Footer</b>License, crisis hotline, Good Faith Estimate.</div>
+</div>
+
+</div>
+</body>
+</html>
