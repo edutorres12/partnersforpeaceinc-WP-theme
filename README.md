@@ -1,0 +1,1 @@
+# partnersforpeaceinc-WP-theme
