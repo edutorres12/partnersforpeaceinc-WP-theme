@@ -383,6 +383,10 @@ It also refuses to seed unless the expected theme is the active one, which stops
 a misconfigured `THEME_DIR` from writing pages into whatever site the credentials
 happen to reach.
 
+Until the secrets exist the workflow skips cleanly and says which ones are
+missing, rather than failing — a red X on `main` for "not set up yet" teaches
+everyone to ignore the workflow, and then a real failure goes unread.
+
 ### One-time setup
 
 **Settings → Secrets and variables → Actions.**

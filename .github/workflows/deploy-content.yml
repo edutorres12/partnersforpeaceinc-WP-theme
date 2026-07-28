@@ -62,7 +62,42 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      # Until the secrets exist this workflow has nothing to do. Skipping
+      # cleanly beats failing: a red X on main for "not set up yet" trains
+      # everyone to ignore this workflow, and then a real failure goes unread.
+      - name: Is the host configured?
+        id: configured
+        env:
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          SSH_USER: ${{ secrets.HOSTINGER_USER }}
+          WP_PATH: ${{ vars.WP_PATH }}
+        run: |
+          set -euo pipefail
+          MISSING=""
+          [ -n "${SSH_KEY:-}" ]  || MISSING="$MISSING HOSTINGER_SSH_KEY"
+          [ -n "${HOST:-}" ]     || MISSING="$MISSING HOSTINGER_HOST"
+          [ -n "${SSH_USER:-}" ] || MISSING="$MISSING HOSTINGER_USER"
+          [ -n "${WP_PATH:-}" ]  || MISSING="$MISSING WP_PATH"
+
+          if [ -n "$MISSING" ]; then
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deployment is not configured yet — missing:$MISSING. Skipping."
+            {
+              echo "## Deployment skipped"
+              echo
+              echo "Not configured yet. Missing:"
+              echo
+              for M in $MISSING; do echo "- \`$M\`"; done
+              echo
+              echo "See **Deploying content from CI** in \`README.md\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Resolve mode
+        if: steps.configured.outputs.ok == 'true'
         id: mode
         env:
           EVENT: ${{ github.event_name }}
@@ -98,6 +133,7 @@ jobs:
           echo "Mode: $MODE"
 
       - name: Set up SSH
+        if: steps.configured.outputs.ok == 'true'
         env:
           SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           HOST: ${{ secrets.HOSTINGER_HOST }}
@@ -117,6 +153,7 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       - name: Update the theme
+        if: steps.configured.outputs.ok == 'true'
         env:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
@@ -138,6 +175,7 @@ jobs:
           REMOTE
 
       - name: Verify the right theme is active
+        if: steps.configured.outputs.ok == 'true'
         env:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
@@ -156,7 +194,7 @@ jobs:
           fi
 
       - name: Back up the database
-        if: steps.mode.outputs.writes == 'true'
+        if: steps.configured.outputs.ok == 'true' && steps.mode.outputs.writes == 'true'
         env:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
@@ -179,6 +217,7 @@ jobs:
           REMOTE
 
       - name: Run the seeder
+        if: steps.configured.outputs.ok == 'true'
         id: seed
         env:
           HOST: ${{ secrets.HOSTINGER_HOST }}
@@ -194,7 +233,7 @@ jobs:
             2>&1 | tee seed-output.txt
 
       - name: Summary
-        if: always()
+        if: always() && steps.configured.outputs.ok == 'true'
         env:
           MODE: ${{ steps.mode.outputs.mode }}
         run: |
