@@ -149,6 +149,7 @@ Rules:
 | Compiled blocks (registered from here) | `build/blocks/<slug>/` |
 | Image scripts | `scripts/gen-placeholders.mjs`, `scripts/optimize-images.mjs`, `scripts/check-tokens.mjs` |
 | WordPress seeder | `scripts/seed-wp.php` (runner) + `scripts/seed/{blocks,pages,posts}.php` |
+| Content deploy (SSH → host) | `.github/workflows/deploy-content.yml` |
 | Design wireframes | `docs/wireframes/` (NOT in repo root) |
 
 ## Common tasks
@@ -228,6 +229,9 @@ no `declare(strict_types=1)`, and any top-level variable the helpers read with
   tells the editor what to do ("Replace these cards with…").
 - ❌ Run the seeder with `apply` on a site you have not dry-run first. It is
   idempotent, but `force` replaces page content.
+- ❌ Make the deploy workflow write on `push`. A merge updates the theme and
+  dry-runs; only a manual dispatch may write, and `apply-force` must stay behind
+  its typed confirmation.
 - ❌ `git push --force` to `main`. `deploy` branch is force-pushed BY CI; manual force-pushes anywhere else need explicit user permission.
 - ❌ Run `git rebase --amend` or `git commit --amend` on commits that are already pushed unless the user explicitly asks.
 - ❌ Add WebP via raw `<img src="...webp">`. Use `wptpl_render_picture()` so the JPG fallback is preserved.

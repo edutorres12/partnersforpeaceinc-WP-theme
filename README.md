@@ -338,6 +338,59 @@ variables the helpers read via `global` must be assigned into `$GLOBALS`
 explicitly — a plain assignment is function-scoped there, and the symptom is a
 run that reports "0 action(s) planned".
 
+## Deploying content from CI
+
+`.github/workflows/deploy-content.yml` updates the theme on the WordPress host
+over SSH and runs the seeder there, so a content change is: edit
+`scripts/seed/pages.php` → PR → merge → run the workflow.
+
+**A merge can never rewrite site content.** A push to `main` updates the theme and
+runs the seeder in **dry-run** only; the plan lands in the job summary and
+nothing touches the database. Writing requires opening the Actions tab and
+running the workflow manually with `mode: apply`. `apply-force` — which replaces
+the content of every seeded page and discards edits made in the WordPress editor
+— additionally requires typing `FORCE` into the confirm field.
+
+Before any write the workflow exports the database to `~/wptpl-backups/` on the
+server (gzipped, ten most recent kept). Backups live in the home directory, not
+under `public_html`, so they are not downloadable from the web.
+
+It also refuses to seed unless the expected theme is the active one, which stops
+a misconfigured `THEME_DIR` from writing pages into whatever site the credentials
+happen to reach.
+
+### One-time setup
+
+**Settings → Secrets and variables → Actions.**
+
+Generate a key dedicated to deployment rather than reusing a personal one:
+
+```bash
+ssh-keygen -t ed25519 -f deploy_key -N ""
+```
+
+Paste `deploy_key.pub` into hPanel → Advanced → SSH Access → Add key, and
+`deploy_key` (the private half, whole file including the BEGIN/END lines) into
+the secret below.
+
+| Secret | Value |
+|---|---|
+| `HOSTINGER_SSH_KEY` | contents of `deploy_key` |
+| `HOSTINGER_HOST` | e.g. `123.45.67.89` |
+| `HOSTINGER_USER` | e.g. `u123456789` |
+
+| Variable | Value |
+|---|---|
+| `HOSTINGER_PORT` | `65002` (Hostinger's SSH port; the default if unset) |
+| `WP_PATH` | absolute path to the WordPress root |
+| `THEME_DIR` | theme path relative to `WP_PATH` (default `wp-content/themes/partnersforpeace`) |
+
+Host and user are secrets so they stay out of the logs; the paths are plain
+variables so a failure is actually debuggable.
+
+Note that a Hostinger SSH key grants access to the whole hosting account, not a
+single site. Keep unrelated client sites on a different account.
+
 ## Conventions
 
 - CSS/PHP prefix: `wptpl-` / `wptpl_`.

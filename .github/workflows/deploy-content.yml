@@ -1,0 +1,215 @@
+# Deploys the theme to the WordPress host over SSH and runs the seeder.
+#
+# On a push to main it only ever DRY-RUNS the seeder: the theme is updated and
+# the plan is printed to the job summary, but nothing is written to the database.
+# Writing requires a manual run from the Actions tab, so a merge can never
+# rewrite site content on its own.
+#
+# Setup (once) — Settings → Secrets and variables → Actions:
+#
+#   Secrets                    Value
+#   HOSTINGER_SSH_KEY          the PRIVATE key, whole file including the
+#                              BEGIN/END lines. Generate a dedicated one:
+#                                ssh-keygen -t ed25519 -f deploy_key -N ""
+#                              and paste deploy_key.pub into
+#                              hPanel → Advanced → SSH Access → Add key.
+#   HOSTINGER_HOST             e.g. 123.45.67.89 or xxxxx.hostinger.com
+#   HOSTINGER_USER             e.g. u123456789
+#
+#   Variables                  Value
+#   HOSTINGER_PORT             65002 (Hostinger's SSH port; default if unset)
+#   WP_PATH                    absolute path to the WordPress root, e.g.
+#                              /home/u123456789/domains/example.com/public_html
+#   THEME_DIR                  path to the theme, relative to WP_PATH. Default:
+#                              wp-content/themes/partnersforpeace
+#
+# Host/user are secrets so they stay out of logs; the paths are variables so
+# failures are actually debuggable.
+
+name: Deploy content
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: What to run on the server
+        type: choice
+        default: dry-run
+        options:
+          - dry-run
+          - apply
+          - apply-force
+      confirm:
+        description: Type FORCE to allow apply-force. Ignored for the other modes.
+        type: string
+        default: ''
+
+# One deploy at a time. Queue rather than cancel — killing a run mid-seed would
+# leave the database half-written.
+concurrency:
+  group: deploy-content
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy + seed
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Resolve mode
+        id: mode
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_MODE: ${{ inputs.mode }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          set -euo pipefail
+          # A push to main never writes. Only a manual dispatch can.
+          if [ "$EVENT" != "workflow_dispatch" ]; then
+            MODE="dry-run"
+          else
+            MODE="${INPUT_MODE:-dry-run}"
+          fi
+
+          if [ "$MODE" = "apply-force" ] && [ "$CONFIRM" != "FORCE" ]; then
+            echo "::error::apply-force replaces the content of every seeded page and discards edits made in the WordPress editor. Re-run and type FORCE in the confirm field to proceed."
+            exit 1
+          fi
+
+          case "$MODE" in
+            dry-run)     SEED_ARGS="" ;;
+            apply)       SEED_ARGS="apply" ;;
+            apply-force) SEED_ARGS="apply force" ;;
+            *) echo "::error::unknown mode '$MODE'"; exit 1 ;;
+          esac
+
+          {
+            echo "mode=$MODE"
+            echo "seed_args=$SEED_ARGS"
+            echo "writes=$( [ -z "$SEED_ARGS" ] && echo false || echo true )"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Mode: $MODE"
+
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SSH_KEY:-}" ] || [ -z "${HOST:-}" ]; then
+            echo "::error::HOSTINGER_SSH_KEY and HOSTINGER_HOST must be set in the repository secrets."
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          # Trust on first use. Hostinger does not publish host key fingerprints,
+          # and the alternative — no host key check at all — is worse.
+          ssh-keyscan -p "$PORT" -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Update the theme
+        env:
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
+          WP_PATH: ${{ vars.WP_PATH }}
+          THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WP_PATH:-}" ]; then
+            echo "::error::The WP_PATH repository variable is not set."
+            exit 1
+          fi
+          ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" bash -s <<REMOTE
+          set -euo pipefail
+          cd "$WP_PATH/$THEME_DIR"
+          git fetch --quiet origin
+          git reset --hard --quiet origin/main
+          echo "Theme now at: \$(git log --oneline -1)"
+          REMOTE
+
+      - name: Verify the right theme is active
+        env:
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
+          WP_PATH: ${{ vars.WP_PATH }}
+          THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
+        run: |
+          set -euo pipefail
+          EXPECTED="$(basename "$THEME_DIR")"
+          ACTIVE="$(ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" \
+            "cd '$WP_PATH' && wp theme list --status=active --field=name" | tr -d '\r')"
+          echo "Active theme: $ACTIVE (expected: $EXPECTED)"
+          if [ "$ACTIVE" != "$EXPECTED" ]; then
+            echo "::error::'$EXPECTED' is not the active theme — activate it in Appearance → Themes before seeding."
+            exit 1
+          fi
+
+      - name: Back up the database
+        if: steps.mode.outputs.writes == 'true'
+        env:
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
+          WP_PATH: ${{ vars.WP_PATH }}
+        run: |
+          set -euo pipefail
+          # Backups go to the home directory, never inside public_html — a .sql
+          # dump under the web root is downloadable by anyone who guesses the name.
+          ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" bash -s <<REMOTE
+          set -euo pipefail
+          mkdir -p ~/wptpl-backups
+          cd "$WP_PATH"
+          FILE=~/wptpl-backups/pre-seed-\$(date -u +%Y%m%d-%H%M%S).sql
+          wp db export "\$FILE" --quiet
+          gzip -f "\$FILE"
+          echo "Backup: \$FILE.gz"
+          # Keep the ten most recent.
+          ls -1t ~/wptpl-backups/*.sql.gz 2>/dev/null | tail -n +11 | xargs -r rm --
+          REMOTE
+
+      - name: Run the seeder
+        id: seed
+        env:
+          HOST: ${{ secrets.HOSTINGER_HOST }}
+          USER: ${{ secrets.HOSTINGER_USER }}
+          PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
+          WP_PATH: ${{ vars.WP_PATH }}
+          THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
+          SEED_ARGS: ${{ steps.mode.outputs.seed_args }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" \
+            "cd '$WP_PATH' && wp eval-file '$THEME_DIR/scripts/seed-wp.php' $SEED_ARGS" \
+            2>&1 | tee seed-output.txt
+
+      - name: Summary
+        if: always()
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+        run: |
+          {
+            echo "## Seeder — \`$MODE\`"
+            echo
+            if [ "$MODE" = "dry-run" ]; then
+              echo "Nothing was written. To apply, run this workflow manually from the Actions tab and pick \`apply\`."
+            fi
+            echo
+            echo '```'
+            cat seed-output.txt 2>/dev/null || echo "(no output — the run failed before the seeder)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Clean up the key
+        if: always()
+        run: rm -f ~/.ssh/id_deploy
