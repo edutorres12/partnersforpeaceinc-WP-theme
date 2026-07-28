@@ -338,6 +338,30 @@ variables the helpers read via `global` must be assigned into `$GLOBALS`
 explicitly — a plain assignment is function-scoped there, and the symptom is a
 run that reports "0 action(s) planned".
 
+## Verifying content changes
+
+`.github/workflows/preview-seed.yml` runs on every PR that touches the seeder,
+the blocks or the templates. It installs a throwaway SQLite-backed WordPress
+inside the runner, activates the theme, and puts the seeder through its paces:
+
+- dry run, then `apply`
+- a second `apply`, which must create nothing — a failure here means the seeder
+  would duplicate content on re-run
+- structural checks: 20 pages, the seven services nested under `/services/`,
+  three menus assigned, front page set
+- renders all 17 public URLs and fails on any non-200 or any PHP
+  notice/warning/fatal in the output
+
+The plan, the counts and the render table land in the job summary, with the raw
+logs as artifacts.
+
+**It deliberately does not run against the staging site.** The check needs to
+`apply` — and sometimes `apply force` — destructively on every PR, which would
+eat any copy written in the WordPress editor. That is harmless while staging is
+empty and gets progressively worse as it fills up. Concurrent PRs would also
+stomp each other on a shared server. Staging is where a human looks at the real
+thing; the runner is where the machine proves nothing is broken.
+
 ## Deploying content from CI
 
 `.github/workflows/deploy-content.yml` updates the theme on the WordPress host

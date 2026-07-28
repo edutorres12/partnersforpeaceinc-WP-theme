@@ -150,6 +150,7 @@ Rules:
 | Image scripts | `scripts/gen-placeholders.mjs`, `scripts/optimize-images.mjs`, `scripts/check-tokens.mjs` |
 | WordPress seeder | `scripts/seed-wp.php` (runner) + `scripts/seed/{blocks,pages,posts}.php` |
 | Content deploy (SSH → host) | `.github/workflows/deploy-content.yml` |
+| Seeder verification (throwaway WP in CI) | `.github/workflows/preview-seed.yml` |
 | Design wireframes | `docs/wireframes/` (NOT in repo root) |
 
 ## Common tasks
@@ -229,6 +230,8 @@ no `declare(strict_types=1)`, and any top-level variable the helpers read with
   tells the editor what to do ("Replace these cards with…").
 - ❌ Run the seeder with `apply` on a site you have not dry-run first. It is
   idempotent, but `force` replaces page content.
+- ❌ Point the PR preview at the staging site. It applies destructively on every
+  run; staging is where a human reviews, not where CI writes.
 - ❌ Make the deploy workflow write on `push`. A merge updates the theme and
   dry-runs; only a manual dispatch may write, and `apply-force` must stay behind
   its typed confirmation.
