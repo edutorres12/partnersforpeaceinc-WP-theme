@@ -145,10 +145,20 @@ jobs:
           set -euo pipefail
           cd wp
           wp server --host=127.0.0.1 --port=8080 --docroot="$PWD" > "$GITHUB_WORKSPACE/server.log" 2>&1 &
-          for i in $(seq 1 30); do
-            curl -sf -o /dev/null http://127.0.0.1:8080/ && break
+
+          # `if` keeps a failed probe from tripping `set -e` — a bare
+          # `curl … && break` exits the step on the first attempt instead of
+          # retrying, which is not what a wait loop is for.
+          READY=0
+          for _ in $(seq 1 45); do
+            if curl -sfL -o /dev/null http://127.0.0.1:8080/; then READY=1; break; fi
             sleep 1
           done
+          if [ "$READY" -ne 1 ]; then
+            echo "::error::the dev server never came up"
+            cat "$GITHUB_WORKSPACE/server.log" || true
+            exit 1
+          fi
 
           FAIL=0
           : > "$GITHUB_WORKSPACE/render.txt"
@@ -159,9 +169,12 @@ jobs:
           for P in $PATHS; do
             BODY="$(curl -sL "http://127.0.0.1:8080$P")"
             CODE="$(curl -sL -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$P")"
+            # `|| true`: grep exits 1 when it finds nothing, which here is the
+            # success case. Without it, pipefail + set -e kill the step on the
+            # first page that renders cleanly.
             ERR="$(printf '%s' "$BODY" \
               | grep -ioE 'Fatal error|Parse error|Warning:|Notice: |Deprecated:|critical error' \
-              | sort -u | tr '\n' ' ')"
+              | sort -u | tr '\n' ' ' || true)"
             BYTES="$(printf '%s' "$BODY" | wc -c)"
             STATUS="ok"
             if [ "$CODE" != "200" ] || [ -n "$ERR" ]; then STATUS="FAIL ${ERR:-http $CODE}"; FAIL=1; fi
