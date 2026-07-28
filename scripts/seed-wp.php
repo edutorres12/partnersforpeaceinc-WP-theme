@@ -7,7 +7,8 @@
  *
  *   wp eval-file scripts/seed-wp.php               # dry run — prints the plan, writes nothing
  *   wp eval-file scripts/seed-wp.php apply         # actually write
- *   wp eval-file scripts/seed-wp.php apply force
+ *   wp eval-file scripts/seed-wp.php apply force   # also replace seeded page content
+ *   wp eval-file scripts/seed-wp.php apply prune   # also trash retired pages
  *
  * The flags are bare words, not `--apply`. WP-CLI parses anything starting with
  * `--` as one of its own options and errors out with "unknown --apply
@@ -19,7 +20,10 @@
  * that already exists is left alone. `force` additionally overwrites the
  * content of pages the seeder owns — use it to re-apply the template after
  * editing the block markup, and expect it to discard manual edits to those
- * pages.
+ * pages. `prune` trashes pages the template used to own and no longer does.
+ *
+ * Both only ever touch pages carrying the `_wptpl_seeded` mark, so a page a
+ * site created by hand is never overwritten or trashed.
  *
  * The copy is deliberately generic (lorem ipsum, "Primary CTA", "Service One").
  * This mirrors the unstyled state of the theme: the structure is final, the
@@ -45,13 +49,14 @@ if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
 $wptpl_argv = isset( $args ) && is_array( $args ) ? $args : array();
 
 /*
- * These three go into $GLOBALS explicitly. `wp eval-file` evaluates this script
+ * These go into $GLOBALS explicitly. `wp eval-file` evaluates this script
  * inside a method, so a plain top-level assignment would be function-scoped and
  * the `global` statements in the helpers below would silently read a different,
  * empty variable — the symptom is a run that reports "0 action(s) planned".
  */
 $GLOBALS['wptpl_apply'] = (bool) array_intersect( array( 'apply', '--apply' ), $wptpl_argv );
 $GLOBALS['wptpl_force'] = (bool) array_intersect( array( 'force', '--force' ), $wptpl_argv );
+$GLOBALS['wptpl_prune'] = (bool) array_intersect( array( 'prune', '--prune' ), $wptpl_argv );
 $GLOBALS['wptpl_plan']  = array();
 
 /*
@@ -64,6 +69,16 @@ $GLOBALS['wptpl_fake_id'] = 900000;
 
 $wptpl_apply = $GLOBALS['wptpl_apply'];
 $wptpl_force = $GLOBALS['wptpl_force'];
+$wptpl_prune = $GLOBALS['wptpl_prune'];
+
+/**
+ * Meta key marking a page as one the seeder created.
+ *
+ * This is what makes `force` and `prune` safe: they only ever touch pages
+ * carrying this mark, so anything a site added by hand is invisible to them.
+ * Pages seeded before the mark existed are adopted on the next run.
+ */
+const WPTPL_SEEDED_META = '_wptpl_seeded';
 
 /**
  * Record an action. In apply mode it also runs; in dry-run mode it only logs.
@@ -118,6 +133,15 @@ function wptpl_seed_page( array $page ): int {
 	if ( $existing instanceof WP_Post ) {
 		if ( ! $wptpl_force ) {
 			wptpl_seed_do( 'skip', sprintf( 'page "%s" (%s) already exists', $page['title'], $slug ) );
+			/*
+			 * Adopt it. Seeding a slug is the template asserting ownership of it,
+			 * so mark the page even when we leave its content alone — otherwise
+			 * pages seeded before the mark existed stay invisible to `force` and
+			 * `prune` forever.
+			 */
+			if ( $GLOBALS['wptpl_apply'] ) {
+				update_post_meta( $existing->ID, WPTPL_SEEDED_META, '1' );
+			}
 			return (int) $existing->ID;
 		}
 		$postarr['ID'] = $existing->ID;
@@ -126,6 +150,7 @@ function wptpl_seed_page( array $page ): int {
 			sprintf( 'page "%s" (%s) — content replaced', $page['title'], $slug ),
 			static function () use ( $postarr ) {
 				wp_update_post( $postarr );
+				update_post_meta( $postarr['ID'], WPTPL_SEEDED_META, '1' );
 			}
 		);
 		return (int) $existing->ID;
@@ -135,7 +160,11 @@ function wptpl_seed_page( array $page ): int {
 		'create',
 		sprintf( 'page "%s" (%s)', $page['title'], $slug ),
 		static function () use ( $postarr ) {
-			return wp_insert_post( $postarr, true );
+			$new = wp_insert_post( $postarr, true );
+			if ( ! is_wp_error( $new ) ) {
+				update_post_meta( (int) $new, WPTPL_SEEDED_META, '1' );
+			}
+			return $new;
 		}
 	);
 
@@ -218,18 +247,22 @@ function wptpl_seed_menu( string $name, string $location, array $items ): void {
 					if ( ! empty( $item['parent'] ) && isset( $by_key[ $item['parent'] ] ) ) {
 						$parent_id = $by_key[ $item['parent'] ];
 					}
-					$item_id = wp_update_nav_menu_item(
-						$menu_id,
-						0,
-						array(
-							'menu-item-title'     => $item['title'],
-							'menu-item-object'    => 'page',
-							'menu-item-object-id' => (int) $item['page_id'],
-							'menu-item-type'      => 'post_type',
-							'menu-item-status'    => 'publish',
-							'menu-item-parent-id' => $parent_id,
-						)
+					$args = array(
+						'menu-item-title'     => $item['title'],
+						'menu-item-status'    => 'publish',
+						'menu-item-parent-id' => $parent_id,
+						'menu-item-classes'   => isset( $item['classes'] ) ? $item['classes'] : '',
 					);
+					if ( ! empty( $item['url'] ) ) {
+						// An off-site link, not a page.
+						$args['menu-item-type'] = 'custom';
+						$args['menu-item-url']  = $item['url'];
+					} else {
+						$args['menu-item-type']      = 'post_type';
+						$args['menu-item-object']    = 'page';
+						$args['menu-item-object-id'] = (int) $item['page_id'];
+					}
+					$item_id = wp_update_nav_menu_item( $menu_id, 0, $args );
 					if ( ! is_wp_error( $item_id ) && isset( $item['key'] ) ) {
 						$by_key[ $item['key'] ] = (int) $item_id;
 					}
@@ -264,6 +297,38 @@ function wptpl_seed_menu( string $name, string $location, array $items ): void {
 	);
 }
 
+/**
+ * Trash pages the template used to own and no longer does.
+ *
+ * Trash, never delete — a restructure should be reversible from wp-admin. Only
+ * pages carrying WPTPL_SEEDED_META are eligible, so a page a site created by
+ * hand at one of these slugs is reported and left alone.
+ *
+ * @param array<int, string> $slugs Retired slugs.
+ */
+function wptpl_seed_prune( array $slugs ): void {
+	foreach ( $slugs as $slug ) {
+		$page = get_page_by_path( $slug );
+		if ( ! $page instanceof WP_Post || 'trash' === $page->post_status ) {
+			continue;
+		}
+		if ( '1' !== get_post_meta( $page->ID, WPTPL_SEEDED_META, true ) ) {
+			wptpl_seed_do(
+				'skip',
+				sprintf( 'page "%s" (%s) is retired but was not seeded by this template — leaving it alone', $page->post_title, $slug )
+			);
+			continue;
+		}
+		wptpl_seed_do(
+			'update',
+			sprintf( 'trash retired page "%s" (%s)', $page->post_title, $slug ),
+			static function () use ( $page ) {
+				wp_trash_post( $page->ID );
+			}
+		);
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
@@ -275,6 +340,9 @@ WP_CLI::log( $wptpl_apply ? '== Seeding WordPress (APPLY) ==' : '== Seeding Word
 if ( $wptpl_apply && $wptpl_force ) {
 	WP_CLI::log( '   force: existing seeded pages will have their content replaced.' );
 }
+if ( $wptpl_prune ) {
+	WP_CLI::log( '   prune: pages the template no longer owns will be moved to the trash.' );
+}
 WP_CLI::log( '' );
 
 require $wptpl_seed_dir . '/blocks.php';
@@ -283,11 +351,14 @@ require $wptpl_seed_dir . '/posts.php';
 
 WP_CLI::log( 'Pages' );
 $wptpl_page_ids = wptpl_seed_all_pages();
+if ( $wptpl_prune ) {
+	wptpl_seed_prune( wptpl_seed_retired_slugs() );
+}
 
 WP_CLI::log( '' );
 WP_CLI::log( 'Settings' );
-wptpl_seed_option( 'blogname', 'Practice Name' );
-wptpl_seed_option( 'blogdescription', 'Lorem ipsum dolor sit amet' );
+wptpl_seed_option( 'blogname', 'Partners for Peace' );
+wptpl_seed_option( 'blogdescription', 'Faith-based counseling and mental health resources' );
 wptpl_seed_option( 'show_on_front', 'page' );
 if ( ! empty( $wptpl_page_ids['home'] ) ) {
 	wptpl_seed_option( 'page_on_front', (string) $wptpl_page_ids['home'] );
@@ -303,14 +374,14 @@ wptpl_seed_option( 'posts_per_page', '9' );
 
 WP_CLI::log( '' );
 WP_CLI::log( 'Customizer' );
-wptpl_seed_theme_mod( 'wptpl_primary_cta_text', 'Primary CTA' );
+wptpl_seed_theme_mod( 'wptpl_primary_cta_text', 'Request a Consultation' );
 wptpl_seed_theme_mod( 'wptpl_primary_cta_url', '/contact/' );
-wptpl_seed_theme_mod( 'wptpl_practice_name', 'Practice Name' );
+wptpl_seed_theme_mod( 'wptpl_practice_name', 'Partners for Peace' );
 wptpl_seed_theme_mod( 'wptpl_practitioner', 'Practitioner Name' );
-wptpl_seed_theme_mod( 'wptpl_license', 'License #000000' );
+wptpl_seed_theme_mod( 'wptpl_license', '' );
 wptpl_seed_theme_mod( 'wptpl_hours', "Monday – Friday\n9:00 – 17:00" );
-wptpl_seed_theme_mod( 'wptpl_modality', 'Lorem, Ipsum, Dolor' );
-wptpl_seed_theme_mod( 'wptpl_languages', 'Sessions in English' );
+wptpl_seed_theme_mod( 'wptpl_modality', '' );
+wptpl_seed_theme_mod( 'wptpl_languages', '' );
 wptpl_seed_theme_mod( 'wptpl_alert_text', '' );
 
 WP_CLI::log( '' );

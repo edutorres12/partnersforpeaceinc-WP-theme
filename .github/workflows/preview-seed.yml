@@ -162,10 +162,10 @@ jobs:
 
           FAIL=0
           : > "$GITHUB_WORKSPACE/render.txt"
-          PATHS="/ /about/ /services/ /services/service-one/ /services/service-two/
-                 /resources/ /blog/ /fees/ /contact/ /crisis-resources/
-                 /guide-landing/ /guide-thank-you/ /privacy/ /terms/ /accessibility/
-                 /featured-post/ /sample-post-one/"
+          PATHS="/ /about-us/ /meet-our-therapists/ /services/
+                 /services/service-one/ /services/service-two/
+                 /blog/ /contact/ /church-partnerships/ /payment/ /donate/
+                 /ai-information/ /featured-post/ /sample-post-one/"
           for P in $PATHS; do
             BODY="$(curl -sL "http://127.0.0.1:8080$P")"
             CODE="$(curl -sL -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$P")"

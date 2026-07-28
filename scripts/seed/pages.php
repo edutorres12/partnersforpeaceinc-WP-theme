@@ -12,8 +12,12 @@
 declare( strict_types = 1 );
 
 /**
- * The seven service subpages. Generic on purpose — the template ships slots,
- * not a service catalogue.
+ * The service subpages.
+ *
+ * Deliberately still generic: the site's sitemap groups services by theme rather
+ * than by therapist, but which groupings survive is an open question on their
+ * side. Renaming these encodes a decision nobody has made — the slots stay
+ * numbered until the real list lands, and then it is one edit here.
  *
  * @return array<int, array{slug: string, title: string}>
  */
@@ -47,6 +51,31 @@ function wptpl_seed_services(): array {
 			'slug'  => 'service-seven',
 			'title' => 'Service Seven',
 		),
+	);
+}
+
+/**
+ * Slugs the template used to own and no longer does.
+ *
+ * `wptpl_seed_prune()` moves these to the trash — never deletes them — so a
+ * restructure does not leave orphans behind. Anything a site added on its own is
+ * untouched: only pages carrying the `_wptpl_seeded` meta are eligible.
+ *
+ * @return array<int, string>
+ */
+function wptpl_seed_retired_slugs(): array {
+	return array(
+		// Sections the sitemap does not include.
+		'resources',
+		'fees',
+		'crisis-resources',
+		'guide-landing',
+		'guide-thank-you',
+		// Compliance pages are held back until the board signs off on their copy
+		// (licensure, HIPAA, Good Faith Estimate, 911/988 disclosures).
+		'privacy',
+		'terms',
+		'accessibility',
 	);
 }
 
@@ -842,122 +871,6 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 }
 
 // ---------------------------------------------------------------------------
-// Fees
-// ---------------------------------------------------------------------------
-
-/**
- * Fees: hero, private-pay intro, payment methods, insurance, superbill,
- * sliding scale, Good Faith Estimate notice, closing CTA.
- */
-function wptpl_seed_page_fees(): string {
-	$text_section = static function ( string $headline, string $eyebrow = '' ) {
-		return wptpl_section(
-			array(
-				wptpl_block(
-					'section-header',
-					array(
-						'eyebrow'   => $eyebrow,
-						'headline'  => $headline,
-						'intro'     => wptpl_lorem( 'long' ),
-						'alignment' => 'left',
-					)
-				),
-			),
-			'',
-			'container-narrow'
-		);
-	};
-
-	return implode(
-		"\n\n",
-		array(
-			wptpl_block(
-				'hero',
-				array(
-					'eyebrow'   => 'Fees',
-					'title'     => 'Fees headline',
-					'subtitle'  => wptpl_lorem( 'medium' ),
-					'layout'    => 'centered',
-					'alignment' => 'center',
-					'ctaText'   => 'Primary CTA',
-					'ctaUrl'    => '/contact/',
-				)
-			),
-
-			$text_section( 'Session rates' ),
-
-			// Payment methods beside an image.
-			wptpl_section(
-				array(
-					wptpl_columns(
-						array(
-							array( wptpl_image( 'service-card' ) ),
-							array(
-								wptpl_heading( 'Payment methods', 2 ),
-								wptpl_block(
-									'checklist',
-									array(
-										'items' => array(
-											array( 'text' => 'Payment method one' ),
-											array( 'text' => 'Payment method two' ),
-											array( 'text' => 'Payment method three' ),
-										),
-									)
-								),
-							),
-						),
-						array( '40%', '60%' )
-					),
-				),
-				'surface'
-			),
-
-			// Insurance beside an image.
-			wptpl_section(
-				array(
-					wptpl_columns(
-						array(
-							array( wptpl_image( 'guide-card' ) ),
-							array(
-								wptpl_heading( 'Insurance', 2 ),
-								wptpl_paragraph( wptpl_lorem( 'long' ) ),
-							),
-						),
-						array( '40%', '60%' )
-					),
-				)
-			),
-
-			$text_section( 'Superbills' ),
-			$text_section( 'Sliding scale' ),
-
-			// Good Faith Estimate notice.
-			wptpl_section(
-				array(
-					wptpl_heading( 'Good Faith Estimate', 3 ),
-					wptpl_paragraph( wptpl_lorem( 'medium' ) . ' <a href="/terms/">Read more</a>.' ),
-				),
-				'surface',
-				'container-narrow'
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline'         => 'The first conversation is free',
-					'text'             => wptpl_lorem( 'short' ),
-					'ctaText'          => 'Primary CTA',
-					'ctaUrl'           => '/contact/',
-					'secondaryCtaText' => 'Secondary CTA',
-					'secondaryCtaUrl'  => '/services/',
-					'theme'            => 'dark',
-				)
-			),
-		)
-	);
-}
-
-// ---------------------------------------------------------------------------
 // Contact
 // ---------------------------------------------------------------------------
 
@@ -1042,390 +955,6 @@ function wptpl_seed_page_contact(): string {
 					'text'     => wptpl_lorem( 'short' ),
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '#book',
-					'theme'    => 'dark',
-				)
-			),
-		)
-	);
-}
-
-// ---------------------------------------------------------------------------
-// Crisis resources
-// ---------------------------------------------------------------------------
-
-/**
- * Crisis resources: intro, three emergency cards, non-emergency support, note.
- *
- * Numbers and service names are placeholders — a live site must replace them
- * with the real hotlines for its region before publishing.
- */
-function wptpl_seed_page_crisis(): string {
-	$card = static function ( string $title ) {
-		return wptpl_block(
-			'feature-card',
-			array(
-				'title'    => $title,
-				'text'     => wptpl_lorem( 'short' ),
-				'centered' => true,
-			)
-		);
-	};
-
-	return implode(
-		"\n\n",
-		array(
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'eyebrow'      => 'Crisis resources',
-							'headline'     => 'If you are in crisis',
-							'intro'        => wptpl_lorem( 'medium' ),
-							'headingLevel' => 1,
-						)
-					),
-				),
-				'',
-				'container-narrow'
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array( 'headline' => 'Immediate help' )
-					),
-					wptpl_columns(
-						array(
-							array( $card( 'Resource one' ) ),
-							array( $card( 'Resource two' ) ),
-							array( $card( 'Resource three' ) ),
-						)
-					),
-					wptpl_paragraph( '<em>Replace these cards with the real emergency numbers for your region before publishing.</em>', '', 'center' ),
-				),
-				'surface'
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'Non-emergency support',
-							'intro'    => wptpl_lorem( 'medium' ),
-						)
-					),
-				),
-				'',
-				'container-narrow'
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'A note on this practice',
-							'intro'    => wptpl_lorem( 'medium' ),
-						)
-					),
-				),
-				'surface',
-				'container-narrow'
-			),
-		)
-	);
-}
-
-// ---------------------------------------------------------------------------
-// Resources + guide funnel
-// ---------------------------------------------------------------------------
-
-/**
- * Resources hub: hero, downloadable guide cards, blog pointer, crisis pointer, CTA.
- */
-function wptpl_seed_page_resources(): string {
-	$guide = static function ( int $n ) {
-		return wptpl_block(
-			'feature-card',
-			array(
-				'title'     => 'Guide ' . $n,
-				'text'      => wptpl_lorem( 'short' ),
-				'imageUrl'  => get_template_directory_uri() . '/assets/placeholders/guide-card.jpg',
-				'ctaText'   => 'Download',
-				'ctaUrl'    => '/guide-landing/',
-				'ctaStyle'  => 'arrow',
-				'className' => 'wptpl-image-pop',
-			)
-		);
-	};
-
-	return implode(
-		"\n\n",
-		array(
-			wptpl_block(
-				'hero',
-				array(
-					'eyebrow'   => 'Resources',
-					'title'     => 'Resources headline',
-					'subtitle'  => wptpl_lorem( 'medium' ),
-					'layout'    => 'centered',
-					'alignment' => 'center',
-					'ctaText'   => '',
-					'ctaUrl'    => '',
-				)
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'Free guides',
-							'intro'    => wptpl_lorem( 'short' ),
-						)
-					),
-					wptpl_columns(
-						array(
-							array( $guide( 1 ) ),
-							array( $guide( 2 ) ),
-							array( $guide( 3 ) ),
-						)
-					),
-				)
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'From the blog',
-							'intro'    => wptpl_lorem( 'short' ) . ' <a href="/blog/">Read the blog</a>.',
-						)
-					),
-				),
-				'surface',
-				'container-narrow'
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'Crisis support',
-							'intro'    => wptpl_lorem( 'short' ) . ' <a href="/crisis-resources/">Crisis resources</a>.',
-						)
-					),
-				),
-				'',
-				'container-narrow'
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'dark',
-				)
-			),
-		)
-	);
-}
-
-/**
- * Guide landing: opt-in beside the pitch, what's inside, who it's for, author,
- * download CTA, related service, crisis pointer.
- */
-function wptpl_seed_page_guide_landing(): string {
-	return implode(
-		"\n\n",
-		array(
-			wptpl_section(
-				array(
-					wptpl_columns(
-						array(
-							array(
-								wptpl_heading( 'Free guide headline', 1 ),
-								wptpl_paragraph( wptpl_lorem( 'medium' ) ),
-								wptpl_block(
-									'checklist',
-									array(
-										'items' => array(
-											array( 'text' => 'Benefit one' ),
-											array( 'text' => 'Benefit two' ),
-											array( 'text' => 'Benefit three' ),
-											array( 'text' => 'Benefit four' ),
-										),
-									)
-								),
-							),
-							array(
-								wptpl_wrap(
-									'group',
-									array( 'className' => 'wptpl-form' ),
-									'<div class="wp-block-group wptpl-form">',
-									'</div>',
-									array(
-										wptpl_heading( 'Get the guide', 2 ),
-										wptpl_paragraph( 'Replace this block with the email-capture form. Fields: name and email.' ),
-									)
-								),
-							),
-						),
-						array( '60%', '40%' )
-					),
-				),
-				'surface'
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array( 'headline' => "What's inside" )
-					),
-					wptpl_columns(
-						array(
-							array(
-								wptpl_heading( 'Part one', 3 ),
-								wptpl_paragraph( wptpl_lorem( 'short' ) ),
-							),
-							array(
-								wptpl_heading( 'Part two', 3 ),
-								wptpl_paragraph( wptpl_lorem( 'short' ) ),
-							),
-							array(
-								wptpl_heading( 'Part three', 3 ),
-								wptpl_paragraph( wptpl_lorem( 'short' ) ),
-							),
-						)
-					),
-				)
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array( 'headline' => 'This guide is for you if…' )
-					),
-					wptpl_block(
-						'checklist',
-						array(
-							'items' => array(
-								array( 'text' => 'Reason one' ),
-								array( 'text' => 'Reason two' ),
-								array( 'text' => 'Reason three' ),
-								array( 'text' => 'Reason four' ),
-							),
-						)
-					),
-				),
-				'surface',
-				'container-narrow'
-			),
-
-			wptpl_section(
-				array(
-					wptpl_columns(
-						array(
-							array( wptpl_image( 'portrait' ) ),
-							array(
-								wptpl_heading( 'About the author', 2 ),
-								wptpl_paragraph( wptpl_lorem( 'medium' ) ),
-							),
-						),
-						array( '30%', '70%' )
-					),
-				)
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Download the guide',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '#guide-form',
-					'theme'    => 'dark',
-				)
-			),
-
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'Working together',
-							'intro'    => wptpl_lorem( 'short' ) . ' <a href="/services/">See services</a>.',
-						)
-					),
-				),
-				'',
-				'container-narrow'
-			),
-		)
-	);
-}
-
-/**
- * Guide thank-you: confirmation, download button, what happens next, CTA.
- */
-function wptpl_seed_page_guide_thanks(): string {
-	return implode(
-		"\n\n",
-		array(
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'eyebrow'      => 'Thank you',
-							'headline'     => 'Your guide is on its way',
-							'intro'        => wptpl_lorem( 'medium' ),
-							'headingLevel' => 1,
-						)
-					),
-				),
-				'',
-				'container-narrow'
-			),
-
-			wptpl_block(
-				'steps',
-				array(
-					'heading' => 'What happens next',
-					'items'   => array(
-						array(
-							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
-						),
-						array(
-							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
-						),
-						array(
-							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
-						),
-					),
-				)
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
 				)
 			),
@@ -1528,28 +1057,233 @@ function wptpl_seed_page_blog(): string {
 }
 
 // ---------------------------------------------------------------------------
-// Legal
+// Team
 // ---------------------------------------------------------------------------
 
 /**
- * A long-form legal page: title, last-updated line, intro, then N sections.
+ * Meet Our Therapists: intro, a grid of practitioner cards, closing CTA.
  *
- * @param string             $title    Page title.
- * @param array<int, string> $sections Section headings.
+ * The cards are slots, not people. Service pages are grouped by theme precisely
+ * so the site does not need restructuring when the roster changes.
  */
-function wptpl_seed_page_legal( string $title, array $sections ): string {
-	$blocks = array(
-		wptpl_heading( $title, 1 ),
-		wptpl_paragraph( '<em>Last updated: replace with a date.</em>' ),
-		wptpl_paragraph( wptpl_lorem( 'long' ) ),
+function wptpl_seed_page_therapists(): string {
+	$card = static function ( int $n ) {
+		return wptpl_block(
+			'feature-card',
+			array(
+				'eyebrow'  => 'Credentials',
+				'title'    => 'Therapist ' . $n,
+				'text'     => wptpl_lorem( 'short' ),
+				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
+				'centered' => true,
+			)
+		);
+	};
+
+	return implode(
+		"\n\n",
+		array(
+			wptpl_block(
+				'hero',
+				array(
+					'eyebrow'   => 'Our team',
+					'title'     => 'Meet our therapists',
+					'subtitle'  => wptpl_lorem( 'medium' ),
+					'layout'    => 'centered',
+					'alignment' => 'center',
+					'ctaText'   => 'Primary CTA',
+					'ctaUrl'    => '/contact/',
+				)
+			),
+			wptpl_section(
+				array(
+					wptpl_columns(
+						array(
+							array( $card( 1 ) ),
+							array( $card( 2 ) ),
+							array( $card( 3 ) ),
+						)
+					),
+					wptpl_columns(
+						array(
+							array( $card( 4 ) ),
+							array( $card( 5 ) ),
+							array( $card( 6 ) ),
+						)
+					),
+				)
+			),
+			wptpl_section(
+				array(
+					wptpl_block(
+						'section-header',
+						array(
+							'headline' => 'How we work together',
+							'intro'    => wptpl_lorem( 'medium' ),
+						)
+					),
+				),
+				'surface',
+				'container-narrow'
+			),
+			wptpl_block(
+				'cta-banner',
+				array(
+					'headline' => 'Closing headline',
+					'text'     => wptpl_lorem( 'short' ),
+					'ctaText'  => 'Primary CTA',
+					'ctaUrl'   => '/contact/',
+					'theme'    => 'dark',
+				)
+			),
+		)
+	);
+}
+
+// ---------------------------------------------------------------------------
+// Conversion pages
+// ---------------------------------------------------------------------------
+
+/**
+ * A conversion page: hero, body section, three supporting cards, steps, CTA.
+ * Payment, Donate and Church Partnerships share this shape.
+ *
+ * @param string $eyebrow   Section eyebrow.
+ * @param string $title     Page title.
+ * @param string $body_head Heading for the body section.
+ * @param string $card_noun Noun used for the three supporting cards.
+ * @param string $cta       Label for the calls to action.
+ */
+function wptpl_seed_page_conversion( string $eyebrow, string $title, string $body_head, string $card_noun, string $cta ): string {
+	$card = static function ( int $n ) use ( $card_noun ) {
+		return wptpl_block(
+			'feature-card',
+			array(
+				'title'    => $card_noun . ' ' . $n,
+				'text'     => wptpl_lorem( 'short' ),
+				'centered' => true,
+			)
+		);
+	};
+
+	return implode(
+		"\n\n",
+		array(
+			wptpl_block(
+				'hero',
+				array(
+					'eyebrow'   => $eyebrow,
+					'title'     => $title,
+					'subtitle'  => wptpl_lorem( 'medium' ),
+					'layout'    => 'centered',
+					'alignment' => 'center',
+					'ctaText'   => $cta,
+					'ctaUrl'    => '/contact/',
+				)
+			),
+			wptpl_section(
+				array(
+					wptpl_block(
+						'section-header',
+						array(
+							'headline'  => $body_head,
+							'intro'     => wptpl_lorem( 'long' ),
+							'alignment' => 'left',
+						)
+					),
+				),
+				'',
+				'container-narrow'
+			),
+			wptpl_section(
+				array(
+					wptpl_columns(
+						array(
+							array( $card( 1 ) ),
+							array( $card( 2 ) ),
+							array( $card( 3 ) ),
+						)
+					),
+				),
+				'surface'
+			),
+			wptpl_block(
+				'steps',
+				array(
+					'heading' => 'How it works',
+					'items'   => array(
+						array(
+							'title' => 'Step one',
+							'text'  => wptpl_lorem( 'short' ),
+						),
+						array(
+							'title' => 'Step two',
+							'text'  => wptpl_lorem( 'short' ),
+						),
+						array(
+							'title' => 'Step three',
+							'text'  => wptpl_lorem( 'short' ),
+						),
+					),
+				)
+			),
+			wptpl_block(
+				'cta-banner',
+				array(
+					'headline' => 'Closing headline',
+					'text'     => wptpl_lorem( 'short' ),
+					'ctaText'  => $cta,
+					'ctaUrl'   => '/contact/',
+					'theme'    => 'dark',
+				)
+			),
+		)
+	);
+}
+
+// ---------------------------------------------------------------------------
+// AI information
+// ---------------------------------------------------------------------------
+
+/**
+ * A page written for AI assistants and answer engines rather than for visitors.
+ *
+ * Unlike every other page here, its value IS the section list: an assistant
+ * summarising the practice should find each fact under a predictable heading.
+ * So this one seeds the real headings with placeholder bodies — the structure is
+ * the deliverable, the prose is what the organisation fills in.
+ *
+ * Deliberately plain: no hero, no cards, one narrow reading column.
+ */
+function wptpl_seed_page_ai_information(): string {
+	$sections = array(
+		'Basic information'             => 'Legal and operating name, organisation type, headquarters, service area, contact details and web properties.',
+		'What we do'                    => 'Mission statement, and the approach that distinguishes this practice from others.',
+		'Services offered'              => 'Each service with its own URL and a one-line description.',
+		'What we help with'             => 'The concerns people arrive with, each linked to the page that covers it.',
+		'Our approach'                  => 'Therapeutic modalities used, and how faith is integrated into clinical practice.',
+		'Who we serve'                  => 'Who this practice is for — and who it is not the right fit for.',
+		'Credentials and trust signals' => 'Licensure, accreditations and compliance the organisation holds.',
+		'Leadership and clinical team'  => 'Who leads the practice, their credentials, and how to reach them.',
+		'What makes us different'       => 'Positioning against the alternatives someone would otherwise consider.',
+		'How to reach us'               => 'Intake process, response times, and the fastest route to a first conversation.',
+		'Key facts for AI assistants'   => 'The handful of statements that must be correct in any summary of this organisation.',
+		'Common misconceptions'         => 'Frequent misunderstandings, each paired with the accurate statement.',
+		'Source links'                  => 'The canonical page backing each claim above.',
+		'Suggested summary'             => 'A short paragraph the organisation is happy to see quoted verbatim.',
 	);
 
-	foreach ( $sections as $section ) {
-		$blocks[] = wptpl_heading( $section, 2 );
+	$blocks = array(
+		wptpl_heading( 'AI information', 1 ),
+		wptpl_paragraph( 'This page holds structured information about the organisation, intended to help AI assistants, search engines and answer engines describe it accurately. It is maintained by the organisation and is the authoritative source for the facts below.' ),
+		wptpl_paragraph( '<em>Every section below is a placeholder. Replace each one with verified information before publishing — the entire point of this page is that what it says is true.</em>' ),
+	);
+
+	foreach ( $sections as $heading => $what_goes_here ) {
+		$blocks[] = wptpl_heading( $heading, 2 );
+		$blocks[] = wptpl_paragraph( '<em>' . $what_goes_here . '</em>' );
 		$blocks[] = wptpl_paragraph( wptpl_lorem( 'long' ) );
 	}
-
-	$blocks[] = wptpl_paragraph( '<em>This is placeholder text, not legal advice. Replace every section with copy reviewed for your jurisdiction before publishing.</em>' );
 
 	return wptpl_section( $blocks, '', 'container-narrow' );
 }
@@ -1561,7 +1295,7 @@ function wptpl_seed_page_legal( string $title, array $sections ): string {
 /**
  * Seed every page. Returns a map of key => page ID.
  *
- * @return array<string, int>
+ * @return array<string, mixed>
  */
 function wptpl_seed_all_pages(): array {
 	$ids = array();
@@ -1574,22 +1308,28 @@ function wptpl_seed_all_pages(): array {
 			'order'   => 0,
 		)
 	);
-
 	$ids['about'] = wptpl_seed_page(
 		array(
-			'slug'    => 'about',
-			'title'   => 'About',
+			'slug'    => 'about-us',
+			'title'   => 'About Us &amp; Our Faith-Centered Approach',
 			'content' => wptpl_seed_page_about(),
 			'order'   => 1,
 		)
 	);
-
+	$ids['therapists'] = wptpl_seed_page(
+		array(
+			'slug'    => 'meet-our-therapists',
+			'title'   => 'Meet Our Therapists',
+			'content' => wptpl_seed_page_therapists(),
+			'order'   => 2,
+		)
+	);
 	$ids['services'] = wptpl_seed_page(
 		array(
 			'slug'    => 'services',
 			'title'   => 'Services',
 			'content' => wptpl_seed_page_services(),
-			'order'   => 2,
+			'order'   => 3,
 		)
 	);
 
@@ -1605,7 +1345,6 @@ function wptpl_seed_all_pages(): array {
 				}
 			)
 		);
-
 		$ids['service_children'][ $service['slug'] ] = wptpl_seed_page(
 			array(
 				'slug'    => $service['slug'],
@@ -1618,15 +1357,6 @@ function wptpl_seed_all_pages(): array {
 		);
 	}
 
-	$ids['resources'] = wptpl_seed_page(
-		array(
-			'slug'    => 'resources',
-			'title'   => 'Resources',
-			'content' => wptpl_seed_page_resources(),
-			'order'   => 3,
-		)
-	);
-
 	$ids['blog'] = wptpl_seed_page(
 		array(
 			'slug'    => 'blog',
@@ -1635,113 +1365,44 @@ function wptpl_seed_all_pages(): array {
 			'order'   => 4,
 		)
 	);
-
-	$ids['fees'] = wptpl_seed_page(
-		array(
-			'slug'    => 'fees',
-			'title'   => 'Fees',
-			'content' => wptpl_seed_page_fees(),
-			'order'   => 5,
-		)
-	);
-
 	$ids['contact'] = wptpl_seed_page(
 		array(
 			'slug'    => 'contact',
 			'title'   => 'Contact',
 			'content' => wptpl_seed_page_contact(),
+			'order'   => 5,
+		)
+	);
+	$ids['church'] = wptpl_seed_page(
+		array(
+			'slug'    => 'church-partnerships',
+			'title'   => 'Church Partnerships',
+			'content' => wptpl_seed_page_conversion( 'For churches', 'Church partnerships', 'Partnering with your congregation', 'Partnership', 'Start a conversation' ),
 			'order'   => 6,
 		)
 	);
-
-	$ids['crisis'] = wptpl_seed_page(
+	$ids['payment'] = wptpl_seed_page(
 		array(
-			'slug'    => 'crisis-resources',
-			'title'   => 'Crisis Resources',
-			'content' => wptpl_seed_page_crisis(),
+			'slug'    => 'payment',
+			'title'   => 'Payment &amp; Insurance',
+			'content' => wptpl_seed_page_conversion( 'Payment', 'Payment &amp; insurance', 'What sessions cost', 'Option', 'Ask about fees' ),
 			'order'   => 7,
 		)
 	);
-
-	$ids['guide_landing'] = wptpl_seed_page(
+	$ids['donate'] = wptpl_seed_page(
 		array(
-			'slug'    => 'guide-landing',
-			'title'   => 'Free Guide',
-			'content' => wptpl_seed_page_guide_landing(),
+			'slug'    => 'donate',
+			'title'   => 'Donate',
+			'content' => wptpl_seed_page_conversion( 'Support the ministry', 'Donate', 'Where your gift goes', 'Fund', 'Give today' ),
 			'order'   => 8,
 		)
 	);
-
-	$ids['guide_thanks'] = wptpl_seed_page(
+	$ids['ai_information'] = wptpl_seed_page(
 		array(
-			'slug'    => 'guide-thank-you',
-			'title'   => 'Thank You',
-			'content' => wptpl_seed_page_guide_thanks(),
+			'slug'    => 'ai-information',
+			'title'   => 'AI Information',
+			'content' => wptpl_seed_page_ai_information(),
 			'order'   => 9,
-		)
-	);
-
-	$ids['privacy'] = wptpl_seed_page(
-		array(
-			'slug'    => 'privacy',
-			'title'   => 'Privacy Policy',
-			'content' => wptpl_seed_page_legal(
-				'Privacy Policy',
-				array(
-					'Information we collect',
-					'Third-party service providers',
-					'Cookies and tracking technologies',
-					'Website data vs. clinical records',
-					'Your privacy rights',
-					'Data retention',
-					"Children's privacy",
-					'Links to other websites',
-					'Changes to this policy',
-					'Contact',
-				)
-			),
-			'order'   => 10,
-		)
-	);
-
-	$ids['terms'] = wptpl_seed_page(
-		array(
-			'slug'    => 'terms',
-			'title'   => 'Terms of Service',
-			'content' => wptpl_seed_page_legal(
-				'Terms of Service',
-				array(
-					'Use of this website',
-					'No therapeutic relationship',
-					'Not for emergencies',
-					'Scheduling and cancellation',
-					'Fees and payment',
-					'Good Faith Estimate',
-					'Intellectual property',
-					'Limitation of liability',
-					'Changes to these terms',
-					'Contact',
-				)
-			),
-			'order'   => 11,
-		)
-	);
-
-	$ids['accessibility'] = wptpl_seed_page(
-		array(
-			'slug'    => 'accessibility',
-			'title'   => 'Accessibility',
-			'content' => wptpl_seed_page_legal(
-				'Accessibility',
-				array(
-					'Our commitment',
-					'Conformance status',
-					'Measures we take',
-					'Known limitations',
-					'Feedback',
-				)
-			),
-			'order'   => 12,
 		)
 	);
 
@@ -1749,16 +1410,27 @@ function wptpl_seed_all_pages(): array {
 }
 
 /**
- * Seed the three menus and assign them to their theme locations.
+ * Seed the menus and assign them to their theme locations.
+ *
+ * There is no Footer Legal menu: the compliance pages are held back until the
+ * board signs off on their copy, so the location stays empty and the footer
+ * renders nothing for it.
  *
  * @param array<string, mixed> $ids Page IDs from wptpl_seed_all_pages().
  */
 function wptpl_seed_all_menus( array $ids ): void {
 	$primary = array(
 		array(
-			'key'     => 'about',
+			'title'   => 'Home',
+			'page_id' => $ids['home'],
+		),
+		array(
 			'title'   => 'About',
 			'page_id' => $ids['about'],
+		),
+		array(
+			'title'   => 'Our Therapists',
+			'page_id' => $ids['therapists'],
 		),
 		array(
 			'key'     => 'services',
@@ -1780,74 +1452,59 @@ function wptpl_seed_all_menus( array $ids ): void {
 	}
 
 	$primary[] = array(
-		'title'   => 'Resources',
-		'page_id' => $ids['resources'],
-	);
-	$primary[] = array(
 		'title'   => 'Blog',
 		'page_id' => $ids['blog'],
-	);
-	$primary[] = array(
-		'title'   => 'Fees',
-		'page_id' => $ids['fees'],
 	);
 	$primary[] = array(
 		'title'   => 'Contact',
 		'page_id' => $ids['contact'],
 	);
+	// Church Partnerships sits last and carries its own class: it addresses a
+	// different audience than everything before it, and the design sets it apart.
+	$primary[] = array(
+		'title'   => 'Church Partnerships',
+		'page_id' => $ids['church'],
+		'classes' => 'wptpl-nav-alt',
+	);
 
 	wptpl_seed_menu( 'Primary', 'primary', $primary );
+
+	$ai_url = home_url( '/ai-information/' );
+	$ask    = 'Tell me about the counseling practice described at ' . $ai_url;
 
 	wptpl_seed_menu(
 		'Footer Links',
 		'footer',
 		array(
 			array(
-				'title'   => 'About',
-				'page_id' => $ids['about'],
+				'title'   => 'Donate',
+				'page_id' => $ids['donate'],
 			),
 			array(
-				'title'   => 'Services',
-				'page_id' => $ids['services'],
-			),
-			array(
-				'title'   => 'Resources',
-				'page_id' => $ids['resources'],
-			),
-			array(
-				'title'   => 'Blog',
-				'page_id' => $ids['blog'],
-			),
-			array(
-				'title'   => 'Fees',
-				'page_id' => $ids['fees'],
+				'title'   => 'Church Partnerships',
+				'page_id' => $ids['church'],
 			),
 			array(
 				'title'   => 'Contact',
 				'page_id' => $ids['contact'],
 			),
 			array(
-				'title'   => 'Crisis Resources',
-				'page_id' => $ids['crisis'],
-			),
-		)
-	);
-
-	wptpl_seed_menu(
-		'Footer Legal',
-		'footer_legal',
-		array(
-			array(
-				'title'   => 'Privacy Policy',
-				'page_id' => $ids['privacy'],
+				'title'   => 'Payment',
+				'page_id' => $ids['payment'],
 			),
 			array(
-				'title'   => 'Terms',
-				'page_id' => $ids['terms'],
+				'title'   => 'AI Info',
+				'page_id' => $ids['ai_information'],
+			),
+			// These hand the AI information page straight to an assistant, so they
+			// are external custom links rather than pages.
+			array(
+				'title' => 'Ask ChatGPT about us',
+				'url'   => 'https://chatgpt.com/?q=' . rawurlencode( $ask ),
 			),
 			array(
-				'title'   => 'Accessibility',
-				'page_id' => $ids['accessibility'],
+				'title' => 'Ask Claude about us',
+				'url'   => 'https://claude.ai/new?q=' . rawurlencode( $ask ),
 			),
 		)
 	);
