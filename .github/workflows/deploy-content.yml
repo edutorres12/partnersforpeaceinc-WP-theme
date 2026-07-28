@@ -204,16 +204,37 @@ jobs:
           set -euo pipefail
           # Backups go to the home directory, never inside public_html — a .sql
           # dump under the web root is downloadable by anyone who guesses the name.
+          #
+          # `wp db export` is NOT usable here. Shared hosts commonly disable
+          # exec/shell_exec/passthru/popen in PHP, and that command shells out to
+          # mysqldump through them — on Hostinger it exits 255 with no message at
+          # all. So read the credentials with WP-CLI (pure PHP) and drive
+          # mysqldump from the shell instead. The credentials go through a 600
+          # defaults-file rather than argv, where they would be visible to
+          # anyone running ps.
           ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" bash -s <<REMOTE
           set -euo pipefail
-          mkdir -p ~/wptpl-backups
           cd "$WP_PATH"
+
+          CNF=\$(mktemp)
+          chmod 600 "\$CNF"
+          printf '[client]\nuser=%s\npassword="%s"\nhost=%s\n' \
+            "\$(wp config get DB_USER)" \
+            "\$(wp config get DB_PASSWORD)" \
+            "\$(wp config get DB_HOST)" > "\$CNF"
+          trap 'rm -f "\$CNF"' EXIT
+
+          mkdir -p ~/wptpl-backups
           FILE=~/wptpl-backups/pre-seed-\$(date -u +%Y%m%d-%H%M%S).sql
-          wp db export "\$FILE" --quiet
+          mysqldump --defaults-extra-file="\$CNF" \
+            --single-transaction --quick --no-tablespaces \
+            "\$(wp config get DB_NAME)" > "\$FILE"
           gzip -f "\$FILE"
-          echo "Backup: \$FILE.gz"
-          # Keep the ten most recent.
-          ls -1t ~/wptpl-backups/*.sql.gz 2>/dev/null | tail -n +11 | xargs -r rm --
+          echo "Backup: \$FILE.gz (\$(du -h "\$FILE.gz" | cut -f1))"
+
+          # Keep the ten most recent. \`|| true\`: ls exits non-zero when the glob
+          # matches nothing, which is the normal state on a first run.
+          ls -1t ~/wptpl-backups/*.sql.gz 2>/dev/null | tail -n +11 | xargs -r rm -- || true
           REMOTE
 
       - name: Run the seeder

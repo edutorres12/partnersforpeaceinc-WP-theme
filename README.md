@@ -379,6 +379,11 @@ Before any write the workflow exports the database to `~/wptpl-backups/` on the
 server (gzipped, ten most recent kept). Backups live in the home directory, not
 under `public_html`, so they are not downloadable from the web.
 
+The backup drives `mysqldump` from the shell rather than using `wp db export`.
+Shared hosts commonly disable `exec`/`shell_exec`/`passthru`/`popen` in PHP, and
+`wp db export` shells out to mysqldump through them — on Hostinger it exits 255
+with no message at all.
+
 It also refuses to seed unless the expected theme is the active one, which stops
 a misconfigured `THEME_DIR` from writing pages into whatever site the credentials
 happen to reach.
