@@ -251,6 +251,11 @@ hidden per page from the editor sidebar.
 
 ## Setting up WordPress (first time)
 
+The fastest path is the seeder — it creates every page, menu, setting and sample
+post in one command. See **Seeding a new site** below.
+
+To do it by hand instead:
+
 1. Activate the theme in **Appearance → Themes**.
 2. Configure **Appearance → Customize → Theme Settings**:
    - Header & CTA: primary button text + URL.
@@ -262,6 +267,66 @@ hidden per page from the editor sidebar.
    - "Footer Legal" → assign to **Footer legal menu**.
 5. **Settings → Reading**: static front page = "Home".
 6. Edit the Home page → Code Editor (`Ctrl+Shift+Alt+M`) → paste the homepage block markup.
+
+## Seeding a new site
+
+`scripts/seed-wp.php` builds the whole WordPress side of a fresh install: the 20
+pages with their block markup, the three menus wired to their theme locations,
+the front-page and permalink settings, the Customizer fields, blog categories
+and six sample posts (one sticky, which is what the featured card picks up).
+
+Run it through WP-CLI from the theme directory:
+
+```bash
+wp eval-file scripts/seed-wp.php                  # dry run — prints the plan, writes nothing
+wp eval-file scripts/seed-wp.php -- --apply       # write
+wp eval-file scripts/seed-wp.php -- --apply --force
+```
+
+**It is safe by default.** Without `--apply` nothing is written; you get a plan
+listing every action it would take. With `--apply` it is idempotent — pages are
+matched by slug, menus by name, options and theme mods are only touched when
+they differ, and anything that already exists is left alone. `--force`
+additionally replaces the content of pages the seeder owns; use it to re-apply
+the template after editing the markup, and expect it to discard manual edits to
+those pages.
+
+### What it creates
+
+| | |
+|---|---|
+| Pages | Home, About, Services + 7 service subpages, Resources, Blog, Fees, Contact, Crisis Resources, Free Guide, Thank You, Privacy, Terms, Accessibility |
+| Menus | Primary (with the services nested under Services), Footer Links, Footer Legal — each assigned to its location |
+| Settings | static front page, `/%postname%/` permalinks, site title + tagline, posts per page |
+| Customizer | header CTA, and every Footer / Practice info field |
+| Blog | 5 categories, 6 posts, and the default "Hello world!" / "Sample Page" trashed |
+
+The blog hub is a **normal page**, not `page_for_posts` — its listing comes from
+the `wptpl/featured-post` and `wptpl/post-grid` blocks, which is what lets it
+carry a hero and a category filter. The seeder deliberately leaves
+`page_for_posts` unset; setting it would make WordPress ignore the page content.
+
+### The copy is placeholder
+
+Everything the seeder writes is lorem ipsum, "Primary CTA", "Service One". That
+matches the unstyled state of the theme: the structure is final, the words are
+slots. Two things need real content before a site goes live, and the seeder says
+so on the page itself:
+
+- **Crisis Resources** ships placeholder cards. Replace them with the real
+  emergency numbers for the site's region.
+- **Legal pages** ship placeholder sections. Replace them with copy reviewed for
+  the relevant jurisdiction.
+
+The Contact and Free Guide pages carry a `wptpl-form` wrapper with a note in
+place of the form — drop the form plugin's shortcode in and the styling applies.
+
+### Editing what it produces
+
+Page markup lives in `scripts/seed/pages.php`, one builder per page, composed
+from the helpers in `scripts/seed/blocks.php` (`wptpl_section()`,
+`wptpl_columns()`, `wptpl_block()`, …). Blog content is in
+`scripts/seed/posts.php`. Change a builder, re-run with `--apply --force`.
 
 ## Conventions
 

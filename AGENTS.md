@@ -33,6 +33,7 @@ npm run lint:php:fix                # PHPCBF auto-fix
 npm run check:tokens                # theme.json ↔ tailwind.config drift check
 npm run format                      # Prettier (JS/JSON) — runs the WP scripts formatter
 npm run gen:placeholders            # regenerate the neutral placeholder images
+wp eval-file scripts/seed-wp.php    # seed a WP install (dry run; add -- --apply)
 npm run optimize:images             # regenerate .webp from JPG/PNG (sharp)
 ```
 
@@ -147,6 +148,7 @@ Rules:
 | Custom block source | `src/blocks/<slug>/` |
 | Compiled blocks (registered from here) | `build/blocks/<slug>/` |
 | Image scripts | `scripts/gen-placeholders.mjs`, `scripts/optimize-images.mjs`, `scripts/check-tokens.mjs` |
+| WordPress seeder | `scripts/seed-wp.php` (runner) + `scripts/seed/{blocks,pages,posts}.php` |
 | Design wireframes | `docs/wireframes/` (NOT in repo root) |
 
 ## Common tasks
@@ -189,6 +191,18 @@ Rules:
   `loading => 'eager'` and `fetchpriority => 'high'` only for above-the-fold
   hero imagery.
 
+### Changing what the seeder creates
+
+`scripts/seed-wp.php` is the runner (flags, helpers, orchestration); the content
+lives in `scripts/seed/`. Page markup is one builder function per page in
+`pages.php`, composed from `blocks.php` helpers — never hand-write block comment
+markup, and never inline a JSON attribute blob. Attribute names must match
+`src/blocks/<slug>/block.json`; a typo silently renders the block's default.
+
+After editing, verify the markup still balances before touching a real site:
+dry-run it (`wp eval-file scripts/seed-wp.php`), which writes nothing and prints
+the full plan.
+
 ### Touching SEO
 
 - Don't add meta tags to `header.php` directly. `inc/seo.php` owns the
@@ -204,6 +218,11 @@ Rules:
 - ❌ Add a color to `theme.json` without also adding it to `tailwind.config.js` AND the fallback block. CI will fail.
 - ❌ Reintroduce a brand color, a webfont, or a page-specific one-off CSS rule
   into the template itself. Those belong to a site built on it, not here.
+- ❌ Put real copy in `scripts/seed/`. The seeder writes placeholders on purpose;
+  a site replaces them in the editor. The one exception is structural text that
+  tells the editor what to do ("Replace these cards with…").
+- ❌ Run the seeder with `--apply` on a site you have not dry-run first. It is
+  idempotent, but `--force` replaces page content.
 - ❌ `git push --force` to `main`. `deploy` branch is force-pushed BY CI; manual force-pushes anywhere else need explicit user permission.
 - ❌ Run `git rebase --amend` or `git commit --amend` on commits that are already pushed unless the user explicitly asks.
 - ❌ Add WebP via raw `<img src="...webp">`. Use `wptpl_render_picture()` so the JPG fallback is preserved.
