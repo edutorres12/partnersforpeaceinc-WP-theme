@@ -278,9 +278,11 @@ and six sample posts (one sticky, which is what the featured card picks up).
 Run it through WP-CLI from the theme directory:
 
 ```bash
-wp eval-file scripts/seed-wp.php                # dry run — prints the plan, writes nothing
-wp eval-file scripts/seed-wp.php apply          # write
-wp eval-file scripts/seed-wp.php apply force
+wp eval-file scripts/seed-wp.php                     # dry run — prints the plan, writes nothing
+wp eval-file scripts/seed-wp.php apply               # write
+wp eval-file scripts/seed-wp.php apply force         # also replace seeded page content
+wp eval-file scripts/seed-wp.php apply prune         # also trash retired pages
+wp eval-file scripts/seed-wp.php apply prune force   # ...including unmarked ones
 ```
 
 The flags are **bare words, not `--apply`** — WP-CLI parses anything starting
@@ -294,6 +296,24 @@ they differ, and anything that already exists is left alone. `force`
 additionally replaces the content of pages the seeder owns; use it to re-apply
 the template after editing the markup, and expect it to discard manual edits to
 those pages.
+
+### What it owns
+
+Every page the seeder creates is marked with a `_wptpl_seeded` meta key, and
+that mark is what makes the destructive modes safe: `force` and `prune` only
+ever touch marked pages. A page a site created by hand at one of these slugs is
+reported and left alone. Re-seeding a slug adopts the page, so an install seeded
+before the mark existed is picked up on the next run.
+
+`prune` trashes — never deletes — pages the template used to own and no longer
+does (`wptpl_seed_retired_slugs()` in `scripts/seed/pages.php`), so a
+restructure is reversible from wp-admin.
+
+Note that `force` covers two permissions at once: replacing the content of
+seeded pages, and letting `prune` take retired pages that carry no mark. That is
+fine while the content is still placeholder, and it is the combination a
+first-time migration needs. Once a site holds real copy, dry-run first and read
+the plan — it names every page it would rewrite.
 
 ### What it creates
 

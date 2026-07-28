@@ -229,7 +229,11 @@ no `declare(strict_types=1)`, and any top-level variable the helpers read with
   a site replaces them in the editor. The one exception is structural text that
   tells the editor what to do ("Replace these cards with…").
 - ❌ Run the seeder with `apply` on a site you have not dry-run first. It is
-  idempotent, but `force` replaces page content.
+  idempotent, but `force` replaces page content AND lets `prune` trash retired
+  pages that carry no seeder mark.
+- ❌ Remove a page builder without adding its slug to `wptpl_seed_retired_slugs()`.
+  The seeder only knows what to clean up from that list; drop it and the page is
+  orphaned on every site already running the template.
 - ❌ Point the PR preview at the staging site. It applies destructively on every
   run; staging is where a human reviews, not where CI writes.
 - ❌ Make the deploy workflow write on `push`. A merge updates the theme and

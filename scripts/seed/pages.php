@@ -65,6 +65,8 @@ function wptpl_seed_services(): array {
  */
 function wptpl_seed_retired_slugs(): array {
 	return array(
+		// Superseded by `about-us`, the slug the sitemap uses.
+		'about',
 		// Sections the sitemap does not include.
 		'resources',
 		'fees',

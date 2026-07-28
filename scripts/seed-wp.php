@@ -20,7 +20,9 @@
  * that already exists is left alone. `force` additionally overwrites the
  * content of pages the seeder owns — use it to re-apply the template after
  * editing the block markup, and expect it to discard manual edits to those
- * pages. `prune` trashes pages the template used to own and no longer does.
+ * pages. `prune` trashes pages the template used to own and no longer does;
+ * combined with `force` it also takes retired pages that carry no mark, which
+ * is how an install seeded before the mark existed gets cleaned up.
  *
  * Both only ever touch pages carrying the `_wptpl_seeded` mark, so a page a
  * site created by hand is never overwritten or trashed.
@@ -313,9 +315,26 @@ function wptpl_seed_prune( array $slugs ): void {
 			continue;
 		}
 		if ( '1' !== get_post_meta( $page->ID, WPTPL_SEEDED_META, true ) ) {
+			/*
+			 * No mark. Either a site made this page by hand, or it predates the
+			 * mark — and there is no way to tell the two apart, so refuse by
+			 * default. `force` is the override for the second case: the dry run
+			 * lists every page it would take, so a human approves with the full
+			 * list in front of them.
+			 */
+			if ( ! $GLOBALS['wptpl_force'] ) {
+				wptpl_seed_do(
+					'skip',
+					sprintf( 'page "%s" (%s) is retired but carries no seeder mark — add `force` to trash it anyway', $page->post_title, $slug )
+				);
+				continue;
+			}
 			wptpl_seed_do(
-				'skip',
-				sprintf( 'page "%s" (%s) is retired but was not seeded by this template — leaving it alone', $page->post_title, $slug )
+				'update',
+				sprintf( 'trash retired page "%s" (%s) — UNMARKED, taken because `force` was passed', $page->post_title, $slug ),
+				static function () use ( $page ) {
+					wp_trash_post( $page->ID );
+				}
 			);
 			continue;
 		}
