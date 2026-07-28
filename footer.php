@@ -52,37 +52,42 @@ if ( ! is_404() ) :
 				<?php endif; ?>
 			</div>
 
-			<div>
-				<div class="wptpl-eyebrow text-on-dark mb-3"><?php esc_html_e( 'Links', 'wptpl' ); ?></div>
-				<?php
-				wp_nav_menu(
-					array(
-						'theme_location'       => 'footer',
-						'container'            => 'nav',
-						'container_aria_label' => __( 'Footer', 'wptpl' ),
-						'menu_class'           => 'leading-loose text-sm space-y-1',
-						'fallback_cb'          => false,
-						'depth'                => 1,
-					)
-				);
-				?>
-			</div>
+			<?php // Each column is skipped entirely when its location holds no menu — a heading over an empty list reads as a broken footer. ?>
+			<?php if ( has_nav_menu( 'footer' ) ) : ?>
+				<div>
+					<div class="wptpl-eyebrow text-on-dark mb-3"><?php esc_html_e( 'Links', 'wptpl' ); ?></div>
+					<?php
+					wp_nav_menu(
+						array(
+							'theme_location'       => 'footer',
+							'container'            => 'nav',
+							'container_aria_label' => __( 'Footer', 'wptpl' ),
+							'menu_class'           => 'leading-loose text-sm space-y-1',
+							'fallback_cb'          => false,
+							'depth'                => 1,
+						)
+					);
+					?>
+				</div>
+			<?php endif; ?>
 
-			<div>
-				<div class="wptpl-eyebrow text-on-dark mb-3"><?php esc_html_e( 'Legal', 'wptpl' ); ?></div>
-				<?php
-				wp_nav_menu(
-					array(
-						'theme_location'       => 'footer_legal',
-						'container'            => 'nav',
-						'container_aria_label' => __( 'Legal', 'wptpl' ),
-						'menu_class'           => 'leading-loose text-sm space-y-1',
-						'fallback_cb'          => false,
-						'depth'                => 1,
-					)
-				);
-				?>
-			</div>
+			<?php if ( has_nav_menu( 'footer_legal' ) ) : ?>
+				<div>
+					<div class="wptpl-eyebrow text-on-dark mb-3"><?php esc_html_e( 'Legal', 'wptpl' ); ?></div>
+					<?php
+					wp_nav_menu(
+						array(
+							'theme_location'       => 'footer_legal',
+							'container'            => 'nav',
+							'container_aria_label' => __( 'Legal', 'wptpl' ),
+							'menu_class'           => 'leading-loose text-sm space-y-1',
+							'fallback_cb'          => false,
+							'depth'                => 1,
+						)
+					);
+					?>
+				</div>
+			<?php endif; ?>
 
 			<div></div>
 		</div>

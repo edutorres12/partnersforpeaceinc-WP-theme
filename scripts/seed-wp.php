@@ -231,6 +231,23 @@ function wptpl_seed_theme_mod( string $name, string $value ): void {
 function wptpl_seed_menu( string $name, string $location, array $items ): void {
 	$menu = wp_get_nav_menu_object( $name );
 
+	/*
+	 * A menu that already exists is left alone — its items may have been
+	 * reordered by hand. But `force` means the template is re-asserting its
+	 * structure, and a restructure that adds and removes pages leaves a stale
+	 * menu pointing at trashed pages, so there the menu is rebuilt from scratch.
+	 */
+	if ( $menu && $GLOBALS['wptpl_force'] ) {
+		wptpl_seed_do(
+			'update',
+			sprintf( 'menu "%s" — rebuilt from scratch (%d item(s))', $name, count( $items ) ),
+			static function () use ( $menu ) {
+				wp_delete_nav_menu( $menu->term_id );
+			}
+		);
+		$menu = null;
+	}
+
 	if ( $menu ) {
 		wptpl_seed_do( 'skip', sprintf( 'menu "%s" already exists — items left untouched', $name ) );
 	} else {
@@ -278,7 +295,8 @@ function wptpl_seed_menu( string $name, string $location, array $items ): void {
 		$locations = array();
 	}
 
-	if ( ! empty( $locations[ $location ] ) ) {
+	$assigned = ! empty( $locations[ $location ] ) ? get_term( (int) $locations[ $location ], 'nav_menu' ) : null;
+	if ( $assigned instanceof WP_Term && ! $GLOBALS['wptpl_force'] ) {
 		wptpl_seed_do( 'skip', sprintf( 'location "%s" already assigned', $location ) );
 		return;
 	}
@@ -348,6 +366,38 @@ function wptpl_seed_prune( array $slugs ): void {
 	}
 }
 
+/**
+ * Delete menus the template used to create and no longer does.
+ *
+ * Menus carry no ownership mark the way pages do, so this needs `force` for the
+ * same reason pruning an unmarked page does: there is no way to tell a stale
+ * template menu from one a site built itself.
+ *
+ * @param array<int, string> $names Retired menu names.
+ */
+function wptpl_seed_prune_menus( array $names ): void {
+	foreach ( $names as $name ) {
+		$menu = wp_get_nav_menu_object( $name );
+		if ( ! $menu ) {
+			continue;
+		}
+		if ( ! $GLOBALS['wptpl_force'] ) {
+			wptpl_seed_do(
+				'skip',
+				sprintf( 'menu "%s" is retired — add `force` to delete it', $name )
+			);
+			continue;
+		}
+		wptpl_seed_do(
+			'update',
+			sprintf( 'delete retired menu "%s"', $name ),
+			static function () use ( $menu ) {
+				wp_delete_nav_menu( $menu->term_id );
+			}
+		);
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Run
 // ---------------------------------------------------------------------------
@@ -372,6 +422,7 @@ WP_CLI::log( 'Pages' );
 $wptpl_page_ids = wptpl_seed_all_pages();
 if ( $wptpl_prune ) {
 	wptpl_seed_prune( wptpl_seed_retired_slugs() );
+	wptpl_seed_prune_menus( wptpl_seed_retired_menus() );
 }
 
 WP_CLI::log( '' );
