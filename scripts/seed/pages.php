@@ -81,6 +81,22 @@ function wptpl_seed_retired_slugs(): array {
 	);
 }
 
+/**
+ * Menus the template used to create and no longer does.
+ *
+ * A menu left behind points at trashed pages. WordPress hides those items, so
+ * the menu renders empty — and the footer still prints its heading above the
+ * nothing. Pruned alongside the retired pages.
+ *
+ * @return array<int, string>
+ */
+function wptpl_seed_retired_menus(): array {
+	return array(
+		// Dropped with the compliance pages it linked to.
+		'Footer Legal',
+	);
+}
+
 // ---------------------------------------------------------------------------
 // Home
 // ---------------------------------------------------------------------------
