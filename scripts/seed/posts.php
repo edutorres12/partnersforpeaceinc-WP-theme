@@ -162,4 +162,21 @@ function wptpl_seed_all_posts(): void {
 			}
 		);
 	}
+
+	// WordPress auto-creates its own Privacy Policy draft; the seeder ships a
+	// real one at /privacy/, so the draft is just clutter in the pages list.
+	$wp_privacy = (int) get_option( 'wp_page_for_privacy_policy' );
+	if ( $wp_privacy ) {
+		$draft = get_post( $wp_privacy );
+		if ( $draft instanceof WP_Post && 'draft' === $draft->post_status ) {
+			wptpl_seed_do(
+				'update',
+				'trash the auto-created "Privacy Policy" draft',
+				static function () use ( $draft ) {
+					update_option( 'wp_page_for_privacy_policy', 0 );
+					wp_trash_post( $draft->ID );
+				}
+			);
+		}
+	}
 }

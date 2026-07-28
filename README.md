@@ -278,15 +278,19 @@ and six sample posts (one sticky, which is what the featured card picks up).
 Run it through WP-CLI from the theme directory:
 
 ```bash
-wp eval-file scripts/seed-wp.php                  # dry run — prints the plan, writes nothing
-wp eval-file scripts/seed-wp.php -- --apply       # write
-wp eval-file scripts/seed-wp.php -- --apply --force
+wp eval-file scripts/seed-wp.php                # dry run — prints the plan, writes nothing
+wp eval-file scripts/seed-wp.php apply          # write
+wp eval-file scripts/seed-wp.php apply force
 ```
 
-**It is safe by default.** Without `--apply` nothing is written; you get a plan
-listing every action it would take. With `--apply` it is idempotent — pages are
+The flags are **bare words, not `--apply`** — WP-CLI parses anything starting
+with `--` as one of its own options and errors out with "unknown --apply
+parameter", and the `--` separator does not help for `eval-file`.
+
+**It is safe by default.** Without `apply` nothing is written; you get a plan
+listing every action it would take. With `apply` it is idempotent — pages are
 matched by slug, menus by name, options and theme mods are only touched when
-they differ, and anything that already exists is left alone. `--force`
+they differ, and anything that already exists is left alone. `force`
 additionally replaces the content of pages the seeder owns; use it to re-apply
 the template after editing the markup, and expect it to discard manual edits to
 those pages.
@@ -299,7 +303,7 @@ those pages.
 | Menus | Primary (with the services nested under Services), Footer Links, Footer Legal — each assigned to its location |
 | Settings | static front page, `/%postname%/` permalinks, site title + tagline, posts per page |
 | Customizer | header CTA, and every Footer / Practice info field |
-| Blog | 5 categories, 6 posts, and the default "Hello world!" / "Sample Page" trashed |
+| Blog | 5 categories, 6 posts, and the default "Hello world!" / "Sample Page" / auto-created Privacy Policy draft trashed |
 
 The blog hub is a **normal page**, not `page_for_posts` — its listing comes from
 the `wptpl/featured-post` and `wptpl/post-grid` blocks, which is what lets it
@@ -326,7 +330,13 @@ place of the form — drop the form plugin's shortcode in and the styling applie
 Page markup lives in `scripts/seed/pages.php`, one builder per page, composed
 from the helpers in `scripts/seed/blocks.php` (`wptpl_section()`,
 `wptpl_columns()`, `wptpl_block()`, …). Blog content is in
-`scripts/seed/posts.php`. Change a builder, re-run with `--apply --force`.
+`scripts/seed/posts.php`. Change a builder, re-run with `apply force`.
+
+Two constraints on `scripts/seed-wp.php` itself, both because `wp eval-file`
+runs it through `eval()`: it must not `declare(strict_types=1)`, and top-level
+variables the helpers read via `global` must be assigned into `$GLOBALS`
+explicitly — a plain assignment is function-scoped there, and the symptom is a
+run that reports "0 action(s) planned".
 
 ## Conventions
 
