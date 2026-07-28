@@ -278,9 +278,11 @@ and six sample posts (one sticky, which is what the featured card picks up).
 Run it through WP-CLI from the theme directory:
 
 ```bash
-wp eval-file scripts/seed-wp.php                # dry run — prints the plan, writes nothing
-wp eval-file scripts/seed-wp.php apply          # write
-wp eval-file scripts/seed-wp.php apply force
+wp eval-file scripts/seed-wp.php                     # dry run — prints the plan, writes nothing
+wp eval-file scripts/seed-wp.php apply               # write
+wp eval-file scripts/seed-wp.php apply force         # also replace seeded page content
+wp eval-file scripts/seed-wp.php apply prune         # also trash retired pages
+wp eval-file scripts/seed-wp.php apply prune force   # ...including unmarked ones
 ```
 
 The flags are **bare words, not `--apply`** — WP-CLI parses anything starting
@@ -294,6 +296,24 @@ they differ, and anything that already exists is left alone. `force`
 additionally replaces the content of pages the seeder owns; use it to re-apply
 the template after editing the markup, and expect it to discard manual edits to
 those pages.
+
+### What it owns
+
+Every page the seeder creates is marked with a `_wptpl_seeded` meta key, and
+that mark is what makes the destructive modes safe: `force` and `prune` only
+ever touch marked pages. A page a site created by hand at one of these slugs is
+reported and left alone. Re-seeding a slug adopts the page, so an install seeded
+before the mark existed is picked up on the next run.
+
+`prune` trashes — never deletes — pages the template used to own and no longer
+does (`wptpl_seed_retired_slugs()` in `scripts/seed/pages.php`), so a
+restructure is reversible from wp-admin.
+
+Note that `force` covers two permissions at once: replacing the content of
+seeded pages, and letting `prune` take retired pages that carry no mark. That is
+fine while the content is still placeholder, and it is the combination a
+first-time migration needs. Once a site holds real copy, dry-run first and read
+the plan — it names every page it would rewrite.
 
 ### What it creates
 
@@ -337,6 +357,92 @@ runs it through `eval()`: it must not `declare(strict_types=1)`, and top-level
 variables the helpers read via `global` must be assigned into `$GLOBALS`
 explicitly — a plain assignment is function-scoped there, and the symptom is a
 run that reports "0 action(s) planned".
+
+## Verifying content changes
+
+`.github/workflows/preview-seed.yml` runs on every PR that touches the seeder,
+the blocks or the templates. It installs a throwaway SQLite-backed WordPress
+inside the runner, activates the theme, and puts the seeder through its paces:
+
+- dry run, then `apply`
+- a second `apply`, which must create nothing — a failure here means the seeder
+  would duplicate content on re-run
+- structural checks: 20 pages, the seven services nested under `/services/`,
+  three menus assigned, front page set
+- renders all 17 public URLs and fails on any non-200 or any PHP
+  notice/warning/fatal in the output
+
+The plan, the counts and the render table land in the job summary, with the raw
+logs as artifacts.
+
+**It deliberately does not run against the staging site.** The check needs to
+`apply` — and sometimes `apply force` — destructively on every PR, which would
+eat any copy written in the WordPress editor. That is harmless while staging is
+empty and gets progressively worse as it fills up. Concurrent PRs would also
+stomp each other on a shared server. Staging is where a human looks at the real
+thing; the runner is where the machine proves nothing is broken.
+
+## Deploying content from CI
+
+`.github/workflows/deploy-content.yml` updates the theme on the WordPress host
+over SSH and runs the seeder there, so a content change is: edit
+`scripts/seed/pages.php` → PR → merge → run the workflow.
+
+**A merge can never rewrite site content.** A push to `main` updates the theme and
+runs the seeder in **dry-run** only; the plan lands in the job summary and
+nothing touches the database. Writing requires opening the Actions tab and
+running the workflow manually with `mode: apply`. `apply-force` — which replaces
+the content of every seeded page and discards edits made in the WordPress editor
+— additionally requires typing `FORCE` into the confirm field.
+
+Before any write the workflow exports the database to `~/wptpl-backups/` on the
+server (gzipped, ten most recent kept). Backups live in the home directory, not
+under `public_html`, so they are not downloadable from the web.
+
+The backup drives `mysqldump` from the shell rather than using `wp db export`.
+Shared hosts commonly disable `exec`/`shell_exec`/`passthru`/`popen` in PHP, and
+`wp db export` shells out to mysqldump through them — on Hostinger it exits 255
+with no message at all.
+
+It also refuses to seed unless the expected theme is the active one, which stops
+a misconfigured `THEME_DIR` from writing pages into whatever site the credentials
+happen to reach.
+
+Until the secrets exist the workflow skips cleanly and says which ones are
+missing, rather than failing — a red X on `main` for "not set up yet" teaches
+everyone to ignore the workflow, and then a real failure goes unread.
+
+### One-time setup
+
+**Settings → Secrets and variables → Actions.**
+
+Generate a key dedicated to deployment rather than reusing a personal one:
+
+```bash
+ssh-keygen -t ed25519 -f deploy_key -N ""
+```
+
+Paste `deploy_key.pub` into hPanel → Advanced → SSH Access → Add key, and
+`deploy_key` (the private half, whole file including the BEGIN/END lines) into
+the secret below.
+
+| Secret | Value |
+|---|---|
+| `HOSTINGER_SSH_KEY` | contents of `deploy_key` |
+| `HOSTINGER_HOST` | e.g. `123.45.67.89` |
+| `HOSTINGER_USER` | e.g. `u123456789` |
+
+| Variable | Value |
+|---|---|
+| `HOSTINGER_PORT` | `65002` (Hostinger's SSH port; the default if unset) |
+| `WP_PATH` | absolute path to the WordPress root |
+| `THEME_DIR` | theme path relative to `WP_PATH` (default `wp-content/themes/partnersforpeace`) |
+
+Host and user are secrets so they stay out of the logs; the paths are plain
+variables so a failure is actually debuggable.
+
+Note that a Hostinger SSH key grants access to the whole hosting account, not a
+single site. Keep unrelated client sites on a different account.
 
 ## Conventions
 

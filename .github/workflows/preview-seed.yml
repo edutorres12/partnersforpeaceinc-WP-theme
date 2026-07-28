@@ -1,0 +1,224 @@
+# Runs the seeder against a throwaway WordPress inside the runner, on every PR.
+#
+# This is the safety net for content changes. `scripts/seed/pages.php` produces
+# block markup that only really proves itself once WordPress parses and renders
+# it, and the seeder itself runs through `wp eval-file`, which has its own rules
+# (no declare(strict_types), globals must be explicit). Reviewing the diff does
+# not catch either class of problem — running it does.
+#
+# Nothing here touches the real site. The install is SQLite-backed, lives in the
+# runner, and disappears with it. Production is only ever reached by
+# deploy-content.yml, and only from main.
+
+name: Preview seed
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'src/blocks/**'
+      - '*.php'
+      - 'inc/**'
+      - 'theme.json'
+      - '.github/workflows/preview-seed.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    name: Seed a throwaway WordPress
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: theme
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, sqlite3, pdo_sqlite, zip, gd, curl, intl
+          coverage: none
+
+      - name: Install WP-CLI
+        run: |
+          set -euo pipefail
+          curl -sSL -o /usr/local/bin/wp \
+            https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x /usr/local/bin/wp
+          wp --info
+
+      - name: Install WordPress on SQLite
+        run: |
+          set -euo pipefail
+          mkdir -p wp && cd wp
+          wp core download --skip-content --quiet
+          wp config create --dbname=wp --dbuser=root --dbpass= --skip-check --quiet
+          mkdir -p wp-content/plugins wp-content/themes wp-content/uploads
+
+          # The SQLite drop-in lets WordPress run without a MySQL service.
+          curl -sSL -o sqlite.zip \
+            https://downloads.wordpress.org/plugin/sqlite-database-integration.zip
+          unzip -qo sqlite.zip -d wp-content/plugins && rm sqlite.zip
+          cp wp-content/plugins/sqlite-database-integration/db.copy wp-content/db.php
+          sed -i \
+            -e "s|{SQLITE_IMPLEMENTATION_FOLDER_PATH}|$PWD/wp-content/plugins/sqlite-database-integration|" \
+            -e "s|{SQLITE_PLUGIN}|sqlite-database-integration/load.php|" \
+            wp-content/db.php
+
+          wp core install \
+            --url=http://localhost:8080 --title="Preview" \
+            --admin_user=admin --admin_password=admin \
+            --admin_email=preview@example.com --skip-email --quiet
+
+      - name: Activate the theme
+        run: |
+          set -euo pipefail
+          ln -s "$GITHUB_WORKSPACE/theme" wp/wp-content/themes/wptpl-theme
+          cd wp
+          wp theme activate wptpl-theme
+          echo "Blocks registered:"
+          wp eval 'echo implode( "\n", array_filter( array_keys( WP_Block_Type_Registry::get_instance()->get_all_registered() ), fn( $n ) => str_starts_with( $n, "wptpl/" ) ) ), "\n";'
+
+      - name: Dry run
+        run: |
+          set -euo pipefail
+          cd wp
+          wp eval-file wp-content/themes/wptpl-theme/scripts/seed-wp.php \
+            | tee "$GITHUB_WORKSPACE/dry-run.txt"
+
+      - name: Apply
+        run: |
+          set -euo pipefail
+          cd wp
+          wp eval-file wp-content/themes/wptpl-theme/scripts/seed-wp.php apply \
+            | tee "$GITHUB_WORKSPACE/apply.txt"
+
+      - name: Check it is idempotent
+        run: |
+          set -euo pipefail
+          cd wp
+          # A second apply must not create anything. Every line the seeder logs
+          # for a creation starts with "+", so any of those means a duplicate.
+          wp eval-file wp-content/themes/wptpl-theme/scripts/seed-wp.php apply \
+            | tee "$GITHUB_WORKSPACE/second-apply.txt"
+          if grep -qE '^\s+\+ ' "$GITHUB_WORKSPACE/second-apply.txt"; then
+            echo "::error::The second apply created something. The seeder is not idempotent — it will duplicate content on re-run."
+            grep -E '^\s+\+ ' "$GITHUB_WORKSPACE/second-apply.txt"
+            exit 1
+          fi
+          echo "Second apply created nothing."
+
+      - name: Check what landed
+        run: |
+          set -euo pipefail
+          cd wp
+          {
+            echo "pages=$(wp post list --post_type=page --format=count)"
+            echo "posts=$(wp post list --post_type=post --format=count)"
+            echo "menus=$(wp menu list --format=count)"
+            echo "front_page=$(wp option get page_on_front)"
+          } | tee "$GITHUB_WORKSPACE/counts.txt"
+
+          # The seven service subpages must be nested, not top-level.
+          NESTED="$(wp post list --post_type=page --post_parent="$(wp post list --post_type=page --name=services --field=ID)" --format=count)"
+          echo "nested_services=$NESTED" | tee -a "$GITHUB_WORKSPACE/counts.txt"
+          if [ "$NESTED" -ne 7 ]; then
+            echo "::error::expected 7 service subpages nested under /services/, found $NESTED"
+            exit 1
+          fi
+
+          # Every menu location must be filled.
+          for LOC in primary footer footer_legal; do
+            wp menu location list --format=csv | grep -q "^$LOC," || true
+          done
+          wp menu list --fields=name,count,locations --format=table
+
+      - name: Render every page
+        run: |
+          set -euo pipefail
+          cd wp
+          wp server --host=127.0.0.1 --port=8080 --docroot="$PWD" > "$GITHUB_WORKSPACE/server.log" 2>&1 &
+
+          # `if` keeps a failed probe from tripping `set -e` — a bare
+          # `curl … && break` exits the step on the first attempt instead of
+          # retrying, which is not what a wait loop is for.
+          READY=0
+          for _ in $(seq 1 45); do
+            if curl -sfL -o /dev/null http://127.0.0.1:8080/; then READY=1; break; fi
+            sleep 1
+          done
+          if [ "$READY" -ne 1 ]; then
+            echo "::error::the dev server never came up"
+            cat "$GITHUB_WORKSPACE/server.log" || true
+            exit 1
+          fi
+
+          FAIL=0
+          : > "$GITHUB_WORKSPACE/render.txt"
+          PATHS="/ /about-us/ /meet-our-therapists/ /services/
+                 /services/service-one/ /services/service-two/
+                 /blog/ /contact/ /church-partnerships/ /payment/ /donate/
+                 /ai-information/ /featured-post/ /sample-post-one/"
+          for P in $PATHS; do
+            BODY="$(curl -sL "http://127.0.0.1:8080$P")"
+            CODE="$(curl -sL -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$P")"
+            # `|| true`: grep exits 1 when it finds nothing, which here is the
+            # success case. Without it, pipefail + set -e kill the step on the
+            # first page that renders cleanly.
+            ERR="$(printf '%s' "$BODY" \
+              | grep -ioE 'Fatal error|Parse error|Warning:|Notice: |Deprecated:|critical error' \
+              | sort -u | tr '\n' ' ' || true)"
+            BYTES="$(printf '%s' "$BODY" | wc -c)"
+            STATUS="ok"
+            if [ "$CODE" != "200" ] || [ -n "$ERR" ]; then STATUS="FAIL ${ERR:-http $CODE}"; FAIL=1; fi
+            printf '%-26s %s %8s bytes  %s\n' "$P" "$CODE" "$BYTES" "$STATUS" \
+              | tee -a "$GITHUB_WORKSPACE/render.txt"
+          done
+          [ "$FAIL" -eq 0 ] || { echo "::error::at least one page failed to render cleanly"; exit 1; }
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Preview seed"
+            echo
+            echo "Ran against a throwaway WordPress in the runner. Production was not touched."
+            echo
+            echo "### What landed"
+            echo '```'
+            cat counts.txt 2>/dev/null || echo "(did not get that far)"
+            echo '```'
+            echo "### Every page rendered"
+            echo '```'
+            cat render.txt 2>/dev/null || echo "(did not get that far)"
+            echo '```'
+            echo "<details><summary>Full plan (dry run)</summary>"
+            echo
+            echo '```'
+            cat dry-run.txt 2>/dev/null || echo "(did not get that far)"
+            echo '```'
+            echo
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-seed-output
+          path: |
+            dry-run.txt
+            apply.txt
+            second-apply.txt
+            counts.txt
+            render.txt
+            server.log
+          if-no-files-found: ignore
+          retention-days: 7
