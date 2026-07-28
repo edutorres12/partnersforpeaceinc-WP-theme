@@ -1,0 +1,8 @@
+/* Hide native marker and use our + indicator. */
+.wptpl-faq__item summary::-webkit-details-marker {
+	display: none;
+}
+
+.wptpl-faq__item summary::marker {
+	content: "";
+}

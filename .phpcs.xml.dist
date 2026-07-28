@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<ruleset name="Therapy Theme Template">
+	<description>WordPress Coding Standards for the Therapy Theme Template.</description>
+
+	<!-- What to scan. -->
+	<file>.</file>
+	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/build/</exclude-pattern>
+	<exclude-pattern>/docs/</exclude-pattern>
+	<!-- Self-contained deploy asset: runs outside the WordPress-loaded theme
+	     context (it renders when WP has crashed), so the escaping/i18n
+	     conventions enforced below intentionally don't apply. -->
+	<exclude-pattern>/dropins/</exclude-pattern>
+
+	<!-- CLI args. -->
+	<arg name="basepath" value="."/>
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg name="parallel" value="8"/>
+	<arg value="np"/>
+
+	<!--
+		Use WordPress-Extra (Core + Extra best practices) but NOT WordPress-Docs.
+		Modern PHP 8 typed signatures make @param tags redundant noise;
+		function-level @description docblocks are still required and we add
+		them for non-trivial functions.
+	-->
+	<rule ref="WordPress-Extra">
+		<!-- Yoda conditions are noisy in templates; allow normal `$a === 'x'` too. -->
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+		<!-- File/class doc comments aren't useful for small partial files. -->
+		<exclude name="Squiz.Commenting.FileComment.Missing"/>
+	</rule>
+
+	<!-- Custom configuration. -->
+	<config name="minimum_supported_wp_version" value="6.4"/>
+	<config name="testVersion" value="8.0-"/>
+
+	<!-- Theme prefix is `wptpl`. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="wptpl"/>
+				<element value="WPTPL"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Text domain check — value should be `wptpl`. -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="wptpl"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

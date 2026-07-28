@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "wptpl/faq",
+	"title": "FAQ",
+	"category": "wptpl",
+	"icon": "editor-help",
+	"description": "List of questions and answers using native <details> accordion.",
+	"keywords": [ "faq", "questions", "accordion" ],
+	"version": "0.1.0",
+	"textdomain": "wptpl",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"className": true,
+		"spacing": { "padding": true, "margin": true },
+		"color": { "background": true, "text": true }
+	},
+	"attributes": {
+		"items": {
+			"type": "array",
+			"default": [
+				{
+					"question": "Question 1",
+					"answer": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+				},
+				{
+					"question": "Question 2",
+					"answer": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+				},
+				{
+					"question": "Question 3",
+					"answer": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+				}
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

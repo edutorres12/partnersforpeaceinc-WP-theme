@@ -1,0 +1,14 @@
+/* Estilos del bloque hero compartidos editor + frontend.
+   Las utilidades de Tailwind se aplican vía className en edit/save.
+   Acá solo CSS que NO se puede expresar con utilities. */
+.wptpl-hero {
+	position: relative;
+}
+
+/* Per-hero opt-in: widen the intro paragraph beyond the default max-w-xl
+   (36rem). Add the "is-intro-wide" class to the hero block (Additional CSS
+   classes) to apply it to a single hero without affecting the others. */
+.wptpl-hero.is-intro-wide .wptpl-hero__subtitle {
+	max-width: 66rem;
+	font-size: 1.25rem; /* 20px */
+}

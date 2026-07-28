@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wptpl/section-header",
+  "title": "Section header",
+  "category": "wptpl",
+  "icon": "heading",
+  "description": "Eyebrow + headline + intro paragraph.",
+  "keywords": [
+    "section",
+    "header",
+    "title",
+    "heading"
+  ],
+  "version": "0.1.0",
+  "textdomain": "wptpl",
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "className": true,
+    "spacing": {
+      "padding": true,
+      "margin": [
+        "top",
+        "bottom"
+      ]
+    },
+    "color": {
+      "background": true,
+      "text": true
+    }
+  },
+  "attributes": {
+    "eyebrow": {
+      "type": "string",
+      "default": ""
+    },
+    "headline": {
+      "type": "string",
+      "default": "Section headline"
+    },
+    "intro": {
+      "type": "string",
+      "default": ""
+    },
+    "alignment": {
+      "type": "string",
+      "default": "center",
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ]
+    },
+    "headingLevel": {
+      "type": "number",
+      "default": 2,
+      "minimum": 1,
+      "maximum": 6
+    }
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

@@ -1,0 +1,2571 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------
+   Base layer — typography defaults.
+
+   IMPORTANT: Tailwind's preflight (`@tailwind base` above) RESETS
+   h1..h6 to `font-size: inherit; font-weight: inherit;` so that
+   utility classes can drive headings. That reset has higher
+   specificity than the `:where(h1)` rule WordPress generates from
+   theme.json `styles.elements`, which means without these explicit
+   rules headings render at body size with no weight.
+
+   So this is the ONE place you change global heading sizes:
+
+     h1       → 48px heading face 700, line-height 53px
+     h2       → 32px heading face 700, line-height 40px
+     h3       → 27px heading face 700, line-height 32px
+     h4       → 20px heading face 700
+     h5       → 18px heading face 700
+     h6       → 12px heading face 700 uppercase tracking-widest
+     body     → 16px body face 400, line-height 24px (1.5)
+
+   Both faces are the same system sans stack until a site picks its
+   typefaces — swap the stacks here, in theme.json, and in
+   tailwind.config.js together.
+
+   Keep the values here in sync with theme.json (so the editor
+   picker matches the frontend).
+   --------------------------------------------------------------- */
+@layer base {
+  html, body {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  }
+  body {
+    font-size: 1rem;
+    line-height: 1.5; /* 24px on 16px */
+  }
+  h1 {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 3rem;        /* 48px */
+    line-height: 1.1;       /* ~53px */
+    font-weight: 700;
+  }
+  h2 {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 2rem;        /* 32px */
+    line-height: 1.25;      /* 40px */
+    font-weight: 700;
+  }
+  h3 {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.6875rem;   /* 27px (20pt) */
+    line-height: 1.1852;    /* 32px (24pt) */
+    font-weight: 700;
+  }
+  h4 {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.25rem;     /* 20px */
+    line-height: 1.3;
+    font-weight: 700;
+  }
+  h5 {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.125rem;    /* 18px */
+    line-height: 1.35;
+    font-weight: 700;
+  }
+  h6 {
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.75rem;     /* 12px */
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+  p {
+    line-height: 1.65;
+  }
+
+  /* Unified interactive transition. One source of truth: 200ms ease-out
+     for all interactive surfaces. `outline` is intentionally excluded so
+     focus rings stay instant for accessibility. */
+  a, button,
+  .wptpl-btn, .wptpl-feature-card,
+  .wptpl-lang-switch, .wptpl-tag-list a,
+  .wptpl-header .custom-logo-link,
+  [role="button"] {
+    transition-property: color, background-color, border-color, opacity, transform, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Visible keyboard focus. Previously the theme relied on the UA default
+     outline, which is near-invisible on the branded backgrounds. This is a
+     single, consistent ring for every interactive element, shown only for
+     keyboard/AT focus (:focus-visible) so mouse clicks don't draw it. Accent
+     reads on the light surfaces that dominate the site; dark landmarks get a
+     canvas override below. `outline` is deliberately kept out of the global
+     transition (above) so the ring appears instantly. */
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--wp--preset--color--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Dark surfaces (footer and the alert-bar band) — swap to a light ring so
+     it stays visible against secondary/canvas-dark backgrounds. */
+  .wptpl-footer :focus-visible,
+  .wptpl-topbar :focus-visible {
+    outline-color: var(--wp--preset--color--on-dark);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Layout tokens — the ONE source of truth for container widths and
+   the horizontal gutter between content and the viewport edge.
+
+   Containers (3 tiers):
+     .wptpl-container         → 1400px  general content (header, footer,
+                                         masthead, 4-card grids)
+     .wptpl-container-md      → 1200px  3-card sections
+     .wptpl-container-narrow  →  760px  long-form text, FAQ
+
+   Gutter: clamp(1rem, 4vw, 2rem) → 32px on desktop; below 768px the
+   responsive overrides pin it to a fixed 20px.
+   The same gutter is applied to .wptpl-section so header / footer /
+   sections all line up against the viewport edge.
+   --------------------------------------------------------------- */
+:root {
+  --wptpl-container-wide:   1400px;
+  --wptpl-container-md:     1200px;
+  --wptpl-container-narrow:  760px;
+  --wptpl-gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Card elevation tokens — kept in secondary (secondary) to stay in palette. */
+  --wptpl-shadow-rest:  0 1px 3px  rgba(34, 34, 34, 0.06);
+  --wptpl-shadow-hover: 0 8px 24px rgba(34, 34, 34, 0.10);
+}
+
+/* ---------------------------------------------------------------
+   Reusable theme components.
+   --------------------------------------------------------------- */
+@layer components {
+  .wptpl-container,
+  .wptpl-container-md,
+  .wptpl-container-narrow {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--wptpl-gutter);
+  }
+  .wptpl-container        { max-width: var(--wptpl-container-wide); }
+  .wptpl-container-md     { max-width: var(--wptpl-container-md); }
+  .wptpl-container-narrow { max-width: var(--wptpl-container-narrow); }
+
+  /* Button — 16px heading Bold, uppercase, tracking-widest.
+     16px = 1rem; 19.2px line-height ≈ 1.2. */
+  .wptpl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    padding: 0.875rem 1.5rem;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    /* Center the label so a CTA that wraps to two lines (long labels on narrow
+       screens) stays centered and reads as a button, instead of inheriting the
+       surrounding text-align (the hero is left-aligned, which made its wrapped
+       CTA hug the left). Single-line buttons are unaffected. */
+    text-align: center;
+    /* Subtle elevation so a flat filled CTA reads as a raised, tappable button
+       (affordance) — same shadow language as the cards. Deepens slightly on
+       hover; the box-shadow transition is already set in the base layer. */
+    box-shadow: 0 2px 5px rgba(34, 34, 34, 0.18);
+  }
+  .wptpl-btn:hover {
+    box-shadow: 0 5px 12px rgba(34, 34, 34, 0.22);
+  }
+  .wptpl-btn-primary {
+    @apply wptpl-btn bg-primary text-white hover:bg-secondary;
+  }
+  .wptpl-btn-secondary {
+    @apply wptpl-btn bg-secondary text-white hover:bg-primary;
+  }
+  .wptpl-btn-accent {
+    @apply wptpl-btn bg-accent text-white;
+  }
+  .wptpl-btn-accent:hover {
+    @apply text-white;
+    background-color: #4d4d4d; /* deeper accent — same hue, softer than jumping to secondary */
+  }
+  .wptpl-btn-outline {
+    @apply wptpl-btn border border-contrast text-contrast hover:bg-contrast hover:text-white;
+  }
+
+  /* Eyebrow — small caps label (12px heading Bold uppercase tracking-widest). */
+  .wptpl-eyebrow {
+    @apply text-muted;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* Section-header eyebrow override — heading 12px light, dark secondary. */
+  .wptpl-section-header .wptpl-eyebrow {
+    @apply text-secondary;
+    font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+  }
+
+  /* Nav links — body 0.9rem medium, uppercase.
+     Hover color is accent (accent) for warmth + visual differentiation
+     from buttons (which use soft/secondary). Transition inherited from
+     the global rule in @layer base. */
+  .wptpl-nav a,
+  .wptpl-nav .menu-item a {
+    @apply text-black;
+    font-family: Arial, Helvetica, ui-sans-serif, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    /* Transition inherited from the unified rule in @layer base. */
+  }
+  .wptpl-nav a:hover,
+  .wptpl-nav .menu-item a:hover {
+    @apply text-accent;
+  }
+
+  /* Dropdown submenu (e.g. Services → individual service pages). The primary
+     menu renders one level of children (header.php uses depth=2); WordPress
+     marks the parent <li> with `menu-item-has-children` and wraps the children
+     in a `.sub-menu` <ul>. Hidden by default, revealed on hover OR keyboard
+     focus (`focus-within`) so it's reachable without a mouse. Styled to match
+     the site: light card, secondary labels, accent hover (inherited from the nav
+     hover rule above), soft elevation. */
+  .wptpl-nav .menu-item-has-children {
+    position: relative;
+  }
+  /* Down-caret after a parent item; rotates 180deg when the menu opens. */
+  .wptpl-nav .menu-item-has-children > a::after {
+    content: "";
+    display: inline-block;
+    margin-left: 0.4em;
+    border-left: 0.3em solid transparent;
+    border-right: 0.3em solid transparent;
+    border-top: 0.3em solid currentColor;
+    vertical-align: middle;
+    transition: transform 200ms ease-out;
+  }
+  .wptpl-nav .menu-item-has-children:hover > a::after,
+  .wptpl-nav .menu-item-has-children:focus-within > a::after {
+    transform: rotate(180deg);
+  }
+  .wptpl-nav .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    min-width: 15rem;
+    margin-top: 0.5rem; /* float just below the bar */
+    padding: 0.5rem 0;
+    list-style: none;
+    background-color: #ffffff;
+    border: 1px solid var(--wp--preset--color--on-dark);
+    border-radius: 0.5rem;
+    box-shadow: var(--wptpl-shadow-hover);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.25rem);
+    transition: opacity 200ms ease-out, transform 200ms ease-out, visibility 0s linear 200ms;
+  }
+  /* Invisible bridge across the gap so moving the cursor from the parent down
+     into the card doesn't drop the hover and close it. */
+  .wptpl-nav .sub-menu::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -0.5rem;
+    height: 0.5rem;
+  }
+  .wptpl-nav .menu-item-has-children:hover > .sub-menu,
+  .wptpl-nav .menu-item-has-children:focus-within > .sub-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+  /* Submenu labels: secondary, normal-case (long service names stay readable).
+     Hover fills canvas + flips to accent + grows a 3px accent bar on the left
+     (inset shadow, so no layout shift). Transition inherited from the global
+     `a` rule in @layer base. */
+  .wptpl-nav .sub-menu a {
+    display: block;
+    padding: 0.5rem 1.25rem;
+    color: var(--wp--preset--color--secondary);
+    font-size: 0.9rem;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+    box-shadow: inset 0 0 0 0 var(--wp--preset--color--accent);
+  }
+  .wptpl-nav .sub-menu a:hover {
+    color: var(--wp--preset--color--accent);
+    background-color: var(--wp--preset--color--on-dark);
+    box-shadow: inset 0.1875rem 0 0 0 var(--wp--preset--color--accent);
+  }
+  /* Highlight the service page you're currently on. */
+  .wptpl-nav .sub-menu .current-menu-item > a,
+  .wptpl-nav .sub-menu .current_page_item > a {
+    color: var(--wp--preset--color--accent);
+    font-weight: 600;
+  }
+
+  /* Footer menu links — on-dark on the dark footer; brighten to
+     white on hover. The global link color (deep accent) is for light
+     backgrounds and would be near-invisible here, so scope a rest color. */
+  .wptpl-footer .menu a,
+  .wptpl-footer .menu-item a {
+    @apply text-on-dark;
+  }
+  .wptpl-footer .menu a:hover,
+  .wptpl-footer .menu-item a:hover {
+    @apply text-white;
+  }
+
+  /* Current top-level section indicator — the nav item for the page you're on
+     (or its ancestor) reads in accent. */
+  .wptpl-nav .current-menu-item > a,
+  .wptpl-nav .current-menu-ancestor > a,
+  .wptpl-nav .current_page_item > a {
+    @apply text-accent;
+  }
+
+  /* --- Mobile menu (below the lg breakpoint, where the desktop nav hides) --- */
+
+  /* Hamburger button → morphs to an X when open (.is-open from nav.js). */
+  .wptpl-nav-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0.625rem;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .wptpl-nav-toggle__bar {
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--wp--preset--color--secondary);
+    transition: transform 200ms ease-out, opacity 150ms ease-out;
+  }
+  .wptpl-nav-toggle.is-open .wptpl-nav-toggle__bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .wptpl-nav-toggle.is-open .wptpl-nav-toggle__bar:nth-child(2) {
+    opacity: 0;
+  }
+  .wptpl-nav-toggle.is-open .wptpl-nav-toggle__bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Panel that drops below the header bar. `hidden` (the attribute) keeps it
+     out until nav.js opens it. */
+  /* Full-screen overlay drawer: fixed below the header bar down to the viewport
+     bottom, so it covers the screen instead of pushing the page. When its
+     content outgrows the space (e.g. Services expanded) it scrolls internally
+     (`overflow-y: auto`); `overscroll-behavior: contain` keeps that scroll from
+     chaining to the locked page behind it. Height is pinned to the small viewport
+     unit so an iOS toolbar can't crop the bottom. */
+  .wptpl-mobile-nav {
+    position: fixed;
+    /* Start exactly at the header's real bottom edge (measured by nav.js, so it
+       already accounts for the admin bar when logged in). The header's own
+       border-b is the single separator — no border-top here, to avoid a seam. */
+    top: var(--wptpl-header-h, 4.75rem);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: #ffffff;
+    padding: 0.5rem var(--wptpl-gutter) 2rem;
+  }
+  /* Keep the header bar (logo + close button) pinned above the overlay while the
+     menu is open, so the close control is always reachable even if a mobile
+     browser lets the locked page drift. Sticky (not fixed) stays in flow, so
+     opening the menu doesn't shift the page underneath. `top` clears the admin
+     bar so the header doesn't tuck under it when logged in. */
+  html.wptpl-nav-open .wptpl-header {
+    position: sticky;
+    top: var(--wptpl-adminbar-h, 0px);
+    z-index: 50;
+  }
+  .wptpl-mobile-menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .wptpl-mobile-menu a {
+    @apply text-secondary;
+    display: block;
+    font-family: Arial, Helvetica, ui-sans-serif, sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.75rem 0.25rem;
+    border-bottom: 1px solid var(--wp--preset--color--on-dark);
+  }
+  .wptpl-mobile-menu a:hover {
+    @apply text-accent;
+  }
+  /* Parent items (e.g. Services) collapse by default in the mobile panel; a
+     caret button (injected by assets/js/nav.js) toggles the children. The parent
+     link is left alone, so it still navigates to its own page. */
+  .wptpl-mobile-menu .menu-item-has-children {
+    position: relative;
+  }
+  .wptpl-mobile-menu .menu-item-has-children > a {
+    padding-right: 3rem; /* clear the caret so long labels never run under it */
+  }
+  /* Service children: indented, normal-case, lighter so the hierarchy reads. */
+  .wptpl-mobile-menu .sub-menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: none;
+  }
+  .wptpl-mobile-menu .menu-item-has-children.is-open > .sub-menu {
+    display: block;
+  }
+  .wptpl-mobile-menu .sub-menu a {
+    padding-left: 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--wp--preset--color--muted);
+  }
+  /* Caret disclosure button — a 44px tap target over the parent row's right end. */
+  .wptpl-submenu-toggle {
+    position: absolute;
+    top: 0;
+    right: -0.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: var(--wp--preset--color--secondary);
+    cursor: pointer;
+  }
+  /* Chevron drawn from borders: points down when closed, flips up when open. */
+  .wptpl-submenu-toggle::after {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: -0.15rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 200ms ease-out;
+  }
+  .wptpl-submenu-toggle[aria-expanded="true"]::after {
+    margin-top: 0.15rem;
+    transform: rotate(-135deg);
+  }
+  .wptpl-mobile-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  /* Lock page scroll while the mobile menu is open. */
+  html.wptpl-nav-open {
+    overflow: hidden;
+  }
+
+  /* Respect reduced-motion: kill the nav animations for users who ask. */
+  @media (prefers-reduced-motion: reduce) {
+    .wptpl-nav .sub-menu,
+    .wptpl-nav-toggle__bar {
+      transition: none;
+    }
+  }
+
+  /* Header logo — cap the WP custom logo to header height; strip
+     any inherited margins so it sits flush left. */
+  .wptpl-header .custom-logo-link {
+    display: inline-block;
+    line-height: 0;
+    margin: 0;
+  }
+  .wptpl-header .custom-logo-link:hover {
+    opacity: 0.85;
+  }
+  .wptpl-header .custom-logo {
+    width: auto;
+    height: auto;
+    max-height: 56px;
+    max-width: 160px;
+    margin: 0;
+  }
+
+  /* Language switcher — heading 11px bold, soft.
+     Hover fills with soft + flips text to white (button-style chip). */
+  .wptpl-lang-switch {
+    @apply text-primary border-primary;
+    font-family: Arial, Helvetica, ui-sans-serif, sans-serif;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    border-radius: 0.25rem;
+  }
+  .wptpl-lang-switch:hover {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+
+  /* Alert bar — site-wide notice at the top of the footer. Copy comes from the
+     `alert_text` Customizer setting (empty by default, so the bar is hidden);
+     toggled per page from the editor sidebar (see inc/topbar.php). */
+  .wptpl-topbar {
+    @apply bg-on-dark text-black text-sm;
+  }
+  .wptpl-topbar a {
+    @apply underline;
+    color: inherit;
+  }
+  .wptpl-topbar a:hover {
+    opacity: 0.85;
+  }
+
+  /* Button variant for CTA-banner on photo background — soft tint,
+     darkens to full soft on hover (matches global "darken bg" pattern). */
+  .wptpl-btn-photo {
+    @apply wptpl-btn;
+    background-color: #cccccc;
+    color: #222222;
+  }
+  .wptpl-btn-photo:hover {
+    background-color: #1a1a1a;
+    color: #222222;
+  }
+
+  /* ---------------------------------------------------------------
+     Section spacing — top + bottom padding from spacing token "50"
+     (= 100px). One change in theme.json updates the whole site.
+
+     .wptpl-section        → 100px top + bottom
+     .wptpl-section-sm     → 24px top + bottom (Medium token)
+     .wptpl-section-lg     → 80px top + bottom (Large token)
+     .wptpl-section-tight  → 16px top + bottom (Small token)
+     --------------------------------------------------------------- */
+  .wptpl-section,
+  .wptpl-section-sm,
+  .wptpl-section-lg,
+  .wptpl-section-tight {
+    padding-inline: var(--wptpl-gutter);
+  }
+  .wptpl-section {
+    padding-top: var(--wp--preset--spacing--50, 6.25rem);
+    padding-bottom: var(--wp--preset--spacing--50, 6.25rem);
+  }
+  .wptpl-section-sm {
+    padding-top: var(--wp--preset--spacing--40, 1.5rem);
+    padding-bottom: var(--wp--preset--spacing--40, 1.5rem);
+  }
+  .wptpl-section-lg {
+    padding-top: var(--wp--preset--spacing--60, 5rem);
+    padding-bottom: var(--wp--preset--spacing--60, 5rem);
+  }
+  .wptpl-section-tight {
+    padding-top: var(--wp--preset--spacing--30, 1rem);
+    padding-bottom: var(--wp--preset--spacing--30, 1rem);
+  }
+
+  /* Hero intro paragraph widen modifier. Mirrors the rule in the hero block's
+     style.css, but lives here too so it ships in the always-enqueued
+     tailwind.css (per-block style assets can be stripped by cache plugins). */
+  .wptpl-hero.is-intro-wide .wptpl-hero__subtitle {
+    max-width: 66rem;
+    font-size: 1.25rem;
+  }
+}
+
+/* ---------------------------------------------------------------
+   404 error page — a full-viewport, vertically-centered cover (no footer,
+   no scroll). Lives OUTSIDE @layer because it hinges on `body.error404`, a
+   class WordPress adds at render time that never appears in scanned source —
+   inside @layer, Tailwind's purge strips the body rule and centering breaks.
+   Scoped to `.error404` so the flex layout never leaks onto normal pages: the
+   body becomes a full-height flex column, .wptpl-main grows, and the cover
+   fills exactly the space under the header and centers its content.
+   --------------------------------------------------------------- */
+body.error404 {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+/* Logged-in view: WordPress renders the admin bar and pushes <html> down by
+   32px (46px on narrow screens). Shrink the cover by that much so the page
+   fits the viewport exactly instead of overflowing by the bar's height and
+   leaving a small scroll. `.admin-bar` is on <body> only when the bar shows,
+   so logged-out visitors keep the full 100dvh. */
+body.error404.admin-bar {
+  min-height: calc(100dvh - 32px);
+}
+@media screen and (max-width: 782px) {
+  body.error404.admin-bar {
+    min-height: calc(100dvh - 46px);
+  }
+}
+body.error404 .wptpl-main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.wptpl-error-cover {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem var(--wptpl-gutter);
+}
+.wptpl-error {
+  text-align: center;
+}
+/* Big, calm "404" — soft (not alarm-red), heading Extrabold, tight leading.
+   Fluid so it never overflows the narrow column on small screens. */
+.wptpl-error__code {
+  color: var(--wp--preset--color--primary);
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(4.5rem, 16vw, 8rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+.wptpl-error__lead {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-inline: auto;
+  max-width: 34rem;
+}
+/* The mobile menu is a fixed overlay (see .wptpl-mobile-nav), so it no longer
+   interacts with this cover — the 404 needs no menu-specific scroll handling. */
+
+/* ---------------------------------------------------------------
+   Content utilities — helper classes used inside page/block content (the class
+   names only appear in the editor content, never in scanned source), so they
+   live OUTSIDE @layer to survive purge.
+   --------------------------------------------------------------- */
+/* Mobile-only line break. A `<br class="wptpl-br-mobile">` collapses on
+   desktop/tablet (no break) and only breaks the line on phones (≤767px), so
+   copy can wrap differently on mobile without touching the larger layouts. */
+.wptpl-br-mobile {
+  display: none;
+}
+/* Tablet-only line break — breaks ONLY on tablet (768–1023px) and collapses on
+   desktop and mobile, so a break can be placed for the tablet layout alone. */
+.wptpl-br-tablet {
+  display: none;
+}
+/* Desktop-only line break — breaks ONLY on desktop (≥1024px) and collapses on
+   tablet (768–1023px) AND mobile (≤767px), so a break meant for the widest
+   layout stops forcing an awkward wrap on both smaller viewports. */
+.wptpl-br-desktop-only {
+  display: none;
+}
+/* Desktop/tablet-only line break — the inverse. A `<br class="wptpl-br-desktop">`
+   breaks the line on ≥768px but collapses on phones, so a hard-coded desktop
+   break stops forcing an awkward wrap on mobile (pair it with a
+   `.wptpl-br-mobile` placed where the phone break should land instead). */
+/* Tablet-off line break — breaks on desktop AND mobile, but collapses on tablet
+   only (768–1023px), so a desktop break that wraps badly on tablet can be
+   suppressed there without touching the other two viewports. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-br-tablet {
+    display: inline;
+  }
+  .wptpl-br-tablet-off {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .wptpl-br-desktop-only {
+    display: inline;
+  }
+}
+@media (max-width: 767px) {
+  .wptpl-br-mobile {
+    display: inline;
+  }
+  .wptpl-br-desktop {
+    display: none;
+  }
+  /* Trust-bar checklist (horizontal = flex; vertical lists use grid): a bit
+     more room between the items once they stack on a phone. */
+  .wptpl-checklist > ul.flex {
+    row-gap: 1.25rem;
+  }
+  /* Homepage trust bar: tighten the wrapped-row gap to 0.8rem so it matches the
+     0.8rem column gap on phones. Scoped to `.home` so other pages keep the
+     roomier 1.25rem set above. */
+  .home .wptpl-checklist > ul.flex {
+    row-gap: 0.8rem;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Block styles — registered via register_block_style() in inc/setup.php
+   so they appear in the WP block sidebar. These live OUTSIDE @layer so
+   Tailwind's purge never strips them (the class name only appears in WP
+   markup, not scanned PHP/JS source).
+   --------------------------------------------------------------- */
+/* Feature-card elevation. Rest state ships a subtle shadow; hover
+   lifts 2px and deepens the shadow. Paired with
+   src/blocks/feature-card/style.css which owns the transform timing. */
+.wptpl-feature-card {
+  box-shadow: var(--wptpl-shadow-rest);
+}
+.wptpl-feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--wptpl-shadow-hover);
+}
+
+/* Feature-card "Learn more →" arrow CTA. On hover the arrow icon slides
+   right and the text shifts color. Light cards → accent; dark-bg cards
+   carry the -light modifier (canvas at rest, brighten to white). The
+   -light:hover rule must follow the base :hover so it wins on dark cards
+   (equal specificity → source order decides). */
+.wptpl-cta-arrow-icon {
+  display: inline-block;
+  transition: transform 200ms ease-out;
+}
+.wptpl-cta-arrow:hover .wptpl-cta-arrow-icon {
+  transform: translateX(4px);
+}
+.wptpl-cta-arrow:hover {
+  color: #666666; /* accent — light cards */
+}
+.wptpl-cta-arrow-light {
+  color: #e6e6e6;
+}
+.wptpl-cta-arrow-light:hover {
+  color: #ffffff; /* brighten on dark cards */
+}
+
+/* FAQ question — one step darker than `accent` so it stays legible at body
+   size on a light section. The decorative "+" keeps its own text-accent
+   utility (aria-hidden, so contrast is not required). */
+.wptpl-faq__summary {
+  color: #333333;
+}
+
+/* Tag-list hover — color/border shift, no opacity. */
+.wptpl-tag-list a:hover {
+  color: #666666;
+  border-color: #666666;
+}
+.wptpl-tag-list a.bg-secondary:hover {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+/* Half-width centered block — matches the rendered width of a card sitting in
+   a 2-column `wp:columns` row, so an odd "last" card can be centered in its
+   own row instead of left-aligned. The (50% - block-gap/2) formula mirrors
+   what the browser computes for each column in a 2-col flex row with the
+   theme's block-gap. Below the columns-stack breakpoint the max-width is
+   dropped so the card spans full width, matching how the 2-col cards
+   themselves behave on small screens. Add as `className` on the block.
+   The fallback is `0px` (not `2rem`) because the theme does not set
+   `styles.spacing.blockGap`, so `--wp--style--block-gap` resolves to no
+   gap on `wp:columns` here; mirroring that fallback keeps the centered
+   card the same width as a regular 2-col card. */
+.wptpl-card-half-centered {
+  margin-inline: auto;
+}
+@media (min-width: 782px) {
+  .wptpl-card-half-centered {
+    max-width: calc(50% - var(--wp--style--block-gap, 0px) / 2);
+  }
+}
+
+/* Centered bilingual card — like `.wptpl-card-half-centered`, but for a lone
+   feature-card using the block's `bilingual` layout. That layout carries two
+   text columns side by side, so the 50% half-card width crams each language
+   into ~25% and reads badly. This caps it at a comfortable two-column reading
+   width and centers it in its own (full-width) row instead. Emitted
+   automatically by the block when a bilingual card has "Half width (centered)"
+   enabled — see src/blocks/feature-card/render.php. */
+.wptpl-card-bilingual-centered {
+  margin-inline: auto;
+}
+@media (min-width: 782px) {
+  .wptpl-card-bilingual-centered {
+    max-width: min(52rem, 100%);
+  }
+}
+/* Below 782px the bilingual card spans full width and stacks with the other,
+   left-aligned cards, so left-align its tags too — the centered treatment is
+   only for the wide two-column layout. (The tag row is the only flex-wrap +
+   justify-center element in the card.) */
+@media (max-width: 781px) {
+  .wptpl-card-bilingual-centered .flex-wrap.justify-center {
+    justify-content: flex-start;
+  }
+}
+
+/* Smaller feature-card titles, capped and centered — for card rows whose
+   titles are short labels rather than sentences. Add `wptpl-title-sm` as the
+   card's CSS class. */
+.wptpl-title-sm h3 {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  max-width: 350px;
+  margin-inline: auto;
+}
+
+/* Opt-in: a heading that is semantically H2 but should read at the H3 visual
+   scale. Lets a page use the correct heading level (e.g. a service/section
+   title sitting directly under the page's H1) without the H2 type size, so
+   the hierarchy is fixed with no visual change. Add `wptpl-h2-as-h3` as the
+   block's CSS class. Two forms are covered: the class ON the heading itself
+   (core `wp:heading`) and ON a wrapper whose title is a descendant (a
+   feature-card, where the class lands on the card). Both selectors are pinned
+   to a heading (`:is(h2,h3)…` / `… :is(h2,h3)`) on purpose — a bare
+   `.wptpl-h2-as-h3` would set font-size on the feature-card wrapper, and it
+   would then inherit into the card's body copy. The mobile step mirrors the
+   global H3 ramp so responsive stays identical too. */
+:is( h2, h3 ).wptpl-h2-as-h3,
+.wptpl-h2-as-h3 :is( h2, h3 ) {
+  font-size: 1.6875rem; /* 27px — matches the H3 desktop size */
+  line-height: 1.1852;
+}
+@media ( max-width: 767px ) {
+  :is( h2, h3 ).wptpl-h2-as-h3,
+  .wptpl-h2-as-h3 :is( h2, h3 ) {
+    font-size: 1.375rem; /* 22px — matches the H3 mobile size */
+    line-height: 1.2;
+  }
+}
+
+/* Post cards on the blog hub. Scoped modifier so the resource / other
+   feature-cards stay untouched — add `wptpl-post-card` as the card's CSS class.
+   Differences from the default feature-card:
+   - The arrow CTA hugs the title instead of being pushed to the card bottom
+     (drop the `mt-auto`); an empty body paragraph is hidden so there's no gap.
+   - A little more breathing room up top and on the sides. */
+.wptpl-post-card .mt-auto {
+  margin-top: 0;
+}
+.wptpl-post-card p:empty {
+  display: none;
+}
+/* Image and text share the same 20px top/side padding so the picture and the
+   copy line up on the same edge. */
+.wptpl-post-card .p-3 {
+  padding-top: 1.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+.wptpl-post-card .p-6 {
+  padding-top: 1.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+/* CTA sits right under the title: remove the block's default pt-4 (1rem) so the
+   only gap is the title's own bottom margin. */
+.wptpl-post-card .pt-4 {
+  padding-top: 0;
+}
+
+/* Blog hub category filter (wptpl/category-filter). Pills match the services
+   `.wptpl-tags-light.wptpl-tags-lg` look — canvas outline, heading face, 1.5rem
+   corners — so the filter reads the same as the rest of the site. The active
+   pill fills dark secondary with canvas text (the "All"-selected state in the
+   design). blog-filter.js toggles `.is-active` and hides non-matching
+   `.wptpl-post-grid__item` cards via the `hidden` attribute. */
+.wptpl-cat-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.wptpl-cat-filter__pill {
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--wp--preset--color--on-dark);
+  color: var(--wp--preset--color--on-dark);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease-out, color 200ms ease-out,
+    border-color 200ms ease-out;
+}
+.wptpl-cat-filter__pill:hover {
+  background-color: #e6e6e6;
+  border-color: #e6e6e6;
+  color: #222222;
+}
+.wptpl-cat-filter__pill.is-active {
+  background-color: var(--wp--preset--color--secondary);
+  border-color: var(--wp--preset--color--secondary);
+  color: var(--wp--preset--color--on-dark);
+}
+.wptpl-post-grid__item[hidden] {
+  display: none;
+}
+
+/* Whole-card click target (featured + post/guide cards). Each card's arrow CTA
+   is stretched over the entire card via ::after, so a click anywhere on the
+   card follows that single link — a bigger, mobile-friendly target, and still
+   just one accessible link per card (labelled by the CTA, with the card heading
+   for context). These cards have only the one CTA link; a second interactive
+   element would need its own `position:relative;z-index` to stay clickable. */
+.wptpl-featured-post,
+.wptpl-post-card {
+  position: relative;
+}
+
+.wptpl-featured-post .wptpl-cta-arrow::after,
+.wptpl-post-card .wptpl-cta-arrow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Single blog post (single.php): big centered title + date, featured image,
+   then the post content — all in the 760px reading column. */
+/* The article column uses the site's standard container gutter at every
+   breakpoint, like every other page — so the title, meta, featured image and
+   body copy always have a reading margin instead of running to the screen
+   edges. (This is just the shared `.wptpl-container-narrow` gutter; the rule is
+   kept explicit so the previous edge-to-edge override isn't reintroduced.) */
+.wptpl-single .wptpl-container-narrow {
+  padding-inline: var(--wptpl-gutter);
+}
+
+/* Page content built as a `.wptpl-container-narrow` Group (page.php renders the
+   blocks with no outer container) also carries WordPress's `has-global-padding`,
+   which stacks a second side padding on top of the container gutter — so on
+   small screens the copy sits over-inset. On mobile + tablet pin it to the
+   single standard gutter so it lines up with the rest of the site. Desktop keeps
+   its wider inset. `!important` beats WP's unlayered `.has-global-padding`. */
+@media (max-width: 1023px) {
+  .wptpl-container-narrow.has-global-padding {
+    padding-inline: var(--wptpl-gutter) !important;
+  }
+}
+
+/* Double side-gutter fix. A `.wptpl-container*` group nested inside a
+   `.wptpl-section*` gets a SECOND side inset: the section already applies the
+   standard `--wptpl-gutter`, and the inner container stacks its own on top, so
+   the content sits over-inset (e.g. the Blog hero). Add `wptpl-flush-x` to the
+   section to drop the inner container's side padding, leaving the single section
+   gutter. Unlayered so it beats the container's own (layered) padding and WP's
+   has-global-padding. */
+.wptpl-flush-x .wptpl-container,
+.wptpl-flush-x .wptpl-container-md {
+  padding-inline: 0;
+}
+
+/* When a `.wptpl-container-narrow` is nested inside another one — the single
+   post wraps its body in a container-narrow Group inside single.php's own
+   container-narrow — the two gutters stack, doubly insetting the copy. Zero the
+   inner one at every breakpoint so the text aligns to the single outer gutter.
+   Placed after the rule above so it wins for the nested case; a top-level page
+   group still gets the single gutter from that rule. */
+.wptpl-container-narrow .wptpl-container-narrow {
+  padding-inline: 0 !important;
+}
+
+.wptpl-single__header {
+  text-align: center;
+}
+.wptpl-single__title {
+  margin-bottom: 1rem;
+}
+.wptpl-single__meta {
+  color: var(--wp--preset--color--muted);
+  font-size: 0.9rem;
+}
+.wptpl-single__figure {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+.wptpl-single__figure img {
+  display: block;
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+/* Fixed crop height keeps every post's featured image identical regardless of
+   the source aspect ratio. Shrink it on phones so the 480px crop doesn't
+   dominate small screens, mirroring the hero's responsive height step-down. */
+@media (max-width: 767px) {
+  .wptpl-single__figure img {
+    height: 280px;
+  }
+}
+/* Long-form content rhythm — replaces the dead `.prose` class (the Tailwind
+   typography plugin isn't installed). `margin-top` only, so it collapses with
+   WordPress's block gap instead of stacking. Element selectors so nested
+   blocks are covered whether or not the content sits in a wrapper group. */
+.wptpl-post-content > :first-child {
+  margin-top: 0;
+}
+.wptpl-post-content p,
+.wptpl-post-content ul,
+.wptpl-post-content ol,
+.wptpl-post-content figure,
+.wptpl-post-content blockquote {
+  margin-top: 1.25rem;
+}
+.wptpl-post-content h2 {
+  margin-top: 2.5rem;
+}
+.wptpl-post-content h3 {
+  margin-top: 2rem;
+}
+.wptpl-post-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+.wptpl-post-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+.wptpl-post-content li + li {
+  margin-top: 0.5rem;
+}
+.wptpl-post-content p a,
+.wptpl-post-content li a {
+  color: #333333; /* one step darker than `accent` — keeps body-size link copy legible */
+  text-decoration: underline;
+}
+.wptpl-post-content blockquote {
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--wp--preset--color--accent);
+  font-style: italic;
+  color: var(--wp--preset--color--muted);
+}
+.wptpl-post-content img {
+  height: auto;
+  border-radius: 0.75rem;
+}
+
+/* Wider header lead — the section-header intro is capped at max-w-2xl (42rem)
+   by default, so a wider section container alone does nothing to the visible
+   text width. This lets the lead span more of the section (e.g. the Blog hub
+   hero, which wants a broad, full-width feel). Add `wptpl-header-wide` as the
+   section-header's CSS class. */
+.wptpl-header-wide .wptpl-section-header__intro {
+  max-width: 58rem;
+}
+
+/* Extra-wide header lead — same idea as `wptpl-header-wide` but tied to the
+   1200px container token, so a long lead fits on two lines instead of three;
+   `text-wrap: balance` evens the two lines. Scoped to its own class so widening
+   it never touches sections that use `wptpl-header-wide`. Add `wptpl-header-xwide`
+   as the section-header's CSS class (used on the Blog hub hero). */
+.wptpl-header-xwide .wptpl-section-header__intro {
+  max-width: var(--wptpl-container-md); /* 1200px */
+  text-wrap: balance;
+}
+
+/* Section overlay — a configurable color tint laid over a section's
+   background, behind its content. Pair `.wptpl-overlay` on a wp:group
+   (typically a `.wptpl-section`) with one color modifier and one
+   opacity modifier, typed into the block's "Additional CSS class(es)"
+   field, e.g.:
+
+     wptpl-overlay wptpl-overlay-primary wptpl-overlay-op-40
+
+   Colors come from the brand palette via WP preset CSS vars so a
+   theme.json tweak propagates automatically; opacity steps from 10%
+   to 90%. With no modifiers the overlay falls back to secondary @ 0.659.
+
+   `.wptpl-overlay-dark` is the legacy preset (same default) kept for
+   backward compatibility; it now shares the variable plumbing below.
+   The whole block lives OUTSIDE @layer so Tailwind never purges it —
+   the classes only appear in WP markup, not in scanned source.
+
+   The `is-style-overlay-*` selectors are the block-style variations
+   registered in inc/setup.php — clicking one in the editor's "Styles"
+   panel activates the overlay AND sets its color, so authors only need
+   to add an opacity class by hand. */
+.wptpl-overlay,
+.wptpl-overlay-dark,
+.wp-block-group[class*="is-style-overlay-"] {
+  position: relative;
+}
+.wptpl-overlay::before,
+.wptpl-overlay-dark::before,
+.wp-block-group[class*="is-style-overlay-"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var( --wptpl-overlay-color, var( --wp--preset--color--secondary ) );
+  opacity: var( --wptpl-overlay-opacity, 0.659 );
+  pointer-events: none;
+}
+.wptpl-overlay > *,
+.wptpl-overlay-dark > *,
+.wp-block-group[class*="is-style-overlay-"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Overlay color modifiers — one per palette slug (see theme.json). Each
+   utility class is paired with its `is-style-*` block-style twin so
+   both authoring paths resolve to the same tint. */
+.wptpl-overlay-primary,
+.is-style-overlay-primary {
+  --wptpl-overlay-color: var( --wp--preset--color--primary );
+}
+.wptpl-overlay-secondary,
+.is-style-overlay-secondary {
+  --wptpl-overlay-color: var( --wp--preset--color--secondary );
+}
+.wptpl-overlay-accent,
+.is-style-overlay-accent {
+  --wptpl-overlay-color: var( --wp--preset--color--accent );
+}
+.wptpl-overlay-base,
+.is-style-overlay-base {
+  --wptpl-overlay-color: var( --wp--preset--color--base );
+}
+.wptpl-overlay-on-dark,
+.is-style-overlay-on-dark {
+  --wptpl-overlay-color: var( --wp--preset--color--on-dark );
+}
+.wptpl-overlay-contrast,
+.is-style-overlay-contrast {
+  --wptpl-overlay-color: var( --wp--preset--color--contrast );
+}
+.wptpl-overlay-muted,
+.is-style-overlay-muted {
+  --wptpl-overlay-color: var( --wp--preset--color--muted );
+}
+.wptpl-overlay-primary-soft,
+.is-style-overlay-primary-soft {
+  --wptpl-overlay-color: var( --wp--preset--color--primary-soft );
+}
+.wptpl-overlay-surface,
+.is-style-overlay-surface {
+  --wptpl-overlay-color: var( --wp--preset--color--surface );
+}
+.wptpl-overlay-white,
+.is-style-overlay-white {
+  --wptpl-overlay-color: var( --wp--preset--color--white );
+}
+
+/* Overlay opacity modifiers — 10%..90% in 10-point steps. */
+.wptpl-overlay-op-10 {
+  --wptpl-overlay-opacity: 0.1;
+}
+.wptpl-overlay-op-20 {
+  --wptpl-overlay-opacity: 0.2;
+}
+.wptpl-overlay-op-30 {
+  --wptpl-overlay-opacity: 0.3;
+}
+.wptpl-overlay-op-40 {
+  --wptpl-overlay-opacity: 0.4;
+}
+.wptpl-overlay-op-50 {
+  --wptpl-overlay-opacity: 0.5;
+}
+.wptpl-overlay-op-60 {
+  --wptpl-overlay-opacity: 0.6;
+}
+.wptpl-overlay-op-70 {
+  --wptpl-overlay-opacity: 0.7;
+}
+.wptpl-overlay-op-80 {
+  --wptpl-overlay-opacity: 0.8;
+}
+.wptpl-overlay-op-90 {
+  --wptpl-overlay-opacity: 0.9;
+}
+
+/* Tag-list "light" variant — canvas outline for dark
+   sections. Add as the tag-list block's "Additional CSS class". Width
+   inherits from the surrounding container (see :root --wptpl-container-*
+   tokens) so it never goes wider than the rest of the section content.
+   Corner radius is left to the block's own rounded-* utility so it stays
+   the single source of truth. */
+.wptpl-tags-light a,
+.wptpl-tags-light span {
+  border-color: var(--wp--preset--color--on-dark);
+  color: var(--wp--preset--color--white);
+}
+/* Services-band pills (light + lg) use on-dark for BOTH the border and the
+   label text, so the pills read in the same canvas as the section headings
+   (e.g. "This is for you if...", which is #e6e6e6 = on-dark) rather than
+   pure white. Scoped to the light+lg combo so other light tag rows keep their
+   white labels. */
+.wptpl-tags-light.wptpl-tags-lg a,
+.wptpl-tags-light.wptpl-tags-lg span {
+  color: var(--wp--preset--color--on-dark);
+  border-color: var(--wp--preset--color--on-dark);
+}
+/* Override the global .wptpl-tag-list a:hover (accent) for the light variant.
+   Accent-on-dark has too little contrast and the hover gets lost; fill with
+   canvas + flip text to secondary so it pops against dark backgrounds. */
+.wptpl-tags-light a:hover {
+  background-color: #e6e6e6;
+  color: #222222;
+  border-color: #e6e6e6;
+}
+/* The services-band resting rule above (0,3,1) outranks the light hover (0,2,1),
+   so without this the hovered label would stay on-dark over the canvas fill
+   (invisible). Re-assert the secondary label at matching specificity (0,3,2). */
+.wptpl-tags-light.wptpl-tags-lg a:hover {
+  color: #222222;
+}
+
+/* Tag-list "large" size modifier — slightly bigger pills (16px bold + roomy
+   padding) for the service-page specialties + related-services bands, where
+   the pills read larger than the default 12px trust-bar size. Sized so that
+   three pills fit across the 760px (wptpl-container-narrow) bands — including
+   the uppercase + tracked canvas variant — without breaking the row. Both -lg
+   bands also use a rounder 1.5rem corner radius (vs the block's default
+   rounded-2xl) and the heading face instead of the inherited body
+   font, so the labels read as geometric, capsule-style chips. Scoped to where
+   the class is added, so the home tag rows keep their approved size + corners.
+   Stack it alongside a color variant, e.g. `wptpl-tags-light wptpl-tags-lg`. */
+.wptpl-tags-lg a,
+.wptpl-tags-lg span {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 1.5rem;
+  font-family: var(--wp--preset--font-family--heading);
+}
+/* Large pills are sized for desktop; on a phone they're wide enough that the
+   longer labels can't pair up and end up stacked one per row. Shrink them on
+   mobile so they flow two per row like the shorter ones. */
+@media (max-width: 767px) {
+  .wptpl-tags-lg a,
+  .wptpl-tags-lg span {
+    font-size: 0.8125rem;
+    padding: 0.4rem 0.95rem;
+  }
+}
+
+/* Checklist item text can carry hand-placed <br> desktop line breaks. They read
+   well in the narrow columns on desktop/tablet, but once the columns stack
+   (<782px) the item is full width and those breaks strand the text with a big
+   gap on the right. Drop them there — the render already adds a space so the
+   words around each break don't run together. */
+@media (max-width: 781px) {
+  .wptpl-checklist li br {
+    display: none;
+  }
+}
+
+/* Row-break spacer reset. The hard row break (rowBreak / auto-split) is an
+   empty full-basis <span> used only to force the flex to wrap. The bare-span
+   selectors in the tag color/size modifiers above (e.g. `.wptpl-tags-lg span`)
+   would otherwise give it pill padding/border/background, rendering it as a
+   visible band between the two rows. Neutralize it here. `.wptpl-tag-list
+   .basis-full` (0,2,0) outranks those `.modifier span` selectors (0,1,1). */
+.wptpl-tag-list .basis-full {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+/* Pills are button-like UI, not selectable copy. Turn off text selection on
+   every tag-list pill so they never read as highlightable text, and give the
+   decorative (non-link <span>) pills the default arrow cursor instead of the
+   text I-beam. Link pills keep the pointer cursor they get from the <a>. */
+.wptpl-tag-list a,
+.wptpl-tag-list span {
+  user-select: none;
+}
+/* Decorative pills — non-link <span> and placeholder <a href="#"> with no real
+   destination — are labels, not controls: default cursor, not clickable. Pills
+   that carry a real URL keep their pointer + click. Add a destination and the
+   pill becomes interactive again automatically. */
+.wptpl-tag-list span,
+.wptpl-tag-list a[href="#"] {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Services-band row gap. The flex container ships gap-2 (0.5rem) on both axes;
+   on the two-row (rowBreak 3+3) services band that vertical gap reads too airy.
+   Tighten only the ROW gap to 0.2rem (column gap between pills stays 0.5rem).
+   Scoped to the light+lg combo so only the services band is affected. */
+.wptpl-tags-light.wptpl-tags-lg .flex {
+  row-gap: 0.2rem;
+}
+
+/* Heading that shrink-wraps to its text and centers the resulting box in its
+   column, while keeping the text itself LEFT-aligned. For the service-page
+   "Symptoms" / "This is for / you if..." labels: a one-line label reads
+   centered, a two-line label reads flush-left but the block still sits
+   centered in its narrow column instead of jumping to the gutter. Add
+   `wptpl-heading-shrink` as the heading's "Additional CSS class" (and do not
+   set a text alignment on the block). */
+.wptpl-heading-shrink {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  /* Centered at every breakpoint (desktop, tablet, mobile) — the label reads
+     better centered above/beside its checklists than left-aligned. */
+  text-align: center;
+}
+
+/* Checklist "tight" modifier — reduces the vertical gap between list items
+   from the block default (gap-3 / 12px) to 8px, for the service-page
+   Symptoms / "This is for you if" columns whose items wrap to two lines and
+   read too airy at the default. Scoped via the class so the home checklists
+   (bio, credentials bar) keep their approved spacing. Add
+   `wptpl-checklist-tight` as the checklist block's "Additional CSS class". */
+.wptpl-checklist-tight ul {
+  gap: 0.5rem;
+}
+
+/* Service-page checklists ("This is for you if…" / "Symptoms") are read-only
+   copy, not controls. Disable text selection and force the default cursor so
+   the items never read as selectable pills / buttons. Scoped via `-tight` (the
+   service-page checklist modifier) so the home trust bar / bio / credentials
+   checklists keep normal text selection. */
+.wptpl-checklist-tight {
+  user-select: none;
+  cursor: default;
+}
+
+/* Steps "tall top" modifier — increases the top padding of the photo-variant
+   steps section so the number circle, which overhangs the cards by 40px, has
+   breathing room above it (the default 100px is measured to the card top, so
+   the overhanging circle visually crowds the section edge). Scoped via the
+   class so the home "How to Get Started" steps keep their approved spacing.
+   `.wptpl-steps.wptpl-steps-pad-top` (0,2,0) outranks the `py-[6.25rem]`
+   utility (0,1,0). Add `wptpl-steps-pad-top` as the steps block's "Additional
+   CSS class". */
+.wptpl-steps.wptpl-steps-pad-top {
+  padding-top: 135px;
+}
+
+/* Section-header eyebrow override → canvas. Add `wptpl-eyebrow-light`
+   as the section-header's "Additional CSS class" when it sits on a
+   dark background. Needs !important to beat the base .wptpl-eyebrow
+   color rule. */
+.wptpl-eyebrow-light .wptpl-eyebrow {
+  color: var(--wp--preset--color--on-dark) !important;
+}
+
+/* Feature-card image "pop" — image sits shorter (89px) and overhangs
+   the top edge of the card. Add `wptpl-image-pop` as the card's
+   "Additional CSS class". The !important on overflow beats the base
+   `overflow-hidden` Tailwind utility the card ships with. */
+.wptpl-image-pop {
+  overflow: visible !important;
+}
+.wptpl-image-pop > .p-3 {
+  margin-top: -30px;
+  padding-bottom: 0.75rem;
+}
+.wptpl-image-pop > .p-6 {
+  padding-top: 0 !important;
+}
+.wptpl-image-pop .p-3 > .relative {
+  border: 3px solid var(--wp--preset--color--accent);
+}
+.wptpl-image-pop .p-3 > .relative img {
+  height: 113px !important;
+}
+
+/* Feature-card image "medium" — shorter 140px image. Add `wptpl-image-md`
+   as the card's "Additional CSS class". */
+.wptpl-image-md .p-3 > .relative img {
+  height: 140px !important;
+}
+
+/* Hero "dark" variant — paints the split hero dark secondary and flips the
+   title to canvas, for service-page heroes (the home hero stays light with a
+   soft title). The subtitle color is set per instance via the block's
+   subtitleColor attribute. `.wptpl-hero-dark h1` (0,1,1) outranks the
+   `.text-primary` utility (0,1,0) the title ships with, so no !important is
+   needed. Lives OUTSIDE @layer so Tailwind never purges it — the class only
+   appears in WP markup. Add `wptpl-hero-dark` as the hero's "Additional CSS
+   class". */
+.wptpl-hero-dark {
+  background-color: var(--wp--preset--color--secondary);
+}
+.wptpl-hero-dark h1 {
+  color: var(--wp--preset--color--on-dark);
+}
+/* Service-page hero subtitle reads heavier (semibold) than the default
+   medium, so the intro lead carries more presence over the photo. Scoped to
+   the dark heroes so light heroes keep their medium weight. */
+.wptpl-hero-dark .wptpl-hero__subtitle {
+  font-weight: 600;
+}
+.is-style-rounded-square img,
+.is-style-rounded-square {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+/* Retrato que llena el alto de su columna. Para una fila de 2 columnas
+   donde una tiene una imagen de ancho fijo y la otra texto de alto
+   variable — la imagen se estira para igualar el alto del texto. Usar
+   como "Additional CSS class" en el bloque de imagen, en pareja con
+   quitar el vertical alignment de la columna para que se estire. El
+   breakpoint 782px es el default de wp-block-columns; debajo de eso
+   las columnas se apilan y la imagen vuelve a su tamaño natural. */
+@media (min-width: 782px) {
+  .wptpl-portrait-fill,
+  .wptpl-portrait-fill img {
+    height: 100%;
+    width: 100%;
+  }
+  .wptpl-portrait-fill img {
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Contact form — Fluent Forms, scoped to `.wptpl-form`.
+
+   The Contact page wraps the [fluentform] shortcode in a
+   `<div class="wptpl-form">`. Fluent Forms emits its own markup
+   (`.ff-el-*`, `.ff-btn-submit`) whose class names never appear in any file
+   Tailwind scans, so these rules live OUTSIDE @layer — otherwise the purge
+   would strip them. Brand treatment: rounded paper-tone inputs with secondary
+   borders, heading-face labels, the language / session-type radios rendered
+   as accent-on-secondary pills, and a full-width accent submit. `!important` appears
+   only where it overrides Fluent Forms' own (strongly specific) default skin.
+   --------------------------------------------------------------- */
+.wptpl-form .ff-el-group {
+  margin-bottom: 0.9rem;
+}
+/* Labels — heading face, bold, muted. */
+.wptpl-form .ff-el-input--label label {
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--wp--preset--color--muted) !important; /* #999999 — !important beats Fluent Forms' own label color when its skin loads after ours */
+  margin-bottom: 0.1rem;
+}
+/* Text / email / phone inputs, textareas and selects — rounded, secondary border,
+   translucent paper fill so the card texture shows through faintly. */
+.wptpl-form .ff-el-form-control {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #999999; /* secondary */
+  background-color: rgba(255, 255, 255, 0.12); /* barely-there fill so the paper texture reads through */
+  padding: 0.6rem 1rem;
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--wp--preset--color--secondary);
+  transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+.wptpl-form .ff-el-form-control::placeholder {
+  color: rgba(153, 153, 153, 0.6);
+}
+.wptpl-form .ff-el-form-control:focus {
+  outline: none;
+  border-color: var(--wp--preset--color--accent); /* accent */
+  box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.18);
+}
+.wptpl-form textarea.ff-el-form-control {
+  min-height: 9rem;
+  resize: vertical;
+}
+/* Radio groups (Preferred language, Preferred session type) become pills: the
+   native control is visually hidden and its label is the pill. Both markups FF
+   can emit are covered — input-inside-label (`label:has`) and input-sibling
+   (`input + label`). */
+/* Radio/checkbox options: Fluent Forms renders each option as its own
+   `.ff-el-form-check` inside `.ff-el-input--content`, and flexes that content as a
+   row on desktop but stacks it into a column on small screens. Force the content
+   to a wrapping row at every width. (Flexing the option divs themselves was the
+   earlier mistake — each holds a single option, so it just stacked the blocks.) */
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-input--content {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem;
+}
+/* Fluent Forms' own skin puts a bottom margin on the inline radio container
+   (.ff-el-group.ff_list_inline .ff-el-form-check → 10px) and on every option
+   label (label.ff-el-form-check-label → 7px). Rendered as inline pills that is
+   dead height below the field, so the rows holding pills (Preferred language /
+   session type) grew taller and their gaps looked bigger than the rest. FF's
+   selectors are highly specific (prefixed with .fluentform / .ff-default), so
+   we override with !important — the same approach already used for the
+   pill/submit fills — to keep every field row on the uniform 0.9rem rhythm
+   that .ff-el-group provides. */
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-form-check {
+  margin-bottom: 0 !important;
+}
+.wptpl-form .ff-el-form-check label.ff-el-form-check-label {
+  margin: 0 !important;
+}
+.wptpl-form .ff-el-form-check input[type="radio"],
+.wptpl-form .ff-el-form-check input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.wptpl-form .ff-el-form-check label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  /* Vertical padding + line-height mirror .ff-el-form-control so a pill is the
+     same height as a text field sitting in the adjacent column. */
+  padding: 0.6rem 1.15rem;
+  line-height: 1.4;
+  border-radius: 0.3rem;
+  border: 1px solid transparent;
+  background-color: var(--wp--preset--color--muted); /* secondary */
+  color: var(--wp--preset--color--on-dark);
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 180ms ease-out, color 180ms ease-out;
+}
+.wptpl-form .ff-el-form-check label:hover {
+  background-color: #1a1a1a; /* slightly deeper secondary */
+}
+.wptpl-form .ff-el-form-check input:checked + label,
+.wptpl-form .ff-el-form-check label:has(input:checked) {
+  background-color: var(--wp--preset--color--accent) !important; /* accent */
+  color: var(--wp--preset--color--on-dark) !important;
+}
+/* Keyboard focus ring on the active pill (the input itself is hidden). */
+.wptpl-form .ff-el-form-check input:focus-visible + label,
+.wptpl-form .ff-el-form-check label:has(input:focus-visible) {
+  box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.3);
+}
+/* Submit — full-width accent, heading face, uppercase (matches .wptpl-btn-accent). */
+.wptpl-form .ff-btn-submit {
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.95rem 1.5rem;
+  background-color: var(--wp--preset--color--accent) !important;
+  color: var(--wp--preset--color--on-dark) !important;
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: background-color 200ms ease-out;
+}
+.wptpl-form .ff-btn-submit:hover {
+  background-color: #4d4d4d !important; /* deeper accent */
+}
+/* Inline validation — keep error cues legible on the paper background. */
+.wptpl-form .ff-el-is-error .ff-el-form-control {
+  border-color: #b3261e;
+}
+.wptpl-form .text-danger,
+.wptpl-form .error {
+  color: #b3261e;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+}
+
+/* ---------------------------------------------------------------
+   WordPress preset color classes — hardcoded fallback.
+
+   WP normally generates these from `theme.json` settings.color.palette
+   via wp_get_global_stylesheet(). When that CSS doesn't reach the
+   frontend (caching, minification plugins, etc.), sections lose their
+   background or text color. These !important fallbacks guarantee they
+   apply regardless.
+
+   ⚠ The hex values here MUST stay in sync with theme.json palette. They
+   are intentionally NOT `var(--wp--preset--color--*)` because the whole
+   point is to work even when WP's preset CSS doesn't load.
+   --------------------------------------------------------------- */
+@layer utilities {
+  .has-primary-background-color      { background-color: #333333 !important; }
+  .has-primary-soft-background-color { background-color: #cccccc !important; }
+  .has-secondary-background-color    { background-color: #222222 !important; }
+  .has-accent-background-color       { background-color: #666666 !important; }
+  .has-base-background-color         { background-color: #ffffff !important; }
+  .has-on-dark-background-color      { background-color: #e6e6e6 !important; }
+  .has-contrast-background-color     { background-color: #333333 !important; }
+  .has-muted-background-color        { background-color: #999999 !important; }
+  .has-surface-background-color      { background-color: #f7f7f7 !important; }
+  .has-white-background-color        { background-color: #ffffff !important; }
+
+  .has-primary-color      { color: #333333 !important; }
+  .has-primary-soft-color { color: #cccccc !important; }
+  .has-secondary-color    { color: #222222 !important; }
+  .has-accent-color       { color: #666666 !important; }
+  .has-base-color         { color: #ffffff !important; }
+  .has-on-dark-color      { color: #e6e6e6 !important; }
+  .has-contrast-color     { color: #333333 !important; }
+  .has-muted-color        { color: #999999 !important; }
+  .has-surface-color      { color: #f7f7f7 !important; }
+  .has-white-color        { color: #ffffff !important; }
+}
+
+/* ===============================================================
+   RESPONSIVE OVERRIDES — mobile (<768) + tablet (768–1023).
+
+   Desktop (≥1024px) is the approved design and is intentionally
+   left untouched: every rule here lives inside a max-width media
+   query, so nothing below fires at desktop widths.
+
+   The approved desktop values are baked into the block markup as
+   Tailwind utilities and inline styles. These overrides re-scale
+   the shared structural classes at smaller widths into ONE
+   consistent spacing + type ladder, WITHOUT editing any block
+   markup. They sit OUTSIDE @layer (and after the utilities layer)
+   so they win over the utilities they shrink without needing
+   !important.
+
+   Spacing + type ladder:
+                       desktop     tablet      mobile
+     section padding    100px  →    72px   →    48px
+     hero/steps/cta     100px  →    72px   →    48px
+     h1                  48px  →    40px   →    32px
+     h2                  32px  →    32px   →    26px
+     h3                  27px  →    27px   →    22px
+   =============================================================== */
+
+/* --- Vertical rhythm: section bands + the big block paddings ----- */
+/* `.wptpl-section` (component class) and the `py-[6.25rem]` utility
+   (hero split, steps photo variant, cta-banner) all carry the 100px
+   desktop rhythm; shrink both together so every band steps down in
+   sync. */
+@media (max-width: 1023px) {
+  .wptpl-section { padding-top: 72px; padding-bottom: 72px; }
+  .py-\[6\.25rem\] { padding-top: 72px; padding-bottom: 72px; }
+}
+@media (max-width: 767px) {
+  .wptpl-section { padding-top: 48px; padding-bottom: 48px; }
+  .py-\[6\.25rem\] { padding-top: 48px; padding-bottom: 48px; }
+}
+
+/* --- Horizontal rhythm: mobile gutter ---------------------------- */
+/* The fluid gutter (clamp(1rem, 4vw, 2rem)) lands at ~15–16px on a phone,
+   which reads tight against the viewport edge. Pin it to a fixed 23px on
+   mobile so every container, section band, header and footer share the
+   same side padding. Tablet and desktop keep the fluid clamp. */
+@media (max-width: 767px) {
+  :root {
+    --wptpl-gutter: 23px;
+  }
+}
+
+/* --- Mobile: normalize full-width section spacing ---------------- */
+/* Full-width section bands carry their own inline side + vertical padding
+   (e.g. padding:5rem 2rem or padding:6.25rem 2rem, typed into the block's
+   dimensions panel) that ignores the mobile gutter and the section rhythm.
+   Normalize every such section so the whole site shares one mobile spacing:
+   23px sides (the gutter) and 48px top/bottom. Covers BOTH block types used for
+   section bands — core Group and core Cover — since the page builds sections
+   with either. Matched by the presence of the inline padding so we only
+   override sections that set it; `!important` beats the inline style. */
+@media (max-width: 767px) {
+  .wp-block-group.alignfull[style*="padding-left"],
+  .wp-block-cover.alignfull[style*="padding-left"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+  .wp-block-group.alignfull[style*="padding-top"],
+  .wp-block-cover.alignfull[style*="padding-top"] {
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+  }
+  /* Full-width Cover bands whose content sits in a `has-global-padding` inner
+     container get side padding from WordPress core defaults (~16px) that the
+     inline-padding rule doesn't reach. To land on exactly the 23px gutter
+     regardless of whether that padding sits on the cover or the inner, zero the
+     cover's side padding and put a single gutter on the inner. Scoped by the
+     has-global-padding inner, so covers with the side padding inline on the
+     cover (and a plain inner) are untouched. */
+  .wp-block-cover.alignfull:has(
+      > .wp-block-cover__inner-container.has-global-padding
+    ) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .wp-block-cover.alignfull
+    > .wp-block-cover__inner-container.has-global-padding {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+}
+
+/* --- Tablet: normalize horizontal side padding to the gutter ---- */
+/* The mobile pass pins every full-width band's side padding to the gutter so
+   the whole site shares one side margin; the tablet pass was deferred (see the
+   note on the hero column below). Without it, bands keep their DESKTOP inline
+   side padding on a ~800px tablet — a band authored at 100px stays at 100px and
+   crushes the copy, while the various full-width Group/Cover bands keep
+   2rem/5rem/6.25rem, so sections don't line up with each other. Pin them all to
+   `var(--wptpl-gutter)` (the fluid clamp, ~32px at
+   tablet) between md and desktop, mirroring the mobile rules but touching ONLY
+   the horizontal axis — vertical padding stays on the 72px rules. Desktop
+   (≥1024) keeps the intentional wide insets. Reuses the same proven selectors
+   as the mobile blocks. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Full-width Group/Cover bands with inline side padding. */
+  .wp-block-group.alignfull[style*="padding-left"],
+  .wp-block-cover.alignfull[style*="padding-left"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+  /* Full-width Cover whose content sits in a has-global-padding inner: zero
+     the cover's sides, gutter on the inner. */
+  .wp-block-cover.alignfull:has(
+      > .wp-block-cover__inner-container.has-global-padding
+    ) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .wp-block-cover.alignfull
+    > .wp-block-cover__inner-container.has-global-padding {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+  /* Stacked hero text column (the `padding-left:max(...)` inline). Once the
+     hero stacks on tablet the desktop container-aligning padding no longer
+     applies; pin both sides to the gutter like every other section. */
+  .wptpl-hero [style*="padding-left:max"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+}
+
+/* --- Tablet: normalize full-width band vertical padding ---------- */
+/* The class/preset-driven vertical rhythm already steps to 72px on tablet, and
+   the generic inline rule catches `100px`/`6.25rem` tops. But a full-width band
+   with a different inline top (the About intro band is `padding:5rem 2rem`)
+   slips through and keeps 80px on tablet, ~8px taller than every other band.
+   Normalize any full-width Group/Cover with an inline top to the 72px tablet
+   rhythm — same selector the mobile rule uses (which pins these to 48px), so
+   it's proven safe; it only matches section bands (`.alignfull`), not cards. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wp-block-group.alignfull[style*="padding-top"],
+  .wp-block-cover.alignfull[style*="padding-top"] {
+    padding-top: 72px !important;
+    padding-bottom: 72px !important;
+  }
+}
+
+/* The CTA banner (wptpl/cta-banner) renders its own side padding as a plain
+   Tailwind class (`px-6` = 24px) baked into render.php, not an inline style —
+   so it's disconnected from `--wptpl-gutter` and doesn't match the rest of
+   the site's side spacing. Tie it to the gutter instead. Unlayered, so the
+   two-class selector beats the compiled `.px-6` utility without `!important`. */
+@media (max-width: 1023px) {
+  .wptpl-cta-banner.px-6 {
+    padding-left: var(--wptpl-gutter);
+    padding-right: var(--wptpl-gutter);
+  }
+}
+
+/* --- Mobile + tablet: full-bleed the card grids + FAQ ---------- */
+/* The service/guide feature-card grids and the FAQ list sit in
+   `.wptpl-container-md` / `.wptpl-container-narrow`, which add the side
+   gutter. On a phone that gutter eats into the already-narrow content — and
+   when the FAQ sits inside a padded section band it doubles up (section
+   gutter + container gutter). Drop the container gutter so these blocks run
+   edge to edge / align with their section. Unlayered, so it beats the
+   container gutter (in @layer components) without !important.
+
+   The card grids stay `.home`-scoped (a homepage-only layout). The FAQ rule
+   is global: the FAQ appears on the homepage AND the service pages, and the
+   doubled padding should go on all of them.
+
+   Extended to ≤1023 so tablet gets the same fix: on tablet these containers
+   otherwise keep their ~32px gutter on top of the section band's gutter, so the
+   card grids and FAQ read as over-inset ("padding doble"). Dropping the
+   container gutter lands them on the single section gutter, like desktop's
+   1200/760px centering does. (This is the same thing the client hand-fixed with
+   an inline `padding-left:0` on one of the guide-card rows.) */
+@media (max-width: 1023px) {
+  .home .wptpl-container-md:has(.wptpl-feature-card),
+  .wptpl-faq.wptpl-container-narrow {
+    padding-inline: 0;
+  }
+}
+
+/* --- Mobile: buttons read clearly as buttons -------------------- */
+/* Keep the existing button styling (uppercase, tracking, colours) but on a
+   phone make the solid CTAs full-width and give them a more pronounced drop
+   shadow, so they read as raised, tappable buttons instead of spread-out
+   labels. Their flex/column containers (hero, cta-banner, mobile menu) already
+   wrap or stack, so width:100% puts one button per row. The `-*` variants
+   carry the button class via @apply, so target them (and the bare `.wptpl-btn`
+   used by the canvas cta-banner variant, plus the Fluent Forms submit). */
+@media (max-width: 767px) {
+  .wptpl-btn,
+  .wptpl-btn-primary,
+  .wptpl-btn-secondary,
+  .wptpl-btn-accent,
+  .wptpl-btn-outline,
+  .wptpl-btn-photo,
+  .wptpl-form .ff-btn-submit {
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(34, 34, 34, 0.28);
+  }
+}
+/* Tablet: keep buttons auto-width (there's room) but give them the same
+   pronounced shadow as mobile so they still read clearly as raised buttons. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-btn,
+  .wptpl-btn-primary,
+  .wptpl-btn-secondary,
+  .wptpl-btn-accent,
+  .wptpl-btn-outline,
+  .wptpl-btn-photo,
+  .wptpl-form .ff-btn-submit {
+    box-shadow: 0 4px 12px rgba(34, 34, 34, 0.28);
+  }
+}
+
+/* --- Type scale ------------------------------------------------- */
+/* Unlayered, so these beat the @layer base heading rules without
+   !important. Only headings that read oversized on small screens
+   are touched; body copy stays at its comfortable size. */
+@media (max-width: 1023px) {
+  h1 { font-size: 2.5rem; line-height: 1.15; }    /* 40px */
+}
+@media (max-width: 767px) {
+  /* Tighter leading than desktop: on a phone these headings wrap to 2–3 lines,
+     so a snug line-height keeps a title reading as one block instead of loose
+     stacked lines. */
+  h1 { font-size: 2rem; line-height: 1.1; }        /* 32px */
+  h2 { font-size: 1.625rem; line-height: 1.2; }    /* 26px */
+  h3 { font-size: 1.375rem; line-height: 1.2; }    /* 22px */
+  /* Paragraphs are set to 1.65 by the base `p` rule (and 1.625 where
+     `leading-relaxed` is used), which reads airy on a phone's short measure.
+     Bring them to a standard 1.5. Unlayered, so it also reins in the
+     leading-relaxed paragraphs (hero subtitle, FAQ answers). */
+  p,
+  .leading-relaxed {
+    line-height: 1.5;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet's measure sits between mobile and desktop: ease the base 1.65
+     paragraph leading to a slightly tighter 1.55 so it doesn't read as airy.
+     Mobile uses 1.5; desktop keeps 1.65. */
+  p,
+  .leading-relaxed {
+    line-height: 1.55;
+  }
+}
+
+/* --- Reduced motion -------------------------------------------------
+   Honor the OS "reduce motion" setting site-wide. Previously only the nav
+   animations were covered; this neutralizes every transition and animation
+   (hover lifts, arrow slides, the FAQ marker, smooth scroll, etc.).
+
+   Deliberately does NOT touch `transform` itself — several layouts use static
+   transforms for positioning (e.g. the step number circle's
+   `-translate-x-1/2` centering, sticky offsets). Killing transforms would
+   break those. We only collapse the *timing*, so motion stops while position
+   stays intact. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Hero: stack the split layout below desktop ----------------- */
+/* Desktop keeps the 2-column split (image beside the text). On tablet
+   and mobile the columns stack and the image moves ABOVE the copy
+   (matches the wireframes and the common mobile hero pattern), with a
+   shorter image so it doesn't swallow a whole screen. Scoped to
+   `.wptpl-hero` so no other grid/height is affected. */
+@media (max-width: 1023px) {
+  .wptpl-hero .md\:grid-cols-2 { grid-template-columns: 1fr; }
+  .wptpl-hero .min-h-\[520px\] { min-height: 380px; order: -1; }
+}
+@media (max-width: 767px) {
+  .wptpl-hero .min-h-\[520px\] { min-height: 260px; }
+}
+
+/* Hero text column: match the side gutter on mobile. The split and centered
+   hero variants render a text column with an inline
+   `padding-left:max(2rem, calc((100vw-1400px)/2+2rem))` + `padding-right:2rem`
+   (render.php) that, on desktop, aligns the copy's left edge with the 1400px
+   container. Once the hero stacks that alignment no longer applies and the
+   fixed 2rem reads wider than every other section. Pin both sides to the
+   gutter so the hero copy lines up with the rest of the page. `!important` is
+   required to beat the inline style. Scoped to mobile only for now — tablet
+   still gets the inline 2rem until we tackle the tablet pass.
+
+   Matched by that inline style, NOT by `.py-[6.25rem]`: the overlay variant
+   (background image) also uses `.py-[6.25rem]` but takes its side padding from
+   an inner `.wptpl-container` (already the gutter), so matching the class
+   would double-pad it. Desktop keeps the container-aligning padding. */
+@media (max-width: 767px) {
+  .wptpl-hero [style*="padding-left:max"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+}
+
+/* --- Trust bar: stack the credentials on mobile ----------------- */
+/* The horizontal credentials checklist (in the tight primary band)
+   reads cramped when its long labels wrap on a phone. Stack it into a
+   centered column instead. Scoped to the tight band so the vertical
+   bio / credentials checklists elsewhere are untouched. */
+@media (max-width: 767px) {
+  .wptpl-section-tight .wptpl-checklist ul {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  /* Each credential shrinks to its content and centers; text-align keeps a
+     wrapped label's second line ("…LIFE TRANSITIONS") centered too, instead
+     of falling back to the left edge. */
+  .wptpl-section-tight .wptpl-checklist li {
+    text-align: center;
+  }
+}
+
+/* --- Header: keep the hamburger through tablet ------------------ */
+/* The full desktop header (logo + menu + language switch + CTA button) needs
+   ~960px to fit on one line; from md (768) up to desktop it overflowed the
+   viewport and pushed a blank band to the right. The header markup now
+   collapses at `lg` (1024) instead of `md`, so tablets get the mobile menu —
+   the standard pattern — and the overflow is gone. This note documents the
+   breakpoint move; the toggle itself lives in header.php's utility classes. */
+
+/* --- Tablet: footer collapses to 2×2 --------------------------- */
+/* The global footer grid (`footer.php`) is `grid md:grid-cols-4`, so it jumps
+   straight from one column (mobile) to four at md (768) — four columns crammed
+   across a ~800px tablet, the same problem the 4-up card rows had. Re-lay it as
+   2×2 between md and desktop so the brand block and the three link/info columns
+   get room to breathe. Scoped to `.wptpl-footer` so only the footer grid is
+   affected; desktop (≥1024) keeps the 4-across layout. The doubled selector
+   (`.wptpl-footer .md\:grid-cols-4`) beats Tailwind's `md:grid-cols-4`. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-footer .md\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Tablet: 4-up card rows become 2×2 -------------------------- */
+/* A row of four columns (the service / card grids) stays 4-across from 782px
+   up, which crams four cards into a ~800px tablet.
+   Re-lay any exactly-four-column row as a 2×2 CSS grid between md and desktop.
+   `:has(…nth-child(4)):not(:has(…nth-child(5)))` matches rows with exactly
+   four columns, so 2- and 3-column rows are left alone. Using grid (not flex
+   basis math) makes the gap self-contained and independent of WP's own column
+   gap. Desktop (≥1024) keeps the approved 4-across layout. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wp-block-columns:has(> .wp-block-column:nth-child(4)):not(
+      :has(> .wp-block-column:nth-child(5))
+    ) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* --- Tablet: 3-up card rows become 2 + 1 ------------------------ */
+/* Three columns across a ~800px tablet leaves each card ~236px wide — far
+   narrower than the ~360px they get on desktop — so multi-word titles wrap
+   mid-word. Re-lay any exactly-three-column row as a 2-column grid, which puts
+   each card back at ~360px so text wraps like it does on desktop.
+   The odd third card centers in its own row instead of hugging the left. Matches
+   rows with exactly three columns, so 2-column rows (the bio) and the 4-up
+   service grids are left to their own rules. Desktop (≥1024) keeps 3-across. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    ) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Equal-height rows so the lone third card matches the height of the two
+       above it (with `h-full` on the card, it stretches to fill its row) —
+       the three read as one uniform trio instead of a shorter card below. */
+    grid-auto-rows: 1fr;
+    gap: 1.5rem;
+  }
+  .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    )
+    > .wp-block-column:nth-child(3):last-child {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 0.75rem);
+    margin-inline: auto;
+  }
+  /* In that 2+1 grid, a row of image-pop cards (the guides) needs a wider row
+     gap so the third card's overhanging image (~15px) clears the row above —
+     same overhang fix as on mobile, which only reached ≤781px. The extra
+     `:has(.wptpl-image-pop)` bumps specificity above the generic grid rule so
+     this row-gap wins. */
+  .wp-block-columns:has(.wptpl-image-pop):has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    ) {
+    row-gap: 40px;
+  }
+}
+
+/* --- Mobile: clearance for cards whose imagery overhangs the top - */
+/* Two block styles let a piece overhang the top edge of the card: the steps
+   number circle (overhangs ~40px) and the `wptpl-image-pop` image (~30px).
+   When these cards stack on a phone the overhang pokes into the card above,
+   because the normal inter-card gap is smaller than the overhang. Give each
+   stacked card enough top clearance for its own overhang — two values, one per
+   overhang size. Horizontal (desktop/tablet) layouts are untouched: there the
+   overhang rises into the section header, not a neighbouring card. */
+@media (max-width: 767px) {
+  /* Steps grid stacks to one column here; widen the row gap so the number
+     circle clears the previous card. */
+  .wptpl-steps .grid {
+    row-gap: 3.5rem;
+  }
+}
+
+/* --- Tablet: 3-up steps grid becomes 2 + 1 --------------------- */
+/* The `wptpl/steps` block renders `grid grid-cols-1 md:grid-cols-3`, so three
+   numbered steps sit in one row from md up. On a ~800px tablet that crams the
+   bordered cards and their copy into ~237px columns. Re-lay them as a 2-column
+   grid with the third step centered on its own row below — the same 2 + 1
+   treatment the wp:columns card rows already get on tablet, and it uses the
+   horizontal space better than a single stacked column. The card's own `gap-6`
+   (1.5rem) stays as the column gap; widen only the ROW gap so the number circle
+   (overhangs the card top by ~40px) clears the row above. The lone third card
+   spans both tracks and is capped to one column's width, centered. Scoped to
+   the 3-col variant so 2-/4-step blocks keep their own layout. Desktop (≥1024)
+   keeps the 3-across row. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-steps .grid.md\:grid-cols-3 {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 4rem;
+  }
+  .wptpl-steps .grid.md\:grid-cols-3 > :nth-child(3):last-child {
+    grid-column: 1 / -1;
+    /* Explicit width (not max-width): with `margin-inline: auto` a max-width item
+       shrinks to its content instead of filling one column, so it read narrower
+       than the two cards above. A definite width pins it to exactly one column. */
+    width: calc(50% - 0.75rem);
+    margin-inline: auto;
+  }
+}
+/* image-pop cards sit in a wp:columns row (24px gap) that stacks below 782px.
+   The image overhangs the card's top edge by ~15px, so the plain 24px stacking
+   gap leaves the overhang almost touching the card above. Widen the stacked
+   row-gap deterministically to 40px (→ ~25px between a card's bottom and the
+   next card's overhanging image, matching the 24px horizontal rhythm). Setting
+   the row-gap keeps every gap even; a per-card top margin did not, because it
+   interacted unevenly with the flex row-gap (one gap ended up 51px, the next
+   9px). Horizontal layouts (≥782px) are a single row, so row-gap is inert. */
+@media (max-width: 781px) {
+  .wp-block-columns:has(.wptpl-image-pop) {
+    row-gap: 40px;
+  }
+}
+
+/* --- Tablet: hero subtitle fills more of the stacked column ------ */
+/* Once the split hero stacks on tablet, the text column is full width but the
+   subtitle keeps its ~576px (max-w-xl) cap, leaving a wide empty band on the
+   right. Widen it toward the column width so the copy block feels balanced
+   under the full-width image. Service-page heroes use `is-intro-wide` (a higher-
+   specificity rule) and keep their own width. Desktop split hero is untouched. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-hero__subtitle {
+    max-width: 42rem;
+  }
+}
+
+/* --- Tablet: shrink + center the bio portrait ------------------- */
+/* `.wptpl-portrait-fill` stretches the image to fill its column (width + height
+   100%, object-fit:cover from the ≥782 rule). On a tablet that made the
+   portrait dominate its column as a tall ~380px strip. Give it a smaller fixed
+   size and center it horizontally in the column so it reads as a tidy portrait
+   beside the copy rather than a full-width block. It still crops via the
+   object-fit:cover already set above. Desktop keeps the fill. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-portrait-fill {
+    width: 280px;
+    max-width: 100%;
+    height: 360px;
+    margin-inline: auto;
+  }
+  .wptpl-portrait-fill img {
+    width: 100%;
+    height: 100%;
+  }
+  /* Pin the portrait to the top of its (taller) row so it sits beside the
+     name/intro, instead of floating to the middle if the text column grows. */
+  .wp-block-column:has(.wptpl-portrait-fill) {
+    align-self: flex-start;
+  }
+}
+
+/* ===============================================================
+   About page & inline-spaced sections — responsive polish
+   These sections bake spacing into the block's inline styles (the
+   100px "Section" preset, fixed column widths), which the class-based
+   rules above don't reach. Handle those inline cases here.
+   =============================================================== */
+
+/* 1) Section band padding. The "Section (100px)" spacing preset is a fixed
+   6.25rem (theme.json fluid:false), so every band using it for top/bottom
+   padding stays 100px on a phone. Shrink the preset itself at the tablet/mobile
+   breakpoints so ALL sections using it step down together — same rhythm as
+   `.wptpl-section` (72/48). `!important` wins the custom-property cascade over
+   WP's global-styles definition. */
+@media (max-width: 1023px) {
+  :root { --wp--preset--spacing--50: 72px !important; }
+}
+@media (max-width: 767px) {
+  :root { --wp--preset--spacing--50: 48px !important; }
+}
+
+/* --- Mobile: let forced-break headings wrap naturally ----------- */
+/* Centered CTA-style headings hard-code a `<br>` for their desktop line break.
+   On a phone that break lands awkwardly; hide the `<br>` so the copy wraps to the
+   column width instead. Exclude `.wptpl-br-mobile` — that one is an intentional
+   phone-only break and must stay visible here. */
+@media (max-width: 767px) {
+  h2.max-w-3xl br:not(.wptpl-br-mobile) {
+    display: none;
+  }
+}
+
+/* 4) Steps built by hand as core columns. The numbered circle overhangs each
+   card's top; when the columns stack on a phone it pokes into the card above.
+   The existing clearance rule only covers the `.grid` (wptpl/steps block)
+   variant — hand-built steps use `.wp-block-columns`, so give that its own
+   row-gap. */
+@media (max-width: 767px) {
+  .wptpl-steps .wp-block-columns {
+    row-gap: 3.5rem;
+  }
+}
+
+/* Tablet: steps 2+1 grid — clear the number-circle overhang.
+   In the tablet 2+1 layout the lone third step card sits in row 2, and its
+   number circle overhangs its top by ~2.5rem, poking into the row above. Widen
+   the row gap so it clears — the same overhang fix already applied for stacked
+   (mobile) steps and for image-pop rows. Scoped to `.wptpl-steps` so only step
+   grids get the wider row gap. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-steps .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    ) {
+    row-gap: 4rem;
+  }
+}
+
+/* ===============================================================
+   Service subpages (one shared template per service)
+   Inline 100px vertical paddings and a tall steps top don't shrink, and
+   the label+checklist rows shouldn't be reshaped like card grids.
+   =============================================================== */
+
+/* 1) Inline literal 100px top/bottom padding (e.g. an FAQ or related-links
+   band) stays 100px on small screens while the class-driven side shrinks
+   — asymmetric and too tall. Step any inline 100px vertical padding down at the
+   section breakpoints. (Horizontal 100px padding is handled separately.) */
+@media (max-width: 1023px) {
+  [style*="padding-top:100px"],
+  [style*="padding-top:6.25rem"] { padding-top: 72px !important; }
+  [style*="padding-bottom:100px"],
+  [style*="padding-bottom:6.25rem"] { padding-bottom: 72px !important; }
+}
+@media (max-width: 767px) {
+  [style*="padding-top:100px"],
+  [style*="padding-top:6.25rem"] { padding-top: 48px !important; }
+  [style*="padding-bottom:100px"],
+  [style*="padding-bottom:6.25rem"] { padding-bottom: 48px !important; }
+}
+
+/* 2) Steps "tall top" (135px, room for the overhanging number circle) doesn't
+   shrink, so on a phone the top dwarfs the reduced bottom. Step it down while
+   keeping ~35px over the base band padding for the circle. */
+@media (max-width: 1023px) {
+  .wptpl-steps.wptpl-steps-pad-top { padding-top: 104px; }
+}
+@media (max-width: 767px) {
+  .wptpl-steps.wptpl-steps-pad-top { padding-top: 84px; }
+}
+
+/* 3) Label + checklist rows (Symptoms / "This is for you if"): three columns —
+   a narrow heading and two checklist columns — NOT a card grid. The tablet
+   3-up -> 2+1 rule would reshape them (heading beside one checklist, the other
+   centered below). Keep their natural columns by restoring the flex layout for
+   any 3-col row that contains a checklist. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    ) {
+    display: flex;
+  }
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    )
+    > .wp-block-column:nth-child(3):last-child {
+    max-width: none;
+    margin-inline: 0;
+  }
+}
+
+/* Mobile: merge the two checklist columns into one continuous list.
+   On a phone the label + 2-checklist row stacks (heading, list 1, list 2). The
+   column row-gap between the two checklist columns is larger than the 8px gap
+   between items, so the two lists read as two separate blocks with a visible
+   "division" between them. Tighten the stacked row-gap to the item gap (0.5rem,
+   the `-tight` checklist spacing) so all the items read as one list, and keep a
+   little breathing room under the label heading. Scoped to the 3-col checklist
+   rows (same selector as the tablet rule) so other stacks are untouched. */
+@media (max-width: 767px) {
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    ) {
+    row-gap: 0.5rem;
+  }
+  .wp-block-columns:has(.wptpl-checklist):has(> .wp-block-column:nth-child(3)):not(
+      :has(> .wp-block-column:nth-child(4))
+    )
+    > .wp-block-column:first-child {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Content sections wrap their columns in a `.wptpl-container-md` inside the
+   `.wptpl-section` band. The band already supplies the side gutter, so the
+   inner container's gutter doubles it (section gutter + container gutter). Some
+   pages zero the container inline (padding:0) and some don't, so the doubling
+   is inconsistent between otherwise-identical sections. Drop the inner
+   container's gutter whenever such a container sits inside a section band, so
+   the content lands on the single section gutter (no doubling). Covers the
+   service-page checklist rows and the Contact form section. Requiring the
+   `.wptpl-section` ancestor means this never full-bleeds a standalone
+   container — worst case the content rests on the section gutter. */
+.wptpl-section .wptpl-container-md:has(.wptpl-checklist),
+.wptpl-section .wptpl-container-md:has(.wptpl-form) {
+  padding-inline: 0;
+}
+
+/* Service-page label headings ("Symptoms", "This is for you if…") sit in a
+   narrow 24% column. On tablet that column gets tight enough that a one-word
+   label ("Symptoms") broke mid-word ("Symptom / s"). Shrink the label a step on
+   tablet so it fits, and never break inside a word. Mobile stacks the column
+   full-width, so it's untouched. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wptpl-heading-shrink {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+}
+/* "This is for you if…" hard-codes a <br> for its two-line look. Once the columns
+   stack (<782px — the full-width, single-column view, including the 768px band
+   Bug Smash mislabels as "tablet") the heading reads better on one line, so drop
+   the break there. Above 782px it sits in a narrow 24% column where the two-line
+   break stays. Content keeps a space before the <br> so the words don't join. */
+@media (max-width: 781px) {
+  .wptpl-heading-shrink br {
+    display: none;
+  }
+}
+
+/* ===============================================================
+   Blog hub — responsive polish
+   =============================================================== */
+
+/* Post grid is `grid-cols-1 md:grid-cols-3`, so it jumps to 3 columns at md
+   (768px) and crams three cards across a tablet. Use 2 columns between md and
+   desktop; desktop (>=1024) keeps the 3-across layout. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Doubled class (0,2,0) so it beats Tailwind's `md:grid-cols-3` (0,1,0), which
+     is emitted later in the sheet and would otherwise win on source order. */
+  .wptpl-post-grid.wptpl-post-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Featured post card carries a 7rem bottom padding for desktop emphasis, which
+   leaves a large empty accent area below the CTA on smaller screens. Trim it below
+   desktop so the card reads balanced like the post cards under it. */
+@media (max-width: 1023px) {
+  .wptpl-featured-post {
+    padding-bottom: 2.5rem !important;
+  }
+}
+
+/* Featured post image uses natural aspect (inline height:auto), so a wide source
+   shows as a short strip. That's fine at tablet/desktop widths (the card is wide,
+   so the image is tall enough), but on a phone it becomes a thin band, unlike the
+   fixed-height (h-48, cropped) post cards below it. Give the featured image a
+   consistent banner aspect on mobile so it reads as a prominent, cropped image. */
+@media (max-width: 767px) {
+  .wptpl-featured-post img {
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+}
+
+/* Mobile: category filter becomes a full-width horizontal scroll strip. The six
+   pills wrapped to three centred rows on a phone; lay them in a single row that
+   scrolls sideways instead. The strip breaks out of both wrapping gutters so it
+   spans the full viewport width, with the gutter kept as inline padding so the
+   first/last pill still have breathing room at rest. The native scrollbar is
+   hidden — blog-filter.js injects a custom, always-visible bar below the row
+   (native mobile scrollbars are overlay and vanish at rest). blog-filter.js
+   also still toggles the active pill and filters. */
+@media (max-width: 767px) {
+  /* Break the strip out of both wrapping gutters so it spans the full width. */
+  .wptpl-section-sm:has(.wptpl-cat-filter),
+  .wptpl-container:has(.wptpl-cat-filter) {
+    padding-inline: 0;
+  }
+  .wptpl-cat-filter {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-inline: var(--wptpl-gutter);
+    scrollbar-width: none; /* hidden — the injected custom bar replaces it */
+  }
+  .wptpl-cat-filter::-webkit-scrollbar {
+    display: none;
+  }
+  .wptpl-cat-filter__pill {
+    flex: 0 0 auto;
+  }
+}
+
+/* Custom, always-visible scrollbar for the mobile category filter, injected by
+   blog-filter.js after the pill row. Native mobile scrollbars are overlay
+   (hidden at rest), so a drawn bar keeps the row's scrollability obvious. The
+   script hides it whenever the row doesn't overflow (e.g. desktop, where the
+   pills wrap). Canvas on the primary-green band via color-mix so it stays on the
+   palette. */
+.wptpl-cat-scrollbar {
+  padding: 0.55rem var(--wptpl-gutter) 0.1rem;
+}
+.wptpl-cat-scrollbar__track {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--wp--preset--color--on-dark) 22%,
+    transparent
+  );
+}
+.wptpl-cat-scrollbar__thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--wp--preset--color--on-dark) 85%,
+    transparent
+  );
+  cursor: grab;
+  touch-action: none;
+}
+.wptpl-cat-scrollbar__thumb:active {
+  cursor: grabbing;
+}
+
+/* Mobile + tablet: drop the container gutter around the featured post and the
+   post grid so they align to the single section gutter instead of doubling it
+   (the cards carry their own inner padding, so the copy still sits inset). Same
+   full-bleed treatment as the homepage card rows — extended to ≤1023 because the
+   doubled gutter reads as wrong/too-much padding on tablet too. */
+@media (max-width: 1023px) {
+  .wptpl-container-md:has(.wptpl-featured-post),
+  .wptpl-container:has(.wptpl-post-grid) {
+    padding-inline: 0;
+  }
+}
+/* Mobile only: the grid's inline 2rem bottom margin separated it from the
+   guide-cards row, which is hidden on phones — drop the now-dead margin. On
+   tablet the guide-cards row is visible, so keep the separation. */
+@media (max-width: 767px) {
+  .wptpl-post-grid {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Contact form section — stack on tablet. The 62/38 form|info split leaves both
+   columns cramped on a tablet (radio pills tight, the Practice-Info "Location"
+   label wrapping). Stack them (form first, info below) so each spans the full
+   width. Matched by the column that holds the form, so only this section stacks;
+   mobile already stacks and desktop keeps the side-by-side split. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .wp-block-columns:has(> .wp-block-column .wptpl-form) {
+    flex-direction: column;
+  }
+  .wp-block-columns:has(> .wp-block-column .wptpl-form) > .wp-block-column {
+    flex-basis: auto !important;
+  }
+  /* The Practice-Info column holds only a couple of short rows, so once stacked
+     it looks empty at full width. Cap and centre it (the column WITHOUT the
+     form) so it reads as a tidy info card under the full-width form. */
+  .wp-block-columns:has(> .wp-block-column .wptpl-form)
+    > .wp-block-column:not(:has(.wptpl-form)) {
+    max-width: 480px;
+    margin-inline: auto;
+  }
+}
+
+/* ===============================================================
+   Motion — subtle scroll-reveal + micro-interactions
+   ---------------------------------------------------------------
+   Everything here is gated on `html.wptpl-anim-ready`, a class added by a
+   tiny inline <head> bootstrap (inc/enqueue.php) ONLY when the browser
+   supports IntersectionObserver and the user hasn't asked for reduced
+   motion. So with JS off, an old browser, reduced motion, or a script
+   error, the class is never present (or is removed) and every element sits
+   at its normal, fully-visible state — content is never hidden by motion.
+
+   Keep this reveal target list in sync with the selector in the bootstrap
+   script (inc/enqueue.php) — the JS observes the same elements and toggles
+   `.is-visible` as they scroll into view.
+   =============================================================== */
+html.wptpl-anim-ready :is(
+    .wptpl-section-header,
+    .wptpl-feature-card,
+    .wptpl-checklist,
+    .wptpl-faq,
+    .wptpl-tag-list,
+    .wptpl-hero__subtitle,
+    .wptpl-steps .wp-block-column,
+    .wptpl-steps .grid > *
+  ) {
+  opacity: 0;
+  transform: translateY(8px);
+  /* Soft, slow deceleration (easeOutQuint-ish) so it reads as a calm settle,
+     not a mechanical slide. */
+  transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+html.wptpl-anim-ready :is(
+    .wptpl-section-header,
+    .wptpl-feature-card,
+    .wptpl-checklist,
+    .wptpl-faq,
+    .wptpl-tag-list,
+    .wptpl-hero__subtitle,
+    .wptpl-steps .wp-block-column,
+    .wptpl-steps .grid > *
+  ).is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Gentle stagger for grouped items ------------------------------ */
+/* A row of cards / steps enters the viewport together; revealing them all at
+   the same instant is what reads as "robotic". Delay each one a little more
+   than the last so the row settles in sequence (left to right). Kept slow and
+   soft to match the calmer reveal above. */
+html.wptpl-anim-ready
+  .wp-block-columns
+  > .wp-block-column:nth-child(2)
+  .wptpl-feature-card,
+html.wptpl-anim-ready .wptpl-steps .wp-block-column:nth-child(2),
+html.wptpl-anim-ready .wptpl-steps .grid > *:nth-child(2) {
+  transition-delay: 0.12s;
+}
+html.wptpl-anim-ready
+  .wp-block-columns
+  > .wp-block-column:nth-child(3)
+  .wptpl-feature-card,
+html.wptpl-anim-ready .wptpl-steps .wp-block-column:nth-child(3),
+html.wptpl-anim-ready .wptpl-steps .grid > *:nth-child(3) {
+  transition-delay: 0.24s;
+}
+html.wptpl-anim-ready
+  .wp-block-columns
+  > .wp-block-column:nth-child(4)
+  .wptpl-feature-card,
+html.wptpl-anim-ready .wptpl-steps .wp-block-column:nth-child(n + 4),
+html.wptpl-anim-ready .wptpl-steps .grid > *:nth-child(n + 4) {
+  transition-delay: 0.36s;
+}
+
+/* --- Micro-interactions: subtle lift on hover, press on tap --------- */
+/* Pure CSS, only when the user allows motion. Card lift is `hover`-only so a
+   tap on mobile doesn't leave a card stuck in the hovered state; buttons get
+   a quick press on `:active`, which reads as tactile feedback on touch. */
+@media (prefers-reduced-motion: no-preference) {
+  .wptpl-feature-card {
+    transition: transform 0.35s ease-out, box-shadow 0.35s ease-out;
+  }
+  .wptpl-btn,
+  .wptpl-btn-accent,
+  .wptpl-btn-primary,
+  .wptpl-btn-secondary,
+  .wptpl-btn-outline,
+  .wptpl-btn-photo {
+    transition: background-color 0.2s ease-out, color 0.2s ease-out,
+      border-color 0.2s ease-out, box-shadow 0.2s ease-out,
+      transform 0.1s ease-out;
+  }
+  .wptpl-btn:active,
+  .wptpl-btn-accent:active,
+  .wptpl-btn-primary:active,
+  .wptpl-btn-secondary:active,
+  .wptpl-btn-outline:active,
+  .wptpl-btn-photo:active {
+    transform: translateY(1px);
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .wptpl-feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(34, 34, 34, 0.1);
+  }
+}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide Thank-You Page Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #d8d8d8; color: #333; }
+
+  .wrap { max-width: 1760px; margin: 20px auto; display: flex; gap: 0; align-items: flex-start; }
+  .page { width: 1400px; background: #fff; border: 2px solid #888; flex-shrink: 0; }
+  .sidebar { width: 320px; position: relative; }
+
+  .row { border-top: 1px solid #ddd; padding: 40px; }
+  .row:first-child { border-top: none; }
+  .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
+  .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  .btn-o { display: inline-block; border: 1.5px solid #333; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  h1 { font-size: 44px; font-weight: 700; line-height: 1.2; }
+  h2 { font-size: 32px; font-weight: 700; }
+  h3 { font-size: 20px; font-weight: 700; }
+  .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
+  .txt { font-size: 16px; color: #999; line-height: 1.5; }
+
+  .template-badge {
+    background: #555;
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .n {
+    position: absolute;
+    left: 20px;
+    width: 290px;
+    background: #fef9e7;
+    border: 1px solid #f0e6a0;
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #8a7a2e;
+    line-height: 1.5;
+  }
+  .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="page">
+
+  <!-- 1. HEADER -->
+  <div class="row" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+    <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 44px; height: 44px; border: 1.5px solid #999;"></div><strong style="font-size: 18px;">Logo</strong></div>
+    <div style="display: flex; gap: 16px; align-items: center; font-size: 16px; color: #999;"><span>About</span><span>Services</span><span>Resources &#9662;</span><span>Blog</span><span>Fees</span><span>Contact</span><span style="border: 1px solid #ccc; padding: 4px 10px;">EN | FA</span><span class="btn" style="font-size: 15px; padding: 10px 22px;">Primary CTA</span></div>
+  </div>
+
+  <!-- 2. CONFIRMATION -->
+  <div class="row" style="text-align: center; padding: 64px 40px;">
+    <div style="max-width: 700px; margin: 0 auto;">
+      <div style="width: 80px; height: 80px; border-radius: 50%; background: #e8f5e9; border: 2px solid #a5d6a7; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px;">&#10003;</div>
+      <h1>Confirmation headline</h1>
+      <p class="txt" style="margin: 12px auto 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Check your inbox for the guide.</p>
+    </div>
+  </div>
+
+  <!-- 3. BOOK A CONSULT -->
+  <div class="row" style="background: #f7f7f7; text-align: center; padding: 48px 40px;">
+    <div style="max-width: 700px; margin: 0 auto;">
+      <div class="sub" style="margin-bottom: 6px;">Next step</div>
+      <h2>Book consult headline</h2>
+      <p class="txt" style="margin: 10px auto 20px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+      <span class="btn" style="padding: 14px 28px;">Book free 15-min consult</span>
+      <p style="margin-top: 10px; font-size: 14px; color: #999;">Free · No commitment · Virtual</p>
+    </div>
+  </div>
+
+  <!-- 4. SHARE -->
+  <div class="row" style="text-align: center; padding: 32px 40px;">
+    <div style="max-width: 600px; margin: 0 auto;">
+      <h3>Share headline</h3>
+      <p class="txt" style="margin: 6px auto 14px;">Lorem ipsum dolor sit amet consectetur.</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <div style="width: 44px; height: 44px; border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #999;">FB</div>
+        <div style="width: 44px; height: 44px; border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #999;">IG</div>
+        <div style="width: 44px; height: 44px; border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #999;">Email</div>
+        <div style="width: 44px; height: 44px; border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #999;">Link</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. RELATED CONTENT -->
+  <div class="row" style="background: #f7f7f7;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h2 style="margin-bottom: 16px;">Related content headline</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+        <div style="background: #fff; border: 1.5px solid #ccc; padding: 16px;">
+          <span class="sub">Blog</span>
+          <h3 style="margin-top: 4px;">Related post 1</h3>
+          <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet.</p>
+          <div style="margin-top: 8px; font-size: 15px; font-weight: 700;">Read →</div>
+        </div>
+        <div style="background: #fff; border: 1.5px solid #ccc; padding: 16px;">
+          <span class="sub">Blog</span>
+          <h3 style="margin-top: 4px;">Related post 2</h3>
+          <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet.</p>
+          <div style="margin-top: 8px; font-size: 15px; font-weight: 700;">Read →</div>
+        </div>
+        <div style="background: #fff; border: 1.5px solid #ccc; padding: 16px;">
+          <span class="sub">Service</span>
+          <h3 style="margin-top: 4px;">Related service</h3>
+          <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet.</p>
+          <div style="margin-top: 8px; font-size: 15px; font-weight: 700;">Learn more →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. FOOTER -->
+  <div style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality · Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">⚠ Crisis disclaimer + hotline</div></div>
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Links</div><div style="line-height: 2;">About<br>Services<br>Resources<br>Blog<br>Fees<br>Contact</div></div>
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Legal</div><div style="line-height: 2;">Privacy Policy<br>Terms of Service<br>Accessibility<br>Good Faith Estimate</div></div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">© 2026 Practice name</div>
+  </div>
+
+</div>
+
+<!-- SIDEBAR NOTES -->
+<div class="sidebar">
+  <div class="n" style="top: 2px;"><b>1. Header</b>Same as all pages.</div>
+  <div class="n" style="top: 232px;"><b>2. Confirmation</b>Checkmark + "check your inbox." Clear confirmation.</div>
+  <div class="n" style="top: 490px;"><b>3. Book a Consult</b>Primary goal. Warmest moment to offer a consult.</div>
+  <div class="n" style="top: 775px;"><b>4. Share</b>Secondary goal. Social share + copy link.</div>
+  <div class="n" style="top: 970px;"><b>5. Related Content</b>2 blog posts + matching service page. Prevents dead end.</div>
+  <div class="n" style="top: 1290px;"><b>6. Footer</b>Same as all pages.</div>
+</div>
+
+</div>
+</body>
+</html>

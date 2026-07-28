@@ -1,0 +1,163 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 2,
+	"settings": {
+		"appearanceTools": true,
+		"useRootPaddingAwareAlignments": true,
+		"background": {
+			"backgroundImage": true,
+			"backgroundSize": true
+		},
+		"layout": {
+			"contentSize": "1400px",
+			"wideSize": "1400px"
+		},
+
+		"color": {
+			"custom": true,
+			"customGradient": true,
+			"defaultPalette": false,
+			"palette": [
+				{ "slug": "primary", "name": "Primary", "color": "#333333" },
+				{
+					"slug": "secondary",
+					"name": "Secondary",
+					"color": "#222222"
+				},
+				{ "slug": "accent", "name": "Accent", "color": "#666666" },
+				{ "slug": "base", "name": "Base", "color": "#ffffff" },
+				{ "slug": "on-dark", "name": "On dark", "color": "#e6e6e6" },
+				{
+					"slug": "primary-soft",
+					"name": "Primary soft",
+					"color": "#cccccc"
+				},
+				{ "slug": "contrast", "name": "Contrast", "color": "#333333" },
+				{ "slug": "muted", "name": "Muted", "color": "#999999" },
+				{ "slug": "surface", "name": "Surface", "color": "#f7f7f7" },
+				{ "slug": "white", "name": "White", "color": "#ffffff" }
+			]
+		},
+
+		"typography": {
+			"customFontSize": true,
+			"fluid": false,
+			"fontFamilies": [
+				{
+					"slug": "heading",
+					"name": "Heading",
+					"fontFamily": "Arial, Helvetica, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+				},
+				{
+					"slug": "body",
+					"name": "Body",
+					"fontFamily": "Arial, Helvetica, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+				}
+			],
+			"fontSizes": [
+				{
+					"slug": "eyebrow",
+					"name": "Eyebrow (12px caps)",
+					"size": "0.75rem"
+				},
+				{ "slug": "small", "name": "Small (14px)", "size": "0.875rem" },
+				{ "slug": "body", "name": "Body (16px)", "size": "1rem" },
+				{
+					"slug": "button",
+					"name": "Button (16px caps)",
+					"size": "1rem"
+				},
+				{ "slug": "h3", "name": "H3 (27px)", "size": "1.6875rem" },
+				{ "slug": "h2", "name": "H2 (32px)", "size": "2rem" },
+				{ "slug": "h1", "name": "H1 (48px)", "size": "3rem" }
+			]
+		},
+
+		"spacing": {
+			"padding": true,
+			"margin": true,
+			"blockGap": true,
+			"units": [ "px", "rem", "em", "%", "vh", "vw" ],
+			"spacingScale": { "disabled": true },
+			"spacingSizes": [
+				{ "slug": "10", "name": "X-tight", "size": "0.25rem" },
+				{ "slug": "20", "name": "Tight (8px)", "size": "0.5rem" },
+				{ "slug": "30", "name": "Small (16px)", "size": "1rem" },
+				{ "slug": "40", "name": "Medium (24px)", "size": "1.5rem" },
+				{ "slug": "50", "name": "Section (100px)", "size": "6.25rem" },
+				{ "slug": "60", "name": "Large (80px)", "size": "5rem" }
+			]
+		},
+
+		"custom": {
+			"note": "Tokens — colors: neutral grayscale placeholders (primary / secondary / accent / base / on-dark / primary-soft / contrast / muted / surface / white); swap the hex values when the site's design lands. Fonts: heading and body both on the system sans stack. Sizes: eyebrow/small/body/button/h3/h2/h1. Spacing: 10..60 (Section = 100px top+bottom)."
+		}
+	},
+
+	"styles": {
+		"color": {
+			"background": "var(--wp--preset--color--base)",
+			"text": "var(--wp--preset--color--contrast)"
+		},
+		"typography": {
+			"fontFamily": "var(--wp--preset--font-family--body)",
+			"fontSize": "1rem",
+			"lineHeight": "1.5"
+		},
+		"elements": {
+			"h1": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)",
+					"fontSize": "3rem",
+					"lineHeight": "1.1",
+					"fontWeight": "700"
+				}
+			},
+			"h2": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)",
+					"fontSize": "2rem",
+					"lineHeight": "1.25",
+					"fontWeight": "700"
+				}
+			},
+			"h3": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)",
+					"fontSize": "1.6875rem",
+					"lineHeight": "1.1852",
+					"fontWeight": "700"
+				}
+			},
+			"h4": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)",
+					"fontSize": "1.25rem",
+					"lineHeight": "1.3",
+					"fontWeight": "700"
+				}
+			},
+			"h5": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)",
+					"fontSize": "1.125rem",
+					"lineHeight": "1.35",
+					"fontWeight": "700"
+				}
+			},
+			"h6": {
+				"typography": {
+					"fontFamily": "var(--wp--preset--font-family--heading)",
+					"fontSize": "0.75rem",
+					"fontWeight": "700",
+					"letterSpacing": "0.18em",
+					"textTransform": "uppercase"
+				}
+			},
+			"link": {
+				"color": { "text": "#333333" },
+				"typography": { "textDecoration": "underline" }
+			}
+		}
+	}
+}

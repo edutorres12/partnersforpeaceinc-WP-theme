@@ -1,0 +1,101 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wptpl/steps",
+  "title": "Steps",
+  "category": "wptpl",
+  "icon": "list-view",
+  "description": "Numbered steps with title and description.",
+  "keywords": [
+    "steps",
+    "numbered",
+    "how-to-start"
+  ],
+  "version": "0.1.0",
+  "textdomain": "wptpl",
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "className": true,
+    "spacing": {
+      "padding": true,
+      "margin": true
+    },
+    "color": {
+      "background": true,
+      "text": true
+    }
+  },
+  "attributes": {
+    "items": {
+      "type": "array",
+      "default": [
+        {
+          "title": "Step 1",
+          "text": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+        },
+        {
+          "title": "Step 2",
+          "text": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+        },
+        {
+          "title": "Step 3",
+          "text": "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+        }
+      ]
+    },
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "intro": {
+      "type": "string",
+      "default": ""
+    },
+    "showCta": {
+      "type": "boolean",
+      "default": false
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "Primary CTA"
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": "#book"
+    },
+    "microcopy": {
+      "type": "string",
+      "default": ""
+    },
+    "backgroundImageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "backgroundImageAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "overlayOpacity": {
+      "type": "number",
+      "default": 0.5,
+      "minimum": 0,
+      "maximum": 1
+    },
+    "overlayColor": {
+      "type": "string",
+      "default": "secondary"
+    },
+    "usePlaceholder": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

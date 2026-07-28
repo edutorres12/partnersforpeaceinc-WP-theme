@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "wptpl/cta-banner",
+	"title": "CTA banner",
+	"category": "wptpl",
+	"icon": "megaphone",
+	"description": "Closing banner with headline + text + primary and optional secondary button. Dark (default) or light theme, per-button color.",
+	"keywords": [ "cta", "banner", "closing" ],
+	"version": "0.1.0",
+	"textdomain": "wptpl",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"className": true,
+		"spacing": { "padding": true, "margin": [ "top", "bottom" ] }
+	},
+	"attributes": {
+		"eyebrow": { "type": "string", "default": "" },
+		"headline": { "type": "string", "default": "Encouraging headline" },
+		"text": {
+			"type": "string",
+			"default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor."
+		},
+		"ctaText": { "type": "string", "default": "Primary CTA" },
+		"ctaUrl": { "type": "string", "default": "#book" },
+		"ctaStyle": {
+			"type": "string",
+			"default": "auto",
+			"enum": [ "auto", "accent", "soft", "canvas", "primary", "outline" ]
+		},
+		"secondaryCtaText": { "type": "string", "default": "" },
+		"secondaryCtaUrl": { "type": "string", "default": "" },
+		"secondaryCtaStyle": {
+			"type": "string",
+			"default": "soft",
+			"enum": [ "auto", "accent", "soft", "canvas", "primary", "outline" ]
+		},
+		"secondaryCtaTextColor": { "type": "string", "default": "" },
+		"buttonLayout": {
+			"type": "string",
+			"default": "row",
+			"enum": [ "row", "column" ]
+		},
+		"theme": {
+			"type": "string",
+			"default": "dark",
+			"enum": [ "dark", "light" ]
+		},
+		"headlineColor": { "type": "string", "default": "" },
+		"bodyColor": { "type": "string", "default": "" },
+		"eyebrowColor": { "type": "string", "default": "" },
+		"backgroundImageUrl": { "type": "string", "default": "" },
+		"backgroundImageAlt": { "type": "string", "default": "" },
+		"overlayOpacity": {
+			"type": "number",
+			"default": 0.45,
+			"minimum": 0,
+			"maximum": 1
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

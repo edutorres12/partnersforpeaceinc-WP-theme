@@ -1,0 +1,4 @@
+/* Estilos específicos del editor para el bloque hero. */
+.wp-block[data-type="wptpl/hero"] .wptpl-hero__title {
+	min-height: 1em;
+}

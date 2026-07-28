@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Post Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #d8d8d8; color: #333; }
+
+  .wrap { max-width: 1760px; margin: 20px auto; display: flex; gap: 0; align-items: flex-start; }
+  .page { width: 1400px; background: #fff; border: 2px solid #888; flex-shrink: 0; }
+  .sidebar { width: 320px; position: relative; }
+
+  .row { border-top: 1px solid #ddd; padding: 40px; }
+  .row:first-child { border-top: none; }
+  .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
+  .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  h1 { font-size: 48px; font-weight: 700; line-height: 1.2; }
+  h2 { font-size: 28px; font-weight: 700; line-height: 1.3; }
+  h3 { font-size: 20px; font-weight: 700; }
+  .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
+  .txt { font-size: 16px; color: #999; line-height: 1.6; }
+  .meta { font-size: 14px; color: #aaa; }
+
+  .n {
+    position: absolute;
+    left: 20px;
+    width: 290px;
+    background: #fef9e7;
+    border: 1px solid #f0e6a0;
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #8a7a2e;
+    line-height: 1.5;
+  }
+  .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="page">
+
+  <!-- 1. HEADER -->
+  <div class="row" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+    <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 44px; height: 44px; border: 1.5px solid #999;"></div><strong style="font-size: 18px;">Logo</strong></div>
+    <div style="display: flex; gap: 16px; align-items: center; font-size: 16px; color: #999;"><span>About</span><span>Services</span><span>Resources &#9662;</span><span>Blog</span><span>Fees</span><span>Contact</span><span style="border: 1px solid #ccc; padding: 4px 10px;">EN | FA</span><span class="btn" style="font-size: 15px; padding: 10px 22px;">Primary CTA</span></div>
+  </div>
+
+  <!-- 2. BREADCRUMB -->
+  <div style="padding: 24px 40px; font-size: 14px; color: #999; background: #fafafa;">Blog → Category → Post title</div>
+
+  <!-- 3. POST HEADER -->
+  <div class="row" style="text-align: center; padding: 64px 40px;">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <span class="sub">Category</span>
+      <h1 style="margin-top: 10px;">Post title headline</h1>
+      <div class="meta" style="margin-top: 14px;">Date · Read time</div>
+    </div>
+  </div>
+
+  <!-- 4. FEATURED IMAGE -->
+  <div class="x" style="height: 500px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Featured image</span></div>
+
+  <!-- 5. POST CONTENT -->
+  <div class="row">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <p class="txt" style="margin-bottom: 16px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <p class="txt" style="margin-bottom: 16px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p class="txt" style="margin-bottom: 16px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+      <h2 style="margin: 28px 0 12px;">Section heading</h2>
+      <p class="txt" style="margin-bottom: 16px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <p class="txt" style="margin-bottom: 16px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p class="txt" style="margin-bottom: 16px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+
+      <div style="border-left: 3px solid #333; padding: 8px 16px; margin: 20px 0; background: #f7f7f7;">
+        <p class="txt" style="font-style: italic;">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore."</p>
+      </div>
+
+      <p class="txt" style="margin-bottom: 16px;">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+      <!-- IN-POST CTA -->
+      <div style="background: #f2f2f2; border: 1.5px solid #ddd; padding: 24px; margin: 28px 0; text-align: center;">
+        <h3>Contextual CTA headline</h3>
+        <p class="txt" style="margin: 6px auto 12px; max-width: 500px;">Lorem ipsum dolor sit amet consectetur.</p>
+        <span class="btn">CTA button</span>
+      </div>
+
+      <h2 style="margin: 28px 0 12px;">Section heading</h2>
+      <p class="txt" style="margin-bottom: 16px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+      <p class="txt" style="margin-bottom: 16px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+
+      <ul style="margin: 12px 0 16px 20px;">
+        <li class="txt" style="margin-bottom: 6px;">List item 1</li>
+        <li class="txt" style="margin-bottom: 6px;">List item 2</li>
+        <li class="txt" style="margin-bottom: 6px;">List item 3</li>
+        <li class="txt" style="margin-bottom: 6px;">List item 4</li>
+        <li class="txt" style="margin-bottom: 6px;">List item 5</li>
+      </ul>
+
+      <p class="txt" style="margin-bottom: 16px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+      <h2 style="margin: 28px 0 12px;">Section heading</h2>
+      <p class="txt" style="margin-bottom: 16px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <p class="txt" style="margin-bottom: 16px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p class="txt" style="margin-bottom: 16px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+    </div>
+  </div>
+
+  <!-- 6. AUTHOR BIO -->
+  <div class="row" style="background: #f7f7f7;">
+    <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center;">
+      <div class="x" style="width: 80px; height: 120px; border-radius: 50%;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1; font-size: 13px;">Photo</span></div>
+      <div>
+        <h3>Author name + credentials</h3>
+        <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. RELATED POSTS -->
+  <div class="row">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h2 style="margin-bottom: 16px;">Related posts headline</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+        <div style="border: 1.5px solid #ccc;">
+          <div class="x" style="height: 160px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1;">Image</span></div>
+          <div style="padding: 12px;">
+            <span class="sub">Category</span>
+            <h3 style="margin-top: 4px;">Post title 1</h3>
+            <div class="meta" style="margin-top: 8px;">Date</div>
+          </div>
+        </div>
+        <div style="border: 1.5px solid #ccc;">
+          <div class="x" style="height: 160px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1;">Image</span></div>
+          <div style="padding: 12px;">
+            <span class="sub">Category</span>
+            <h3 style="margin-top: 4px;">Post title 2</h3>
+            <div class="meta" style="margin-top: 8px;">Date</div>
+          </div>
+        </div>
+        <div style="border: 1.5px solid #ccc;">
+          <div class="x" style="height: 160px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1"/></svg><span style="z-index:1;">Image</span></div>
+          <div style="padding: 12px;">
+            <span class="sub">Category</span>
+            <h3 style="margin-top: 4px;">Post title 3</h3>
+            <div class="meta" style="margin-top: 8px;">Date</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. NEWSLETTER -->
+  <div class="row" style="background: #f2f2f2;">
+    <div style="max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;">
+      <div>
+        <div class="sub" style="margin-bottom: 6px;">Stay connected</div>
+        <h2>Newsletter headline</h2>
+        <p class="txt" style="margin-top: 10px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.</p>
+      </div>
+      <div>
+        <div style="display: flex; gap: 8px;">
+          <div style="flex: 1; border: 1.5px solid #ccc; padding: 16px 20px; font-size: 16px; color: #aaa; background: #fff;">Email address</div>
+          <span class="btn">Subscribe</span>
+        </div>
+        <p style="margin-top: 12px; font-size: 14px; color: #999;">Lorem ipsum dolor sit amet. No spam.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. CLOSING CTA -->
+  <div style="background: #333; color: #fff; text-align: center; padding: 64px 40px;">
+    <h2 style="color: #fff; font-size: 36px;">Encouraging headline</h2>
+    <p class="txt" style="color: rgba(255,255,255,0.5); margin: 10px auto 20px; max-width: 600px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <span class="btn" style="background: #fff; color: #333;">Primary CTA</span>
+  </div>
+
+  <!-- 10. FOOTER -->
+  <div style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality · Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">⚠ Crisis disclaimer + hotline</div></div>
+      
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Links</div><div style="line-height: 2;">About<br>Services<br>Resources<br>Blog<br>Fees<br>Contact</div></div>
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Legal</div><div style="line-height: 2;">Privacy Policy<br>Terms of Service<br>Accessibility<br>Good Faith Estimate</div></div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">© 2026 Practice name</div>
+  </div>
+
+</div>
+
+<!-- SIDEBAR NOTES -->
+<div class="sidebar">
+  <div class="n" style="top: 0;"><b>1. Header</b>Same as all pages.</div>
+  <div class="n" style="top: 64px;"><b>2. Breadcrumb</b>Shows where the post lives.</div>
+  <div class="n" style="top: 112px;"><b>3. Post Header</b>Category, title, meta info.</div>
+  <div class="n" style="top: 312px;"><b>4. Featured Image</b>Full width.</div>
+  <div class="n" style="top: 812px;"><b>5. Post Content + In-Post CTA</b>CTA block only appears on posts related to postpartum, perimenopause, or couples. Links to the matching guide. Posts about other topics do not include this block.</div>
+  <div class="n" style="top: 1900px;"><b>6. Author Bio</b>Photo + credentials + short bio.</div>
+  <div class="n" style="top: 2050px;"><b>7. Related Posts</b>3 posts from the same category.</div>
+  <div class="n" style="top: 2400px;"><b>8. Newsletter</b>Lower commitment than booking.</div>
+  <div class="n" style="top: 2580px;"><b>9. Closing CTA</b>Turns readers into inquiries.</div>
+  <div class="n" style="top: 2760px;"><b>10. Footer</b>Same as all pages.</div>
+</div>
+
+</div>
+</body>
+</html>
