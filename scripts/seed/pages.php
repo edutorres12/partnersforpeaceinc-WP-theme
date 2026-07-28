@@ -12,50 +12,44 @@
 declare( strict_types = 1 );
 
 /**
- * The service subpages.
+ * Service subpages, grouped by theme rather than by therapist.
  *
- * Deliberately still generic: the site's sitemap groups services by theme rather
- * than by therapist, but which groupings survive is an open question on their
- * side. Renaming these encodes a decision nobody has made — the slots stay
- * numbered until the real list lands, and then it is one edit here.
+ * That is how families search — someone looks for help with anxiety, not for a
+ * particular clinician — and it keeps the page count stable as the roster
+ * changes. Straight from the client's sitemap.
  *
  * @return array<int, array{slug: string, title: string}>
  */
 function wptpl_seed_services(): array {
 	return array(
 		array(
-			'slug'  => 'service-one',
-			'title' => 'Service One',
+			'slug'  => 'anxiety-stress-overthinking',
+			'title' => 'Anxiety, Stress &amp; Overthinking',
 		),
 		array(
-			'slug'  => 'service-two',
-			'title' => 'Service Two',
+			'slug'  => 'trauma-grief-healing',
+			'title' => 'Trauma, Grief &amp; Healing Through Faith',
 		),
 		array(
-			'slug'  => 'service-three',
-			'title' => 'Service Three',
+			'slug'  => 'depression-burnout-renewed-hope',
+			'title' => 'Depression, Burnout &amp; Renewed Hope',
 		),
 		array(
-			'slug'  => 'service-four',
-			'title' => 'Service Four',
+			'slug'  => 'marriage-family-relationship-counseling',
+			'title' => 'Marriage, Family &amp; Relationship Counseling',
 		),
 		array(
-			'slug'  => 'service-five',
-			'title' => 'Service Five',
-		),
-		array(
-			'slug'  => 'service-six',
-			'title' => 'Service Six',
-		),
-		array(
-			'slug'  => 'service-seven',
-			'title' => 'Service Seven',
+			'slug'  => 'life-transitions-purpose-identity',
+			'title' => 'Life Transitions, Purpose &amp; Identity in Christ',
 		),
 	);
 }
 
 /**
  * Slugs the template used to own and no longer does.
+ *
+ * Entries are paths, not slugs: a child page must be listed as
+ * `parent/child`, because that is what `get_page_by_path()` matches.
  *
  * `wptpl_seed_prune()` moves these to the trash — never deletes them — so a
  * restructure does not leave orphans behind. Anything a site added on its own is
@@ -65,6 +59,17 @@ function wptpl_seed_services(): array {
  */
 function wptpl_seed_retired_slugs(): array {
 	return array(
+		// The numbered slots the template shipped before the real service list
+		// landed. Superseded by the themed slugs in wptpl_seed_services().
+		// These are child pages, so they need their full path — a bare slug
+		// finds nothing and the page is silently left behind.
+		'services/service-one',
+		'services/service-two',
+		'services/service-three',
+		'services/service-four',
+		'services/service-five',
+		'services/service-six',
+		'services/service-seven',
 		// Superseded by `about-us`, the slug the sitemap uses.
 		'about',
 		// Sections the sitemap does not include.
@@ -106,8 +111,10 @@ function wptpl_seed_retired_menus(): array {
  * numbered steps, FAQ, closing CTA.
  */
 function wptpl_seed_page_home(): string {
+	// Rows of three, however many services there are — the list is expected to
+	// change, and a hardcoded card count breaks the moment it does.
 	$service_cards = array();
-	foreach ( wptpl_seed_services() as $index => $service ) {
+	foreach ( wptpl_seed_services() as $service ) {
 		$service_cards[] = wptpl_block(
 			'feature-card',
 			array(
@@ -120,10 +127,24 @@ function wptpl_seed_page_home(): string {
 				'ctaStyle' => 'arrow',
 			)
 		);
-		if ( 5 === $index ) {
-			break; // The grid shows six; the seventh lives on the Services page.
-		}
 	}
+	$service_rows = array();
+	foreach ( array_chunk( $service_cards, 3 ) as $row ) {
+		$service_rows[] = wptpl_columns(
+			array_map(
+				static function ( $card ) {
+					return array( $card );
+				},
+				$row
+			)
+		);
+	}
+	$service_grid = implode(
+		'
+
+',
+		$service_rows
+	);
 
 	return implode(
 		"\n\n",
@@ -226,20 +247,7 @@ function wptpl_seed_page_home(): string {
 							'headline' => 'Services headline',
 						)
 					),
-					wptpl_columns(
-						array(
-							array( $service_cards[0] ),
-							array( $service_cards[1] ),
-							array( $service_cards[2] ),
-						)
-					),
-					wptpl_columns(
-						array(
-							array( $service_cards[3] ),
-							array( $service_cards[4] ),
-							array( $service_cards[5] ),
-						)
-					),
+					$service_grid,
 				)
 			),
 
@@ -577,10 +585,8 @@ function wptpl_seed_page_about(): string {
  * Services: hero over a photo, a six-card grid, one wide bilingual card, CTA.
  */
 function wptpl_seed_page_services(): string {
-	$services = wptpl_seed_services();
-	$cards    = array();
-
-	foreach ( array_slice( $services, 0, 6 ) as $service ) {
+	$cards = array();
+	foreach ( wptpl_seed_services() as $service ) {
 		$cards[] = wptpl_block(
 			'feature-card',
 			array(
@@ -593,10 +599,23 @@ function wptpl_seed_page_services(): string {
 		);
 	}
 
-	$seventh = $services[6];
+	// Rows of three, however many services there are.
+	$rows = array();
+	foreach ( array_chunk( $cards, 3 ) as $row ) {
+		$rows[] = wptpl_columns(
+			array_map(
+				static function ( $card ) {
+					return array( $card );
+				},
+				$row
+			)
+		);
+	}
 
 	return implode(
-		"\n\n",
+		'
+
+',
 		array(
 			wptpl_block(
 				'hero',
@@ -612,47 +631,7 @@ function wptpl_seed_page_services(): string {
 					'className'          => 'wptpl-hero-dark',
 				)
 			),
-
-			wptpl_section(
-				array(
-					wptpl_columns(
-						array(
-							array( $cards[0] ),
-							array( $cards[1] ),
-							array( $cards[2] ),
-						)
-					),
-					wptpl_columns(
-						array(
-							array( $cards[3] ),
-							array( $cards[4] ),
-							array( $cards[5] ),
-						)
-					),
-				)
-			),
-
-			// Seventh service gets the wide bilingual treatment.
-			wptpl_section(
-				array(
-					wptpl_block(
-						'feature-card',
-						array(
-							'title'             => $seventh['title'],
-							'text'              => wptpl_lorem( 'medium' ),
-							'titleRight'        => $seventh['title'] . ' (second language)',
-							'textRight'         => wptpl_lorem( 'medium' ),
-							'layout'            => 'bilingual',
-							'halfWidthCentered' => true,
-							'ctaText'           => 'Learn more',
-							'ctaUrl'            => '/services/' . $seventh['slug'] . '/',
-							'ctaStyle'          => 'arrow',
-						)
-					),
-				),
-				'surface'
-			),
-
+			wptpl_section( $rows ),
 			wptpl_block(
 				'cta-banner',
 				array(
@@ -667,12 +646,6 @@ function wptpl_seed_page_services(): string {
 	);
 }
 
-/**
- * A single service subpage. Same template for all seven.
- *
- * @param array{slug: string, title: string} $service  This service.
- * @param array<int, array{slug: string, title: string}> $siblings Related services.
- */
 function wptpl_seed_page_service( array $service, array $siblings ): string {
 	$checklist = static function ( string $prefix ) {
 		return array(
@@ -1437,11 +1410,9 @@ function wptpl_seed_all_pages(): array {
  * @param array<string, mixed> $ids Page IDs from wptpl_seed_all_pages().
  */
 function wptpl_seed_all_menus( array $ids ): void {
+	// No Home item: the logo in the header already links there, and repeating it
+	// costs a nav slot for nothing.
 	$primary = array(
-		array(
-			'title'   => 'Home',
-			'page_id' => $ids['home'],
-		),
 		array(
 			'title'   => 'About',
 			'page_id' => $ids['about'],
