@@ -5,13 +5,18 @@
  *
  * Run with WP-CLI from the theme directory (or pass an absolute path):
  *
- *   wp eval-file scripts/seed-wp.php              # dry run — prints the plan, writes nothing
- *   wp eval-file scripts/seed-wp.php -- --apply   # actually write
- *   wp eval-file scripts/seed-wp.php -- --apply --force
+ *   wp eval-file scripts/seed-wp.php               # dry run — prints the plan, writes nothing
+ *   wp eval-file scripts/seed-wp.php apply         # actually write
+ *   wp eval-file scripts/seed-wp.php apply force
  *
- * SAFE BY DEFAULT. Without `--apply` nothing is written. With `--apply` the
+ * The flags are bare words, not `--apply`. WP-CLI parses anything starting with
+ * `--` as one of its own options and errors out with "unknown --apply
+ * parameter"; the `--` separator does not help for eval-file. Positional
+ * arguments are handed to the script as $args, so that is what we use.
+ *
+ * SAFE BY DEFAULT. Without `apply` nothing is written. With `apply` the
  * script is idempotent: pages are matched by slug, menus by name, and anything
- * that already exists is left alone. `--force` additionally overwrites the
+ * that already exists is left alone. `force` additionally overwrites the
  * content of pages the seeder owns — use it to re-apply the template after
  * editing the block markup, and expect it to discard manual edits to those
  * pages.
@@ -20,10 +25,13 @@
  * This mirrors the unstyled state of the theme: the structure is final, the
  * words are placeholders for the site to replace.
  *
+ * NOTE: this file must NOT declare strict_types. `wp eval-file` runs it through
+ * eval(), and a declare() is only legal as the first statement of a real script
+ * — PHP fatals otherwise. The files under scripts/seed/ are loaded with
+ * require(), so they keep their declaration.
+ *
  * @package wptpl
  */
-
-declare( strict_types = 1 );
 
 if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
 	echo "This script must be run through WP-CLI: wp eval-file scripts/seed-wp.php\n";
@@ -34,16 +42,28 @@ if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
 // Flags
 // ---------------------------------------------------------------------------
 
-$wptpl_argv  = isset( $args ) && is_array( $args ) ? $args : array();
-$wptpl_apply = in_array( '--apply', $wptpl_argv, true );
-$wptpl_force = in_array( '--force', $wptpl_argv, true );
+$wptpl_argv = isset( $args ) && is_array( $args ) ? $args : array();
 
-/**
- * Collected plan lines, printed at the end of a dry run.
- *
- * @var array<int, string>
+/*
+ * These three go into $GLOBALS explicitly. `wp eval-file` evaluates this script
+ * inside a method, so a plain top-level assignment would be function-scoped and
+ * the `global` statements in the helpers below would silently read a different,
+ * empty variable — the symptom is a run that reports "0 action(s) planned".
  */
-$wptpl_plan = array();
+$GLOBALS['wptpl_apply'] = (bool) array_intersect( array( 'apply', '--apply' ), $wptpl_argv );
+$GLOBALS['wptpl_force'] = (bool) array_intersect( array( 'force', '--force' ), $wptpl_argv );
+$GLOBALS['wptpl_plan']  = array();
+
+/*
+ * Stand-in post IDs handed out during a dry run. Without them every page would
+ * "return" 0, and everything keyed off a page ID — the front-page option, the
+ * nested service items in the Primary menu — would silently drop out of the
+ * plan, making the dry run under-report what `apply` will actually do.
+ */
+$GLOBALS['wptpl_fake_id'] = 900000;
+
+$wptpl_apply = $GLOBALS['wptpl_apply'];
+$wptpl_force = $GLOBALS['wptpl_force'];
 
 /**
  * Record an action. In apply mode it also runs; in dry-run mode it only logs.
@@ -119,6 +139,10 @@ function wptpl_seed_page( array $page ): int {
 		}
 	);
 
+	if ( null === $id ) {
+		// Dry run — hand back a stand-in so the rest of the plan still resolves.
+		return ++$GLOBALS['wptpl_fake_id'];
+	}
 	if ( is_wp_error( $id ) ) {
 		WP_CLI::warning( sprintf( 'Could not create "%s": %s', $slug, $id->get_error_message() ) );
 		return 0;
@@ -249,7 +273,7 @@ $wptpl_seed_dir = __DIR__ . '/seed';
 WP_CLI::log( '' );
 WP_CLI::log( $wptpl_apply ? '== Seeding WordPress (APPLY) ==' : '== Seeding WordPress (DRY RUN — nothing will be written) ==' );
 if ( $wptpl_apply && $wptpl_force ) {
-	WP_CLI::log( '   --force: existing seeded pages will have their content replaced.' );
+	WP_CLI::log( '   force: existing seeded pages will have their content replaced.' );
 }
 WP_CLI::log( '' );
 
@@ -298,7 +322,7 @@ WP_CLI::log( 'Blog' );
 wptpl_seed_all_posts();
 
 WP_CLI::log( '' );
-foreach ( $wptpl_plan as $wptpl_line ) {
+foreach ( $GLOBALS['wptpl_plan'] as $wptpl_line ) {
 	WP_CLI::log( $wptpl_line );
 }
 WP_CLI::log( '' );
@@ -307,12 +331,12 @@ if ( $wptpl_apply ) {
 	if ( function_exists( 'flush_rewrite_rules' ) ) {
 		flush_rewrite_rules( false );
 	}
-	WP_CLI::success( sprintf( '%d action(s) applied.', count( $wptpl_plan ) ) );
+	WP_CLI::success( sprintf( '%d action(s) applied.', count( $GLOBALS['wptpl_plan'] ) ) );
 } else {
 	WP_CLI::success(
 		sprintf(
-			'%d action(s) planned. Nothing was written — re-run with `-- --apply` to commit.',
-			count( $wptpl_plan )
+			'%d action(s) planned. Nothing was written — re-run with `apply` to commit.',
+			count( $GLOBALS['wptpl_plan'] )
 		)
 	);
 }

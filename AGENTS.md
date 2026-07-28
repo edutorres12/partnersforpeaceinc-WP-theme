@@ -33,7 +33,7 @@ npm run lint:php:fix                # PHPCBF auto-fix
 npm run check:tokens                # theme.json ↔ tailwind.config drift check
 npm run format                      # Prettier (JS/JSON) — runs the WP scripts formatter
 npm run gen:placeholders            # regenerate the neutral placeholder images
-wp eval-file scripts/seed-wp.php    # seed a WP install (dry run; add -- --apply)
+wp eval-file scripts/seed-wp.php    # seed a WP install (dry run; add `apply` to write)
 npm run optimize:images             # regenerate .webp from JPG/PNG (sharp)
 ```
 
@@ -203,6 +203,11 @@ After editing, verify the markup still balances before touching a real site:
 dry-run it (`wp eval-file scripts/seed-wp.php`), which writes nothing and prints
 the full plan.
 
+`seed-wp.php` runs through `eval()`, which imposes two rules on that file only:
+no `declare(strict_types=1)`, and any top-level variable the helpers read with
+`global` must be assigned into `$GLOBALS` explicitly. Flags are bare words
+(`apply`, `force`) because WP-CLI claims anything starting with `--`.
+
 ### Touching SEO
 
 - Don't add meta tags to `header.php` directly. `inc/seo.php` owns the
@@ -221,8 +226,8 @@ the full plan.
 - ❌ Put real copy in `scripts/seed/`. The seeder writes placeholders on purpose;
   a site replaces them in the editor. The one exception is structural text that
   tells the editor what to do ("Replace these cards with…").
-- ❌ Run the seeder with `--apply` on a site you have not dry-run first. It is
-  idempotent, but `--force` replaces page content.
+- ❌ Run the seeder with `apply` on a site you have not dry-run first. It is
+  idempotent, but `force` replaces page content.
 - ❌ `git push --force` to `main`. `deploy` branch is force-pushed BY CI; manual force-pushes anywhere else need explicit user permission.
 - ❌ Run `git rebase --amend` or `git commit --amend` on commits that are already pushed unless the user explicitly asks.
 - ❌ Add WebP via raw `<img src="...webp">`. Use `wptpl_render_picture()` so the JPG fallback is preserved.
