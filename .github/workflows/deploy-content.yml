@@ -1,9 +1,16 @@
 # Deploys the theme to the WordPress host over SSH and runs the seeder.
 #
-# On a push to main it only ever DRY-RUNS the seeder: the theme is updated and
-# the plan is printed to the job summary, but nothing is written to the database.
-# Writing requires a manual run from the Actions tab, so a merge can never
-# rewrite site content on its own.
+# What a push to main does is set by the PUSH_MODE repository variable, and it
+# defaults to `apply prune force` — a merge lands on the site by itself.
+#
+# That default is right ONLY while the site's content is placeholder, which is
+# the phase this project is in: the seeder owns every page, so re-applying costs
+# nothing and a merge that does not reach the site is just a broken promise.
+#
+# The moment anyone writes real copy in the WordPress editor, set PUSH_MODE to
+# `dry-run`. From then on a merge updates the theme and prints the plan, and
+# writing takes a manual run from the Actions tab. `force` replaces the content
+# of every seeded page; on a site with real copy that is data loss.
 #
 # Setup (once) — Settings → Secrets and variables → Actions:
 #
@@ -40,7 +47,9 @@ on:
         options:
           - dry-run
           - apply
+          - apply-prune
           - apply-force
+          - apply-prune-force
       confirm:
         description: Type FORCE to allow apply-force. Ignored for the other modes.
         type: string
@@ -103,24 +112,34 @@ jobs:
           EVENT: ${{ github.event_name }}
           INPUT_MODE: ${{ inputs.mode }}
           CONFIRM: ${{ inputs.confirm }}
+          PUSH_MODE: ${{ vars.PUSH_MODE }}
         run: |
           set -euo pipefail
-          # A push to main never writes. Only a manual dispatch can.
           if [ "$EVENT" != "workflow_dispatch" ]; then
-            MODE="dry-run"
+            # A push uses PUSH_MODE. Set that variable to `dry-run` once the site
+            # holds real copy — see the note at the top of this file.
+            MODE="${PUSH_MODE:-apply-prune-force}"
           else
             MODE="${INPUT_MODE:-dry-run}"
           fi
 
-          if [ "$MODE" = "apply-force" ] && [ "$CONFIRM" != "FORCE" ]; then
-            echo "::error::apply-force replaces the content of every seeded page and discards edits made in the WordPress editor. Re-run and type FORCE in the confirm field to proceed."
-            exit 1
-          fi
+          # Any manual mode carrying `force` needs the typed confirmation, not just
+          # apply-force — apply-prune-force is the more destructive of the two.
+          case "$EVENT:$MODE" in
+            workflow_dispatch:*force*)
+              if [ "$CONFIRM" != "FORCE" ]; then
+                echo "::error::'$MODE' replaces the content of every seeded page and discards edits made in the WordPress editor. Re-run and type FORCE in the confirm field to proceed."
+                exit 1
+              fi
+              ;;
+          esac
 
           case "$MODE" in
-            dry-run)     SEED_ARGS="" ;;
-            apply)       SEED_ARGS="apply" ;;
-            apply-force) SEED_ARGS="apply force" ;;
+            dry-run)          SEED_ARGS="" ;;
+            apply)            SEED_ARGS="apply" ;;
+            apply-force)      SEED_ARGS="apply force" ;;
+            apply-prune)      SEED_ARGS="apply prune" ;;
+            apply-prune-force) SEED_ARGS="apply prune force" ;;
             *) echo "::error::unknown mode '$MODE'"; exit 1 ;;
           esac
 
@@ -263,6 +282,8 @@ jobs:
             echo
             if [ "$MODE" = "dry-run" ]; then
               echo "Nothing was written. To apply, run this workflow manually from the Actions tab and pick \`apply\`."
+            else
+              echo "Written to the site. **Hostinger caches HTML for 7 days** — purge it in hPanel → Performance → Cache Manager, then hard-reload, or the change stays invisible."
             fi
             echo
             echo '```'

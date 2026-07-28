@@ -388,12 +388,22 @@ thing; the runner is where the machine proves nothing is broken.
 over SSH and runs the seeder there, so a content change is: edit
 `scripts/seed/pages.php` → PR → merge → run the workflow.
 
-**A merge can never rewrite site content.** A push to `main` updates the theme and
-runs the seeder in **dry-run** only; the plan lands in the job summary and
-nothing touches the database. Writing requires opening the Actions tab and
-running the workflow manually with `mode: apply`. `apply-force` — which replaces
-the content of every seeded page and discards edits made in the WordPress editor
-— additionally requires typing `FORCE` into the confirm field.
+**What a merge does is set by the `PUSH_MODE` repository variable**, and it
+defaults to `apply prune force` — a merge lands on the site by itself.
+
+That default is right only while the site's content is placeholder: the seeder
+owns every page, re-applying costs nothing, and a merge that does not reach the
+site is a broken promise. **The moment anyone writes real copy in the WordPress
+editor, set `PUSH_MODE` to `dry-run`.** From then on a merge updates the theme
+and prints the plan, and writing takes a manual run — `force` replaces the
+content of every seeded page, which on a site with real copy is data loss.
+
+Manual runs from the Actions tab default to `dry-run`, and any mode carrying
+`force` requires typing `FORCE` into the confirm field.
+
+Hostinger caches HTML for seven days. After anything is written, purge it in
+hPanel → Performance → Cache Manager and hard-reload, or the change stays
+invisible. The job summary says so on every run that writes.
 
 Before any write the workflow exports the database to `~/wptpl-backups/` on the
 server (gzipped, ten most recent kept). Backups live in the home directory, not
@@ -434,6 +444,7 @@ the secret below.
 
 | Variable | Value |
 |---|---|
+| `PUSH_MODE` | what a merge does. Unset means `apply prune force`; set it to `dry-run` once the site holds real copy |
 | `HOSTINGER_PORT` | `65002` (Hostinger's SSH port; the default if unset) |
 | `WP_PATH` | absolute path to the WordPress root |
 | `THEME_DIR` | theme path relative to `WP_PATH` (default `wp-content/themes/partnersforpeace`) |
