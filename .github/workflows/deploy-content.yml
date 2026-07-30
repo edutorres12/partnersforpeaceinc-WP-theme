@@ -1,9 +1,12 @@
 # Deploys the theme to the WordPress host over SSH and runs the seeder.
 #
-# On a push to main it only ever DRY-RUNS the seeder: the theme is updated and
-# the plan is printed to the job summary, but nothing is written to the database.
-# Writing requires a manual run from the Actions tab, so a merge can never
-# rewrite site content on its own.
+# On a push to main it updates the theme and runs the seeder in `apply` mode:
+# whatever the seeder is missing gets created, and pages that already exist are
+# left alone (seed-wp.php:20). The database is backed up first, every time.
+#
+# The destructive modes stay manual: `apply-force` replaces the content of every
+# seeded page — discarding copy written in the WordPress editor — and `prune`
+# trashes retired pages. Neither can be reached by a merge.
 #
 # Setup (once) — Settings → Secrets and variables → Actions:
 #
@@ -15,16 +18,18 @@
 #                              hPanel → Advanced → SSH Access → Add key.
 #   HOSTINGER_HOST             e.g. 123.45.67.89 or xxxxx.hostinger.com
 #   HOSTINGER_USER             e.g. u123456789
+#   WP_PATH                    absolute path to the WordPress root, e.g.
+#                              /home/u123456789/domains/example.com/public_html
 #
 #   Variables                  Value
 #   HOSTINGER_PORT             65002 (Hostinger's SSH port; default if unset)
-#   WP_PATH                    absolute path to the WordPress root, e.g.
-#                              /home/u123456789/domains/example.com/public_html
 #   THEME_DIR                  path to the theme, relative to WP_PATH. Default:
 #                              wp-content/themes/partnersforpeace
 #
-# Host/user are secrets so they stay out of logs; the paths are variables so
-# failures are actually debuggable.
+# WP_PATH is a secret because it embeds the account username. The cost is that
+# GitHub masks it in the logs, so it shows up as *** in every error message that
+# quotes it — when a path problem needs debugging, echo THEME_DIR (a variable)
+# and work from there.
 
 name: Deploy content
 
@@ -36,10 +41,10 @@ on:
       mode:
         description: What to run on the server
         type: choice
-        default: dry-run
+        default: apply
         options:
-          - dry-run
           - apply
+          - dry-run
           - apply-force
       confirm:
         description: Type FORCE to allow apply-force. Ignored for the other modes.
@@ -71,7 +76,7 @@ jobs:
           SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           HOST: ${{ secrets.HOSTINGER_HOST }}
           SSH_USER: ${{ secrets.HOSTINGER_USER }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
         run: |
           set -euo pipefail
           MISSING=""
@@ -105,11 +110,14 @@ jobs:
           CONFIRM: ${{ inputs.confirm }}
         run: |
           set -euo pipefail
-          # A push to main never writes. Only a manual dispatch can.
+          # A push to main applies. `apply` only ever creates what is missing —
+          # existing pages are left alone — so a merge publishes new content
+          # without overwriting copy edited on the site. apply-force and prune
+          # are destructive and stay reachable only by manual dispatch.
           if [ "$EVENT" != "workflow_dispatch" ]; then
-            MODE="dry-run"
+            MODE="apply"
           else
-            MODE="${INPUT_MODE:-dry-run}"
+            MODE="${INPUT_MODE:-apply}"
           fi
 
           if [ "$MODE" = "apply-force" ] && [ "$CONFIRM" != "FORCE" ]; then
@@ -158,19 +166,38 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
           THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
         run: |
           set -euo pipefail
           if [ -z "${WP_PATH:-}" ]; then
-            echo "::error::The WP_PATH repository variable is not set."
+            echo "::error::The WP_PATH repository secret is not set."
             exit 1
           fi
           ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" bash -s <<REMOTE
           set -euo pipefail
           cd "$WP_PATH/$THEME_DIR"
-          git fetch --quiet origin
-          git reset --hard --quiet origin/main
+
+          if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            echo "::error::\$PWD is not a git clone. This step updates the theme with git, so the theme directory has to be one — check THEME_DIR, or clone the repo there."
+            exit 1
+          fi
+
+          # Say what we are looking at before touching it. When this step fails
+          # it is almost always because the clone is not what someone assumed,
+          # and without these two lines the error names a ref instead of a repo.
+          echo "Remotes:"
+          git remote -v
+          echo "On branch: \$(git rev-parse --abbrev-ref HEAD)"
+
+          # Fetch main by name instead of relying on the clone's refspec. A
+          # Hostinger Git deployment clones a single branch, so origin fetches
+          # fine while refs/remotes/origin/main never exists — which is how this
+          # step used to die with "ambiguous argument 'origin/main'". Resetting
+          # to FETCH_HEAD sidesteps tracking refs entirely and also works on the
+          # shallow clones that panel creates.
+          git fetch --quiet origin main
+          git reset --hard --quiet FETCH_HEAD
           echo "Theme now at: \$(git log --oneline -1)"
           REMOTE
 
@@ -180,7 +207,7 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
           THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
         run: |
           set -euo pipefail
@@ -199,7 +226,7 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
         run: |
           set -euo pipefail
           # Backups go to the home directory, never inside public_html — a .sql
@@ -244,7 +271,7 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
           THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
           SEED_ARGS: ${{ steps.mode.outputs.seed_args }}
         run: |
