@@ -177,8 +177,27 @@ jobs:
           ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" bash -s <<REMOTE
           set -euo pipefail
           cd "$WP_PATH/$THEME_DIR"
-          git fetch --quiet origin
-          git reset --hard --quiet origin/main
+
+          if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            echo "::error::\$PWD is not a git clone. This step updates the theme with git, so the theme directory has to be one — check THEME_DIR, or clone the repo there."
+            exit 1
+          fi
+
+          # Say what we are looking at before touching it. When this step fails
+          # it is almost always because the clone is not what someone assumed,
+          # and without these two lines the error names a ref instead of a repo.
+          echo "Remotes:"
+          git remote -v
+          echo "On branch: \$(git rev-parse --abbrev-ref HEAD)"
+
+          # Fetch main by name instead of relying on the clone's refspec. A
+          # Hostinger Git deployment clones a single branch, so origin fetches
+          # fine while refs/remotes/origin/main never exists — which is how this
+          # step used to die with "ambiguous argument 'origin/main'". Resetting
+          # to FETCH_HEAD sidesteps tracking refs entirely and also works on the
+          # shallow clones that panel creates.
+          git fetch --quiet origin main
+          git reset --hard --quiet FETCH_HEAD
           echo "Theme now at: \$(git log --oneline -1)"
           REMOTE
 
