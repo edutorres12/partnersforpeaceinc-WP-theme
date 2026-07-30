@@ -454,16 +454,23 @@ function wptpl_image( string $file, string $classname = '', string $width = '' )
  * used inside them — a tinted card, a column's contents, a constrained run of
  * copy. It never carries `alignfull` or the section rhythm class.
  *
+ * A tinted group with no padding is not a card — it is a colored rectangle with
+ * the copy jammed against its edges. `$padding` and `$radius` are what turn it
+ * into one, and any group that sets a background needs both.
+ *
  * @param array<int, string> $inner      Inner block markup.
  * @param string             $bg         Palette slug for the background, or ''.
  * @param string             $text       Palette slug for the text color, or ''.
  * @param string             $classname  Extra CSS classes.
  * @param string             $margin_top Top margin (e.g. "2.5rem"), or ''.
+ * @param string             $padding    Inner padding (e.g. "50px"), or ''.
+ * @param string             $radius     Corner radius (e.g. "22px"), or ''.
  */
-function wptpl_group( array $inner, string $bg = '', string $text = '', string $classname = '', string $margin_top = '' ): string {
+function wptpl_group( array $inner, string $bg = '', string $text = '', string $classname = '', string $margin_top = '', string $padding = '', string $radius = '' ): string {
 	$attrs   = array();
 	$classes = 'wp-block-group';
 	$style   = '';
+	$css     = '';
 
 	if ( '' !== $classname ) {
 		$attrs['className'] = $classname;
@@ -482,9 +489,27 @@ function wptpl_group( array $inner, string $bg = '', string $text = '', string $
 	if ( '' !== $text || '' !== $bg ) {
 		$classes .= ( '' !== $text ? ' has-text-color' : '' ) . ( '' !== $bg ? ' has-background' : '' );
 	}
+	$block_style = array();
 	if ( '' !== $margin_top ) {
-		$attrs['style'] = array( 'spacing' => array( 'margin' => array( 'top' => $margin_top ) ) );
-		$style          = sprintf( ' style="margin-top:%s"', esc_attr( $margin_top ) );
+		$block_style['spacing']['margin'] = array( 'top' => $margin_top );
+		$css                             .= 'margin-top:' . $margin_top . ';';
+	}
+	if ( '' !== $padding ) {
+		$block_style['spacing']['padding'] = array(
+			'top'    => $padding,
+			'right'  => $padding,
+			'bottom' => $padding,
+			'left'   => $padding,
+		);
+		$css                              .= 'padding:' . $padding . ';';
+	}
+	if ( '' !== $radius ) {
+		$block_style['border'] = array( 'radius' => $radius );
+		$css                  .= 'border-radius:' . $radius . ';';
+	}
+	if ( $block_style ) {
+		$attrs['style'] = $block_style;
+		$style          = sprintf( ' style="%s"', esc_attr( rtrim( $css, ';' ) ) );
 	}
 
 	$attrs['layout'] = array( 'type' => 'constrained' );
