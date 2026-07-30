@@ -35,6 +35,7 @@ npm run format                      # Prettier (JS/JSON) — runs the WP scripts
 npm run gen:placeholders            # regenerate the neutral placeholder images
 wp eval-file scripts/seed-wp.php    # seed a WP install (dry run; add `apply` to write)
 npm run optimize:images             # regenerate .webp from JPG/PNG (sharp)
+bash scripts/wp-remote.sh <args>    # read the live site over SSH (needs .env)
 ```
 
 Pre-commit hook (Husky + lint-staged) runs PHPCS / ESLint / Prettier on
