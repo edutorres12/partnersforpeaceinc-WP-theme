@@ -128,15 +128,22 @@ function wptpl_seed_page_home(): string {
 			)
 		);
 	}
+	// `wptpl-services-carousel` is what the mobile row-gap rule keys off, so the
+	// rows don't sit flush against each other once they stack on a phone. The
+	// first row is set off from the section header; the rows after it are set
+	// off from the row above by the same gap the columns use between cards.
 	$service_rows = array();
-	foreach ( array_chunk( $service_cards, 3 ) as $row ) {
+	foreach ( array_chunk( $service_cards, 3 ) as $index => $row ) {
 		$service_rows[] = wptpl_columns(
 			array_map(
 				static function ( $card ) {
 					return array( $card );
 				},
 				$row
-			)
+			),
+			array(),
+			'wptpl-services-carousel',
+			0 === $index ? '3rem' : '1.5rem'
 		);
 	}
 	$service_grid = implode(
@@ -149,20 +156,20 @@ function wptpl_seed_page_home(): string {
 	return implode(
 		"\n\n",
 		array(
-			// 1. Hero.
+			// 1. Hero. Title, subtitle and one CTA — no eyebrow, no microcopy and
+			// no secondary CTA. The block still supports all three; the home hero
+			// just doesn't use them, so the template ships without placeholder
+			// copy ("Niche + location identifier", a consultation microcopy line)
+			// that a site would have to notice and delete.
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'          => 'Niche + location identifier',
-					'title'            => 'Warm, hopeful headline',
-					'subtitle'         => wptpl_lorem( 'medium' ),
-					'ctaText'          => 'Primary CTA',
-					'ctaUrl'           => '/contact/',
-					'secondaryCtaText' => 'Secondary CTA',
-					'secondaryCtaUrl'  => '/services/',
-					'microcopy'        => 'Free 15-minute consultation · No commitment · Virtual sessions',
-					'layout'           => 'split',
-					'imageUrl'         => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'title'    => 'Warm, hopeful headline',
+					'subtitle' => wptpl_lorem( 'medium' ),
+					'ctaText'  => 'Primary CTA',
+					'ctaUrl'   => '/contact/',
+					'layout'   => 'split',
+					'imageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
 				)
 			),
 
@@ -194,7 +201,6 @@ function wptpl_seed_page_home(): string {
 					wptpl_block(
 						'section-header',
 						array(
-							'eyebrow'  => 'Validating subheading',
 							'headline' => 'Empathetic headline',
 							'intro'    => wptpl_lorem( 'short' ),
 						)
@@ -231,7 +237,10 @@ function wptpl_seed_page_home(): string {
 									)
 								),
 							),
-						)
+						),
+						array(),
+						'',
+						'3rem'
 					),
 				),
 				'surface'
@@ -242,10 +251,7 @@ function wptpl_seed_page_home(): string {
 				array(
 					wptpl_block(
 						'section-header',
-						array(
-							'eyebrow'  => 'Services intro',
-							'headline' => 'Services headline',
-						)
+						array( 'headline' => 'Services headline' )
 					),
 					$service_grid,
 				)
@@ -260,16 +266,19 @@ function wptpl_seed_page_home(): string {
 					),
 					wptpl_block(
 						'tag-list',
-						array(
-							'items' => array_map(
-								static function ( $n ) {
-									return array(
-										'label' => 'Specialty ' . $n,
-										'url'   => '',
-									);
-								},
-								range( 1, 12 )
+						array_merge(
+							array(
+								'items' => array_map(
+									static function ( $n ) {
+										return array(
+											'label' => 'Specialty ' . $n,
+											'url'   => '',
+										);
+									},
+									range( 1, 12 )
+								),
 							),
+							wptpl_margin_top( '2rem' )
 						)
 					),
 				),
@@ -341,30 +350,35 @@ function wptpl_seed_page_home(): string {
 					),
 					wptpl_block(
 						'faq',
-						array(
-							'items' => array(
-								array(
-									'question' => 'Question one?',
-									'answer'   => wptpl_lorem( 'medium' ),
-								),
-								array(
-									'question' => 'Question two?',
-									'answer'   => wptpl_lorem( 'medium' ),
-								),
-								array(
-									'question' => 'Question three?',
-									'answer'   => wptpl_lorem( 'medium' ),
-								),
-								array(
-									'question' => 'Question four?',
-									'answer'   => wptpl_lorem( 'medium' ),
+						array_merge(
+							array(
+								'items' => array(
+									array(
+										'question' => 'Question one?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
+									array(
+										'question' => 'Question two?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
+									array(
+										'question' => 'Question three?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
+									array(
+										'question' => 'Question four?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
 								),
 							),
+							wptpl_margin_top( '2rem' )
 						)
 					),
 				),
 				'surface',
-				'container-narrow'
+				// No container: wptpl/faq already renders inside
+				// wptpl-container-narrow.
+				''
 			),
 
 			// 9. Closing CTA.
@@ -800,7 +814,9 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'surface',
-				'container-narrow'
+				// No container: wptpl/faq already renders inside
+				// wptpl-container-narrow.
+				''
 			),
 
 			// Related services.
@@ -1279,6 +1295,35 @@ function wptpl_seed_page_ai_information(): string {
 	return wptpl_section( $blocks, '', 'container-narrow' );
 }
 
+/**
+ * A legal page: title, a "replace this" note, then one heading + placeholder
+ * body per section.
+ *
+ * The section headings are real — they are what each document has to cover —
+ * while the bodies are lorem. Compliance copy has to be written or reviewed by
+ * someone qualified, so seeding plausible-sounding legal text would be worse
+ * than useless: it reads as finished and invites publishing it as-is.
+ *
+ * @param string             $title    Page title.
+ * @param string             $intro    One-line description of the document.
+ * @param array<int, string> $sections Section headings, in order.
+ */
+function wptpl_seed_page_legal( string $title, string $intro, array $sections ): string {
+	$blocks = array(
+		wptpl_heading( $title, 1 ),
+		wptpl_paragraph( $intro ),
+		wptpl_paragraph( '<em>Placeholder. This document must be written or reviewed by qualified counsel before publishing — do not ship the text below.</em>' ),
+		wptpl_paragraph( '<em>Last updated: replace with the date this document was last reviewed.</em>' ),
+	);
+
+	foreach ( $sections as $heading ) {
+		$blocks[] = wptpl_heading( $heading, 2 );
+		$blocks[] = wptpl_paragraph( wptpl_lorem( 'long' ) );
+	}
+
+	return wptpl_section( $blocks, '', 'container-narrow' );
+}
+
 // ---------------------------------------------------------------------------
 // Orchestration
 // ---------------------------------------------------------------------------
@@ -1396,6 +1441,72 @@ function wptpl_seed_all_pages(): array {
 			'order'   => 9,
 		)
 	);
+	$ids['privacy'] = wptpl_seed_page(
+		array(
+			'slug'    => 'privacy',
+			'title'   => 'Privacy Policy',
+			'content' => wptpl_seed_page_legal(
+				'Privacy Policy',
+				'How this practice collects, uses, stores and shares personal information.',
+				array(
+					'Information we collect',
+					'How we use your information',
+					'Protected health information',
+					'How we share information',
+					'Cookies and analytics',
+					'Data retention',
+					'Your rights and choices',
+					'Children’s privacy',
+					'Changes to this policy',
+					'Contact us',
+				)
+			),
+			'order'   => 10,
+		)
+	);
+	$ids['terms'] = wptpl_seed_page(
+		array(
+			'slug'    => 'terms',
+			'title'   => 'Terms of Use',
+			'content' => wptpl_seed_page_legal(
+				'Terms of Use',
+				'The terms that govern use of this website.',
+				array(
+					'Acceptance of these terms',
+					'No therapeutic relationship',
+					'Not for emergencies',
+					'Use of this site',
+					'Intellectual property',
+					'Third-party links',
+					'Disclaimers',
+					'Limitation of liability',
+					'Governing law',
+					'Contact us',
+				)
+			),
+			'order'   => 11,
+		)
+	);
+	$ids['accessibility'] = wptpl_seed_page(
+		array(
+			'slug'    => 'accessibility',
+			'title'   => 'Accessibility Statement',
+			'content' => wptpl_seed_page_legal(
+				'Accessibility Statement',
+				'Our commitment to keeping this website usable by everyone, and how to tell us when it is not.',
+				array(
+					'Our commitment',
+					'Conformance status',
+					'Measures we take',
+					'Known limitations',
+					'Compatibility with assistive technology',
+					'Feedback and requests',
+					'Contact us',
+				)
+			),
+			'order'   => 12,
+		)
+	);
 
 	return $ids;
 }
@@ -1403,9 +1514,9 @@ function wptpl_seed_all_pages(): array {
 /**
  * Seed the menus and assign them to their theme locations.
  *
- * There is no Footer Legal menu: the compliance pages are held back until the
- * board signs off on their copy, so the location stays empty and the footer
- * renders nothing for it.
+ * The Footer Legal location holds the three compliance pages. Their bodies are
+ * placeholders — see wptpl_seed_page_legal() — but the pages and the menu ship
+ * so the footer is structurally complete and the copy has somewhere to land.
  *
  * @param array<string, mixed> $ids Page IDs from wptpl_seed_all_pages().
  */
@@ -1494,6 +1605,25 @@ function wptpl_seed_all_menus( array $ids ): void {
 			array(
 				'title' => 'Ask Claude about us',
 				'url'   => 'https://claude.ai/new?q=' . rawurlencode( $ask ),
+			),
+		)
+	);
+
+	wptpl_seed_menu(
+		'Footer Legal',
+		'footer_legal',
+		array(
+			array(
+				'title'   => 'Privacy Policy',
+				'page_id' => $ids['privacy'],
+			),
+			array(
+				'title'   => 'Terms of Use',
+				'page_id' => $ids['terms'],
+			),
+			array(
+				'title'   => 'Accessibility',
+				'page_id' => $ids['accessibility'],
 			),
 		)
 	);

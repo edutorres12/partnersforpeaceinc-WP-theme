@@ -741,6 +741,18 @@ body.error404 .wptpl-main {
   }
 }
 
+/* A credential label under a practitioner name (e.g. a licence acronym): on
+   tablet + phone only (≤1023px) it's a bit smaller and tucked closer to the
+   name; desktop keeps the larger inline size the block sets. `!important`
+   beats the block's inline font-size/margin. Add `wptpl-credential-label` via
+   the paragraph's Advanced → CSS class. */
+@media (max-width: 1023px) {
+  .wptpl-credential-label {
+    font-size: 18px !important;
+    margin-top: 0 !important;
+  }
+}
+
 /* ---------------------------------------------------------------
    Block styles — registered via register_block_style() in inc/setup.php
    so they appear in the WP block sidebar. These live OUTSIDE @layer so
@@ -842,6 +854,47 @@ body.error404 .wptpl-main {
   }
 }
 
+/* Vertical rule between the columns of a two-column row — e.g. an icon+title
+   column beside a body column. Replaces the column's hairline left border with
+   a thicker bar that overhangs the text top and bottom so it "surpasses" the
+   copy. Add `wptpl-vrule` as the column's CSS class and keep its left padding.
+   Hidden on mobile, where the columns stack. */
+.wptpl-vrule {
+  position: relative;
+}
+.wptpl-vrule::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: calc(100% + 4rem);
+  background: var(--wp--preset--color--on-dark);
+}
+@media (max-width: 781px) {
+  .wptpl-vrule {
+    padding-left: 0 !important;
+    /* Columns are stacked here (WP stacks < 782px), so the body column sits
+       under the centered icon + title. Center its copy to match instead of
+       leaving it left-aligned. Above 782px it's a real two-column row and the
+       body stays left-aligned. */
+    text-align: center;
+  }
+  .wptpl-vrule::before {
+    display: none;
+  }
+}
+
+/* Horizontal dividers between stacked items inside a card. Thin (default 1px)
+   solid bar. Width + centering come from the `.wptpl-card-inset > *` rule
+   (shared 500px content column); here we only add the 25px vertical breathing
+   room. Add `wptpl-sep-wide` alongside `is-style-wide`. */
+.wp-block-separator.is-style-wide.wptpl-sep-wide {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
 /* Smaller feature-card titles, capped and centered — for card rows whose
    titles are short labels rather than sentences. Add `wptpl-title-sm` as the
    card's CSS class. */
@@ -850,6 +903,82 @@ body.error404 .wptpl-main {
   line-height: 1.3;
   max-width: 350px;
   margin-inline: auto;
+}
+
+/* A lone card that follows a two-column pair and has to read as their peer:
+   match the exact rendered width of a 2-col card (50% minus half the 1.5rem
+   column gap) and match their height. `height:auto` clears any forced inline
+   height on the inner body. Add `wptpl-card-solo` as the card's CSS class. */
+.wptpl-card-solo {
+  margin-inline: auto;
+}
+.wptpl-card-solo .p-6 {
+  height: auto !important;
+  justify-content: center;
+}
+@media (min-width: 782px) {
+  .wptpl-card-solo {
+    max-width: calc(50% - 0.75rem);
+  }
+  .wptpl-card-solo .p-6 {
+    min-height: 230px;
+  }
+}
+
+/* Fix a row of short-titled cards to a 550px box (500px content + 25px inline
+   padding each side), centered. Pairs with `wptpl-title-sm` above, which is
+   already on these cards. */
+.wptpl-feature-card.wptpl-title-sm {
+  width: 550px;
+  max-width: 100%;
+  margin-inline: auto;
+}
+.wptpl-feature-card.wptpl-title-sm .p-6 {
+  padding: 25px;
+}
+/* When two of these sit in a 2-column row, drop the inner auto margin (right on
+   the left card, left on the right card) so they pull toward each other and the
+   only space between them is the column gap. The outer auto margins stay,
+   keeping the pair centered. */
+.wp-block-column:first-child .wptpl-feature-card.wptpl-title-sm {
+  margin-right: 0;
+}
+.wp-block-column:last-child .wptpl-feature-card.wptpl-title-sm {
+  margin-left: 0;
+}
+/* When the two-column row stacks (≤781px — WP's column breakpoint, which
+   includes iPad portrait at 768px), the inner-margin overrides above pull the
+   two cards flush-right / flush-left in their now-full-width columns, so they
+   and any centered card below zig-zag (right, left, center). Restore auto side
+   margins on the stacked cards so they all read as one centered column. */
+@media (max-width: 781px) {
+  .wp-block-column:first-child .wptpl-feature-card.wptpl-title-sm,
+  .wp-block-column:last-child .wptpl-feature-card.wptpl-title-sm {
+    margin-inline: auto;
+  }
+}
+
+/* Hand-built steps rows (a core-columns variant, not the wptpl/steps block):
+   each column's number circle is pulled up 5rem so it overhangs the column's
+   top edge, eating into the section's top padding so the band reads top-heavy.
+   Give the top padding explicit, tuned values per breakpoint so there's clear
+   breathing room above the circles: 140px desktop, 112px tablet, 80px mobile.
+   Scoped by `.has-global-padding` — a hand-built Group carries it, the
+   wptpl/steps block wrapper (`wptpl-steps text-center …`) does not — so this
+   avoids `:has()`, which CSS optimizers (LiteSpeed "Remove Unused CSS" /
+   combine) can strip. `!important` beats the inline `padding-top`. */
+.wp-block-group.alignfull.wptpl-steps.has-global-padding {
+  padding-top: 140px !important;
+}
+@media (max-width: 1023px) {
+  .wp-block-group.alignfull.wptpl-steps.has-global-padding {
+    padding-top: 112px !important;
+  }
+}
+@media (max-width: 767px) {
+  .wp-block-group.alignfull.wptpl-steps.has-global-padding {
+    padding-top: 80px !important;
+  }
 }
 
 /* Opt-in: a heading that is semantically H2 but should read at the H3 visual
@@ -1083,6 +1212,40 @@ body.error404 .wptpl-main {
 .wptpl-post-content img {
   height: auto;
   border-radius: 0.75rem;
+}
+
+/* Constrain step descriptions to a narrower, centered column so they wrap to
+   ~2 lines instead of running the full card width. Add `wptpl-steps` as the
+   section group's CSS class. */
+.wptpl-steps p {
+  max-width: 320px;
+  margin-inline: auto;
+}
+
+/* Fixed, centered width for a card whose contents (headings, paragraphs AND
+   any `wptpl-sep-wide` dividers) must share one content column, so the divider
+   width and the text width always match — independent of the block's
+   `contentSize`. The card is capped at 600px, every direct child at 500px.
+   max-width keeps it responsive on narrow viewports; the tablet and mobile
+   overrides in the RESPONSIVE OVERRIDES section drop the cap and pin the side
+   padding to the gutter. Add `wptpl-card-inset` as the card's CSS class. */
+.wptpl-card-inset.wptpl-card-inset {
+  max-width: 600px;
+  margin-inline: auto;
+}
+.wptpl-card-inset.wptpl-card-inset > * {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Larger role/subtitle line under a hero's name or title. Bumps the
+   section-header intro above its default text-xl. Add `wptpl-hero-header` as
+   the section-header's CSS class. */
+.wptpl-hero-header .wptpl-section-header__intro {
+  font-size: var(--wp--preset--font-size--h3);
+  line-height: 1.3;
+  color: var(--wp--preset--color--on-dark);
 }
 
 /* Wider header lead — the section-header intro is capped at max-w-2xl (42rem)
@@ -1437,6 +1600,19 @@ body.error404 .wptpl-main {
 .wptpl-hero-dark .wptpl-hero__subtitle {
   font-weight: 600;
 }
+
+/* Flush-left hero title. A heading in an RTL script (Arabic, Farsi, Hebrew)
+   resolves to `text-align: start` — its right edge — which reads misaligned
+   above a left-aligned subtitle and CTA. Force the title left so the headline
+   lines up with the copy below it. The bidi character order is left untouched;
+   only the block's alignment changes. Add `is-title-left` to the hero's
+   "Additional CSS class" (alongside wptpl-hero-dark, if used). Lives OUTSIDE
+   @layer so Tailwind never purges it — the class only appears in WP markup. */
+.wptpl-hero.is-title-left h1,
+.wptpl-hero.is-title-left h2 {
+  text-align: left;
+}
+
 .is-style-rounded-square img,
 .is-style-rounded-square {
   border-radius: 1.5rem;
@@ -1469,13 +1645,83 @@ body.error404 .wptpl-main {
    `<div class="wptpl-form">`. Fluent Forms emits its own markup
    (`.ff-el-*`, `.ff-btn-submit`) whose class names never appear in any file
    Tailwind scans, so these rules live OUTSIDE @layer — otherwise the purge
-   would strip them. Brand treatment: rounded paper-tone inputs with secondary
-   borders, heading-face labels, the language / session-type radios rendered
-   as accent-on-secondary pills, and a full-width accent submit. `!important` appears
-   only where it overrides Fluent Forms' own (strongly specific) default skin.
+   would strip them. Treatment: rounded inputs with hairline borders, labels on
+   the heading face, the language / session-type radios rendered as a single
+   segmented toggle (dark selected segment) inside a matching rounded frame,
+   and a one-column submit. `!important` appears only where it overrides Fluent
+   Forms' own (strongly specific) default skin.
+
+   Three shared tokens: the border tone for every field outline (inputs, select,
+   segmented toggle) — muted at reduced opacity so the outline reads as a
+   hairline rather than a hard rule — the column gutter, which both the row
+   layout and the submit's width derive from, and the field height, which keeps
+   the toggle level with the input beside it.
+
+   The rgba() values below are placeholder greys taken from the palette slugs
+   (muted #999999, accent #666666, primary #333333). Alpha means they can't be
+   written as `var(--wp--preset--color--*)`, so swap these literals along with
+   theme.json and tailwind.config.js when a site's design lands.
    --------------------------------------------------------------- */
+.wptpl-form {
+  --wptpl-field-border: rgba(153, 153, 153, 0.55); /* muted #999999 @ 55% */
+  --wptpl-form-gutter: 25px;
+  /* One field's outer height. Every control on the row — the text inputs, the
+     select and the segmented toggle — takes this as a min-height so they sit
+     level; left to their own box math the toggle came out ~1px short, since it
+     sets its type a step smaller than an input while sharing the padding and
+     line-height. Mobile raises this to 52px — see the max-width:768px block. */
+  --wptpl-field-height: 45px;
+  /* Validation red, for both the outline and the message. The message runs at
+     0.85rem, so it needs 4.5:1 against the surface it sits on; this lands at
+     6.1 on the placeholder surface (#f7f7f7). Re-check it if the surface slug
+     is darkened by a design. */
+  --wptpl-error: #b3261e;
+}
+/* Field rhythm — generous enough that each label reads as belonging to the
+   field under it, not to the row above. */
 .wptpl-form .ff-el-group {
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+/* Column gutter. Fluent Forms lays multi-column rows out itself with a fixed
+   20px channel, and does it differently across versions — some ship a negative
+   margin on the row plus padding on each cell, others a `calc(50% - 10px)` cell
+   width with space-between. Neutralise whichever it is (zero the row margins
+   and the cell padding, drop the hard-coded width) and let flex do the work:
+   equal cells with a real `gap`. `flex: 1 1 0` keeps every cell in a row the
+   same width, which is what this form uses throughout. */
+.wptpl-form .ff-t-container {
+  display: flex;
+  gap: var(--wptpl-form-gutter);
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.wptpl-form .ff-t-cell {
+  flex: 1 1 0 !important;
+  width: auto !important;
+  min-width: 0; /* let a cell shrink to its share instead of its content's width */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+/* Stack those columns on phones. Fluent Forms ships its own rule for this, but
+   the overrides above zero the cell width with !important, so whether FF's rule
+   still lands comes down to which stylesheet is enqueued last. Own the stacking
+   here so it can't flip with enqueue order. The breakpoint matches FF's 768px
+   rather than the theme's 767px, so there's no width where the two disagree. */
+@media (max-width: 768px) {
+  .wptpl-form .ff-t-container {
+    flex-wrap: wrap;
+    gap: 0; /* stacked fields are already spaced by the .ff-el-group margin */
+  }
+  .wptpl-form .ff-t-cell {
+    flex: 1 1 100% !important;
+  }
+  /* Taller fields once they go full width — a thumb gets a more forgiving
+     target than the 45px desktop floor, and the extra height reads as
+     proportionate against the wider box. Retuning the token moves the inputs,
+     the select and the segmented toggle together. */
+  .wptpl-form {
+    --wptpl-field-height: 52px;
+  }
 }
 /* Labels — heading face, bold, muted. */
 .wptpl-form .ff-el-input--label label {
@@ -1485,13 +1731,14 @@ body.error404 .wptpl-main {
   color: var(--wp--preset--color--muted) !important; /* #999999 — !important beats Fluent Forms' own label color when its skin loads after ours */
   margin-bottom: 0.1rem;
 }
-/* Text / email / phone inputs, textareas and selects — rounded, secondary border,
-   translucent paper fill so the card texture shows through faintly. */
+/* Text / email / phone inputs, textareas and selects — rounded, hairline
+   border, translucent fill so any surface texture shows through faintly. */
 .wptpl-form .ff-el-form-control {
   width: 100%;
+  min-height: var(--wptpl-field-height);
   border-radius: 0.75rem;
-  border: 1px solid #999999; /* secondary */
-  background-color: rgba(255, 255, 255, 0.12); /* barely-there fill so the paper texture reads through */
+  border: 1px solid var(--wptpl-field-border);
+  background-color: rgba(255, 255, 255, 0.12); /* barely-there fill so the surface reads through */
   padding: 0.6rem 1rem;
   font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
@@ -1511,31 +1758,100 @@ body.error404 .wptpl-main {
   min-height: 9rem;
   resize: vertical;
 }
-/* Radio groups (Preferred language, Preferred session type) become pills: the
-   native control is visually hidden and its label is the pill. Both markups FF
-   can emit are covered — input-inside-label (`label:has`) and input-sibling
+/* Dropdown menus — Fluent Forms emits a native
+   `<select class="ff-el-form-control">`, so it inherits the input skin above.
+   Strip the OS chevron/appearance and paint a matching chevron, with room on
+   the right so the arrow never overlaps the selected text. */
+.wptpl-form select.ff-el-form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2.75rem;
+  cursor: pointer;
+  /* Muted (#999999) chevron, matching the input border. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.1rem center;
+}
+/* IE / legacy: hide the native arrow. */
+.wptpl-form select.ff-el-form-control::-ms-expand {
+  display: none;
+}
+/* Radio groups (Preferred language, Preferred session type) become ONE
+   segmented toggle instead of a row of detached pills: the options share a
+   single hairline box that spans the column, split by internal dividers. The
+   native control is visually hidden and its label is the segment. Both markups
+   FF can emit are covered — input-inside-label (`label:has`) and input-sibling
    (`input + label`). */
 /* Radio/checkbox options: Fluent Forms renders each option as its own
    `.ff-el-form-check` inside `.ff-el-input--content`, and flexes that content as a
    row on desktop but stacks it into a column on small screens. Force the content
-   to a wrapping row at every width. (Flexing the option divs themselves was the
-   earlier mistake — each holds a single option, so it just stacked the blocks.) */
+   to a row at every width. (Flexing the option divs themselves was the earlier
+   mistake — each holds a single option, so it just stacked the blocks.)
+
+   The row WRAPS, and the frame is drawn on the segments rather than here, for
+   one reason: on a failed submit Fluent Forms appends its validation message
+   INSIDE this same wrapper. When the wrapper was the frame, that message became
+   a third flex item and rendered inside the toggle, boxed in beside the last
+   option. Bordering each segment instead lets the message take a full-width
+   line of its own, below the toggle, where every other field puts it. */
 .wptpl-form .ff-el-group.ff_list_inline .ff-el-input--content {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: 0.6rem;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
 }
-/* Fluent Forms' own skin puts a bottom margin on the inline radio container
-   (.ff-el-group.ff_list_inline .ff-el-form-check → 10px) and on every option
-   label (label.ff-el-form-check-label → 7px). Rendered as inline pills that is
-   dead height below the field, so the rows holding pills (Preferred language /
-   session type) grew taller and their gaps looked bigger than the rest. FF's
-   selectors are highly specific (prefixed with .fluentform / .ff-default), so
-   we override with !important — the same approach already used for the
-   pill/submit fills — to keep every field row on the uniform 0.9rem rhythm
-   that .ff-el-group provides. */
+/* Each option takes an equal share of the toggle, so two options split the
+   column in half and three split it in thirds — the toggle always matches the
+   width of the text field sitting in the adjacent column. Each segment carries
+   the frame: a full hairline box with its left edge dropped, so a segment's
+   right border doubles as the divider to the next one. */
 .wptpl-form .ff-el-group.ff_list_inline .ff-el-form-check {
-  margin-bottom: 0 !important;
+  display: flex; /* so the label fills the segment's full height, not just its text box */
+  flex: 1 1 0;
+  min-width: 0; /* let long option labels shrink instead of blowing the frame out */
+  /* Level with the text field in the adjacent column. `align-items: stretch`
+     hands any extra height down to the label, so the selected fill still
+     covers the segment edge to edge. */
+  min-height: var(--wptpl-field-height);
+  border: 1px solid var(--wptpl-field-border);
+  border-left-width: 0;
+  overflow: hidden; /* clip the selected fill to the rounded outer corners */
+}
+/* Outer corners get the same radius as .ff-el-form-control, so the row of
+   segments reads as one field. The closing corner is matched by "the segment
+   with no segment after it" rather than :last-child, because the validation
+   message can be the real last child. */
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-form-check:first-child {
+  border-left-width: 1px;
+  border-top-left-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+}
+.wptpl-form
+  .ff-el-group.ff_list_inline
+  .ff-el-form-check:not(:has(~ .ff-el-form-check)) {
+  border-top-right-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+/* The validation message — a full-width line under the toggle. */
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-input--content > .error,
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-input--content > .text-danger {
+  flex: 1 1 100%;
+}
+/* Fluent Forms' own skin spaces its inline options out with margins on every
+   `.ff-el-form-check` (bottom AND right) plus a left padding that reserves room
+   for the native radio, and adds a bottom margin to every option label
+   (label.ff-el-form-check-label → 7px). Inside the segmented frame all of that
+   is dead space: the right margin punched a gap between segments and left one
+   hanging after the last one, and the bottom margin pushed the toggle taller
+   than the field beside it. Zero the box entirely — the frame owns the outer
+   edge and the divider borders own the seams. FF's selectors are highly
+   specific (prefixed with .fluentform / .ff-default), so we override with
+   !important, the same approach already used for the segment/submit fills. */
+.wptpl-form .ff-el-group.ff_list_inline .ff-el-form-check {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 .wptpl-form .ff-el-form-check label.ff-el-form-check-label {
   margin: 0 !important;
@@ -1549,17 +1865,22 @@ body.error404 .wptpl-main {
   pointer-events: none;
 }
 .wptpl-form .ff-el-form-check label {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
+  height: 100%;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   margin: 0;
-  /* Vertical padding + line-height mirror .ff-el-form-control so a pill is the
-     same height as a text field sitting in the adjacent column. */
-  padding: 0.6rem 1.15rem;
+  /* Vertical padding + line-height mirror .ff-el-form-control so the toggle is
+     the same height as a text field sitting in the adjacent column. Horizontal
+     padding stays modest so a three-option toggle still fits on one line. */
+  padding: 0.6rem 0.75rem;
   line-height: 1.4;
-  border-radius: 0.3rem;
-  border: 1px solid transparent;
-  background-color: var(--wp--preset--color--muted); /* secondary */
-  color: var(--wp--preset--color--on-dark);
+  border-radius: 0; /* the frame around the group owns the rounding */
+  border: none;
+  background-color: rgba(255, 255, 255, 0.12); /* same fill as .ff-el-form-control, so an unselected segment reads as a field */
+  color: var(--wp--preset--color--muted);
   font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.95rem;
   font-weight: 500;
@@ -1567,21 +1888,40 @@ body.error404 .wptpl-main {
   transition: background-color 180ms ease-out, color 180ms ease-out;
 }
 .wptpl-form .ff-el-form-check label:hover {
-  background-color: #1a1a1a; /* slightly deeper secondary */
+  background-color: rgba(153, 153, 153, 0.12); /* faint muted wash */
 }
+/* Selected segment — dark fill, so the active choice reads instantly against
+   the surface. */
 .wptpl-form .ff-el-form-check input:checked + label,
 .wptpl-form .ff-el-form-check label:has(input:checked) {
-  background-color: var(--wp--preset--color--accent) !important; /* accent */
+  background-color: var(--wp--preset--color--secondary) !important;
   color: var(--wp--preset--color--on-dark) !important;
 }
-/* Keyboard focus ring on the active pill (the input itself is hidden). */
+/* Keyboard focus ring on the active segment (the input itself is hidden). Inset
+   so the ring stays inside the shared frame instead of overlapping the
+   neighbouring segment. */
 .wptpl-form .ff-el-form-check input:focus-visible + label,
 .wptpl-form .ff-el-form-check label:has(input:focus-visible) {
-  box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.3);
+  box-shadow: inset 0 0 0 2px var(--wp--preset--color--accent);
 }
-/* Submit — full-width accent, heading face, uppercase (matches .wptpl-btn-accent). */
+/* Submit — one-column-wide, centered under the fields and kept close to them.
+   Match a single grid column: a two-column row splits into halves less half the
+   gutter each, so the button derives its width from the same
+   --wptpl-form-gutter token and stays one column wide whatever that is set to.
+   Small top margin keeps it tied to the fields. Heading face, uppercase —
+   matches .wptpl-btn-accent. (Mobile keeps content-width — see the
+   max-width:767px override below.) */
 .wptpl-form .ff-btn-submit {
-  width: 100%;
+  display: block;
+  width: calc(50% - var(--wptpl-form-gutter) / 2); /* one grid column */
+  min-width: 150px; /* floor so "SUBMIT" never cramps if the column narrows */
+  max-width: 100%;
+  /* Centered on the form's axis. FF's own wrapper can carry an alignment class
+     set in the form editor (`ff-text-left` / `ff-text-center`), so set the
+     margins explicitly instead of relying on the wrapper's text-align. */
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5rem; /* set off from the last field, but kept close to it */
   border: none;
   border-radius: 0.5rem;
   padding: 0.95rem 1.5rem;
@@ -1598,15 +1938,99 @@ body.error404 .wptpl-main {
 .wptpl-form .ff-btn-submit:hover {
   background-color: #4d4d4d !important; /* deeper accent */
 }
-/* Inline validation — keep error cues legible on the paper background. */
-.wptpl-form .ff-el-is-error .ff-el-form-control {
-  border-color: #b3261e;
+/* Inline validation — keep error cues legible on the surface. The segmented
+   toggle picks up the same red outline as a text input; without this it was the
+   one field that stayed neutral while its message went red. */
+.wptpl-form .ff-el-is-error .ff-el-form-control,
+.wptpl-form .ff-el-is-error.ff_list_inline .ff-el-form-check {
+  border-color: var(--wptpl-error);
 }
 .wptpl-form .text-danger,
 .wptpl-form .error {
-  color: #b3261e;
+  color: var(--wptpl-error);
   font-size: 0.85rem;
   margin-top: 0.3rem;
+}
+/* Fluent Forms paints every label inside an errored group red, which catches
+   the segment labels — so the option names themselves turned red. That reads as
+   though the options were invalid, when what's wrong is that neither is picked.
+   The red outline and the message below already carry the error, so keep the
+   choices in their normal tone. The second rule puts the selected segment's
+   light text back: the blanket rule above would otherwise beat the checked
+   colour, which sits earlier in the file at equal specificity. */
+.wptpl-form .ff-el-is-error .ff-el-form-check label {
+  color: var(--wp--preset--color--muted) !important;
+}
+.wptpl-form .ff-el-is-error .ff-el-form-check input:checked + label,
+.wptpl-form .ff-el-is-error .ff-el-form-check label:has(input:checked) {
+  color: var(--wp--preset--color--on-dark) !important;
+}
+
+/* ---------------------------------------------------------------
+   Success message — what replaces the form once a submit goes through.
+
+   Fluent Forms emits `<div class="ff-message-success" role="status">` carrying
+   its own pale notice skin, which read as a barely-there grey box — the least
+   emphatic thing on the page, at the one moment the page has good news.
+   Restyle it as a deliberate confirmation card: a rule down the left, a soft
+   wash, rounded to the same 0.75rem as the fields, with a check mark so the
+   outcome is legible before the sentence is. Primary rather than the accent of
+   the submit — this is a state, not another call to action. `!important` beats
+   FF's own notice skin, the same way the field rules do.
+   --------------------------------------------------------------- */
+.wptpl-form .ff-message-success {
+  position: relative;
+  margin: 0;
+  padding: 1.5rem 1.75rem 1.5rem 4rem; /* left inset clears the check mark */
+  border: 1px solid rgba(51, 51, 51, 0.45) !important; /* primary @ 45% */
+  border-left: 4px solid var(--wp--preset--color--primary) !important;
+  border-radius: 0.75rem;
+  background-color: rgba(51, 51, 51, 0.08) !important;
+  color: var(--wp--preset--color--secondary) !important;
+}
+/* Check mark — a light tick on a primary disc, drawn the same way as the
+   select's chevron (inline SVG data URI) so it needs no icon font or extra
+   markup, neither of which we can add to plugin output anyway. */
+.wptpl-form .ff-message-success::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 1.6rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background-color: var(--wp--preset--color--primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10' fill='none'%3E%3Cpath d='M1 5l3.4 3.4L11 1.6' stroke='%23e6e6e6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.wptpl-form .ff-message-success p {
+  margin: 0;
+  font-family: Arial, Helvetica, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: inherit;
+}
+.wptpl-form .ff-message-success p + p {
+  margin-top: 0.65rem;
+}
+/* A message authored in the Fluent Forms editor wrapped in <em> reads hesitant
+   rather than emphatic across three lines, so it renders upright here;
+   deleting the <em> in the form editor gets the same result. */
+.wptpl-form .ff-message-success em {
+  font-style: normal;
+}
+/* Phones: the check mark's left inset eats too much of a narrow column, so it
+   moves above the text instead of beside it. */
+@media (max-width: 768px) {
+  .wptpl-form .ff-message-success {
+    padding: 1.35rem 1.35rem 1.35rem 1.5rem;
+  }
+  .wptpl-form .ff-message-success::before {
+    position: static;
+    display: block;
+    margin-bottom: 0.85rem;
+  }
 }
 
 /* ---------------------------------------------------------------
@@ -1674,13 +2098,28 @@ body.error404 .wptpl-main {
 /* `.wptpl-section` (component class) and the `py-[6.25rem]` utility
    (hero split, steps photo variant, cta-banner) all carry the 100px
    desktop rhythm; shrink both together so every band steps down in
-   sync. */
+   sync.
+
+   The `:not()` chain matters. `wptpl_section()` emits the base class AND the
+   modifier together (`wptpl-section wptpl-section-tight`), but the modifiers
+   are defined inside `@layer components` while these overrides are unlayered —
+   and unlayered rules beat layered ones regardless of specificity. Without the
+   exclusions a 16px `-tight` band (the trust bar) or a 24px `-sm` band (the
+   blog filter) would jump to 72px on tablet and 48px on mobile, which is
+   *larger* than its desktop padding. The modifiers set their own deliberate
+   rhythm, so leave them alone at every width. */
 @media (max-width: 1023px) {
-  .wptpl-section { padding-top: 72px; padding-bottom: 72px; }
+  .wptpl-section:not(.wptpl-section-sm):not(.wptpl-section-lg):not(.wptpl-section-tight) {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
   .py-\[6\.25rem\] { padding-top: 72px; padding-bottom: 72px; }
 }
 @media (max-width: 767px) {
-  .wptpl-section { padding-top: 48px; padding-bottom: 48px; }
+  .wptpl-section:not(.wptpl-section-sm):not(.wptpl-section-lg):not(.wptpl-section-tight) {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
   .py-\[6\.25rem\] { padding-top: 48px; padding-bottom: 48px; }
 }
 
@@ -1774,6 +2213,26 @@ body.error404 .wptpl-main {
     padding-left: var(--wptpl-gutter) !important;
     padding-right: var(--wptpl-gutter) !important;
   }
+  /* Bands authored with a 100px inline side padding — the constrained ones the
+     `.alignfull[style*="padding-left"]` rule above doesn't reach. */
+  .wp-block-group[style*="padding-left:100px"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+  /* `wptpl-card-inset` — fill the section width on tablet. The base rule caps
+     the card at 600px and centers it, which on a ~800px tablet leaves a wide
+     empty margin on each side. Drop the cap so the card — and its inner content
+     column plus any `wptpl-sep-wide` dividers (`> *`, capped at 500px) — spans
+     the section width; the gutter stays as the inner side padding. Desktop
+     keeps the 600/500px centered card. */
+  .wptpl-card-inset.wptpl-card-inset {
+    max-width: none;
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+  .wptpl-card-inset.wptpl-card-inset > * {
+    max-width: none;
+  }
 }
 
 /* --- Tablet: normalize full-width band vertical padding ---------- */
@@ -1861,6 +2320,15 @@ body.error404 .wptpl-main {
   .wptpl-btn-photo,
   .wptpl-form .ff-btn-submit {
     box-shadow: 0 4px 12px rgba(34, 34, 34, 0.28);
+  }
+}
+/* The shared mobile button rule above forces the Fluent Forms submit to
+   width:100%; on the Contact form that read too wide. Keep the raised shadow it
+   applied, but let the submit stay content-width (centered by the auto margins
+   on the base rule) so on a phone it reads as a button, not a full-width bar. */
+@media (max-width: 767px) {
+  .wptpl-form .ff-btn-submit {
+    width: fit-content;
   }
 }
 
@@ -2108,6 +2576,19 @@ body.error404 .wptpl-main {
   }
 }
 
+/* --- Mobile: services rows stack as full-width cards ------------- */
+/* The `.wptpl-services-carousel` rows (the service offerings on the home page
+   and the service-page listings) fall back to WordPress's default column
+   stacking on a phone — one full-width card per row, every service visible in
+   a single vertical scroll. Without a row-gap the stacked cards sit flush
+   against each other; give them the same 1.5rem the desktop rows use between
+   their two banks. Tablet/desktop keep their multi-up layout. */
+@media (max-width: 767px) {
+  .wptpl-services-carousel.wp-block-columns {
+    row-gap: 1.5rem;
+  }
+}
+
 /* --- Tablet: hero subtitle fills more of the stacked column ------ */
 /* Once the split hero stacks on tablet, the text column is full width but the
    subtitle keeps its ~576px (max-w-xl) cap, leaving a wide empty band on the
@@ -2165,6 +2646,60 @@ body.error404 .wptpl-main {
   :root { --wp--preset--spacing--50: 48px !important; }
 }
 
+/* 2) Bands authored with a 100px inline side padding. On a phone that crushes
+   the copy into a narrow strip. It's usually a full-width colored band, so its
+   side padding IS the only thing holding the text off the colored edge — don't
+   zero it. Pin it to the mobile gutter so the copy lines up with every other
+   section's side padding. (The `.alignfull[style*="padding-left"]` rule in the
+   mobile normalize pass covers full-width bands; this catches the constrained
+   ones too.) */
+@media (max-width: 767px) {
+  .wp-block-group[style*="padding-left:100px"] {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
+  }
+}
+
+/* 3) Fixed-width 2-col rows — a row where one column is pinned to a fixed px
+   width (a portrait beside a bio, a lead form beside its copy) and the other
+   takes the rest. The fixed column gets cramped on a tablet, because the row
+   doesn't stack until 782px. Stack it below desktop with the fixed column on
+   top (source order already puts the portrait/copy first), matched by the fixed
+   width so other 2-col rows are untouched. The three widths listed are the ones
+   the templates use — add to both lists if a layout introduces another. */
+@media (max-width: 1023px) {
+  .wp-block-columns:has(> .wp-block-column[style*="440px"]),
+  .wp-block-columns:has(> .wp-block-column[style*="400px"]),
+  .wp-block-columns:has(> .wp-block-column[style*="380px"]) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .wp-block-columns:has(> .wp-block-column[style*="440px"])
+    > .wp-block-column[style*="440px"],
+  .wp-block-columns:has(> .wp-block-column[style*="400px"])
+    > .wp-block-column[style*="400px"],
+  .wp-block-columns:has(> .wp-block-column[style*="380px"])
+    > .wp-block-column[style*="380px"] {
+    max-width: 440px;
+    margin-inline: auto;
+  }
+}
+@media (max-width: 767px) {
+  .wp-block-group.is-style-overlay-primary {
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+  }
+  /* Shrink + center a tall portrait placeholder (a rounded box with a
+     min-height of 460px in the fixed column) so it doesn't dominate the
+     stacked mobile layout above the copy. */
+  .is-style-overlay-primary [style*="min-height:460px"] {
+    min-height: 300px !important;
+    max-width: 300px;
+    margin-inline: auto;
+  }
+}
+
 /* --- Mobile: let forced-break headings wrap naturally ----------- */
 /* Centered CTA-style headings hard-code a `<br>` for their desktop line break.
    On a phone that break lands awkwardly; hide the `<br>` so the copy wraps to the
@@ -2184,6 +2719,16 @@ body.error404 .wptpl-main {
 @media (max-width: 767px) {
   .wptpl-steps .wp-block-columns {
     row-gap: 3.5rem;
+  }
+}
+
+/* 5) `wptpl-card-inset` bands. Their inline side padding is a touch tight on a
+   phone; pin it to the mobile gutter so the copy lines up with every other
+   section's side padding. */
+@media (max-width: 767px) {
+  .wptpl-card-inset.wptpl-card-inset {
+    padding-left: var(--wptpl-gutter) !important;
+    padding-right: var(--wptpl-gutter) !important;
   }
 }
 
@@ -2312,6 +2857,32 @@ body.error404 .wptpl-main {
 @media (max-width: 781px) {
   .wptpl-heading-shrink br {
     display: none;
+  }
+}
+
+/* Related-services pills (`wptpl-tags-lg`).
+   Mobile (≤767): stack one per row. Linked service labels vary wildly in
+   length, so on a narrow phone a centered wrap looks lopsided and a long pill
+   can overflow — stacking keeps it tidy.
+   Tablet (768–1023): there's room across the row, so let them WRAP and fit as
+   many per row as possible instead of one-per-line — a short trio then sits on
+   a single row. Desktop already wraps. Scoped to the large (related-services)
+   variant so the plain keyword pill rows are untouched. */
+@media (max-width: 767px) {
+  .wptpl-tags-lg .flex {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+/* Center the label so a pill that wraps to two lines (a long service name)
+   stays centered instead of hugging the left, and cap the width so the longest
+   pill wraps its own text rather than overflowing. At ≤1023 so it guards both
+   the stacked phone layout and the wrapping tablet rows. */
+@media (max-width: 1023px) {
+  .wptpl-tags-lg .flex a,
+  .wptpl-tags-lg .flex span {
+    max-width: 100%;
+    text-align: center;
   }
 }
 
