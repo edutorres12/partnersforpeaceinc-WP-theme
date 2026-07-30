@@ -557,7 +557,9 @@ function wptpl_seed_page_about(): string {
 						'on-dark',
 						'',
 						'',
-						'2.5rem'
+						'2.5rem',
+						'50px',
+						'22px'
 					),
 				),
 				'cta-bg'
@@ -577,7 +579,7 @@ function wptpl_seed_page_about(): string {
 						)
 					),
 					wptpl_paragraph( wptpl_lorem_len( 134 ), '', 'center' ),
-					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem' ),
+					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem', '50px', '22px' ),
 				),
 				'steps-bg'
 			),
@@ -735,7 +737,10 @@ function wptpl_seed_page_services(): string {
 			),
 			array(),
 			'',
-			0 === $index ? '' : '1.5rem'
+			0 === $index ? '' : '1.5rem',
+			false,
+			array(),
+			'1.5rem'
 		);
 	}
 
@@ -1076,11 +1081,20 @@ function wptpl_seed_page_contact(): string {
 										$info_row( 'Location', 54 ),
 									),
 									'secondary',
-									'on-dark'
+									'on-dark',
+									'',
+									'',
+									'40px',
+									'22px'
 								),
 							),
 						),
-						array( '62%', '38%' )
+						array( '62%', '38%' ),
+						'',
+						'',
+						false,
+						array(),
+						'50px'
 					),
 				),
 				'surface',
@@ -1133,20 +1147,6 @@ function wptpl_seed_page_contact(): string {
  * hub carry a hero and a filter.
  */
 function wptpl_seed_page_blog(): string {
-	$guide = static function ( int $n ) {
-		return wptpl_block(
-			'feature-card',
-			array(
-				'title'     => 'Guide ' . $n,
-				'text'      => wptpl_lorem_len( 56 ),
-				'imageUrl'  => get_template_directory_uri() . '/assets/placeholders/guide-card.jpg',
-				'ctaText'   => 'Download',
-				'ctaUrl'    => '/guide-landing/',
-				'ctaStyle'  => 'arrow',
-				'className' => 'wptpl-post-card',
-			)
-		);
-	};
 
 	return implode(
 		"\n\n",
@@ -1188,16 +1188,11 @@ function wptpl_seed_page_blog(): string {
 				'container-md'
 			),
 
+			// Post grid only. A static row of guide cards used to sit under it,
+			// which read as three more posts that never updated.
 			wptpl_section(
 				array(
 					wptpl_block( 'post-grid', array( 'count' => 9 ) ),
-					wptpl_columns(
-						array(
-							array( $guide( 1 ) ),
-							array( $guide( 2 ) ),
-							array( $guide( 3 ) ),
-						)
-					),
 				),
 				'',
 				'container'
@@ -1379,7 +1374,11 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 							array( $card( 3 ) ),
 						),
 						array(),
-						'wptpl-services-carousel'
+						'wptpl-services-carousel',
+						'',
+						false,
+						array(),
+						'1.5rem'
 					),
 				),
 				'surface'

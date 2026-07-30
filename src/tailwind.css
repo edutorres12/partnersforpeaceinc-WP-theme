@@ -861,6 +861,11 @@ body.error404 .wptpl-main {
    Hidden on mobile, where the columns stack. */
 .wptpl-vrule {
   position: relative;
+  /* The bar is drawn at the column's left edge, so without an inset the copy
+     starts on top of it. This is the "keep its left padding" the note above
+     refers to — owning it here means every use gets it, rather than each one
+     remembering to type a padding into the block's dimensions panel. */
+  padding-left: 2.5rem;
 }
 .wptpl-vrule::before {
   content: "";
@@ -871,6 +876,18 @@ body.error404 .wptpl-main {
   width: 3px;
   height: calc(100% + 4rem);
   background: var(--wp--preset--color--on-dark);
+}
+/* The column facing the rule holds an icon above a short title. Left-aligned it
+   drifts away from the bar and reads as a stray caption; centred it reads as
+   the label for the copy beside it. Scoped to rows that actually have a rule,
+   so ordinary two-column rows are untouched. */
+.wp-block-columns:has(> .wptpl-vrule) > .wp-block-column:not(.wptpl-vrule) {
+  text-align: center;
+}
+.wp-block-columns:has(> .wptpl-vrule)
+  > .wp-block-column:not(.wptpl-vrule)
+  :is(img, figure) {
+  margin-inline: auto;
 }
 @media (max-width: 781px) {
   .wptpl-vrule {
@@ -969,15 +986,21 @@ body.error404 .wptpl-main {
    combine) can strip. `!important` beats the inline `padding-top`. */
 .wp-block-group.alignfull.wptpl-steps.has-global-padding {
   padding-top: 140px !important;
+  /* The bottom needs stating too. The band is usually the last thing before the
+     footer, and with only a top padding set the last line of copy sits flush
+     against it. These are the standard section values, not the inflated top. */
+  padding-bottom: 100px !important;
 }
 @media (max-width: 1023px) {
   .wp-block-group.alignfull.wptpl-steps.has-global-padding {
     padding-top: 112px !important;
+    padding-bottom: 72px !important;
   }
 }
 @media (max-width: 767px) {
   .wp-block-group.alignfull.wptpl-steps.has-global-padding {
     padding-top: 80px !important;
+    padding-bottom: 48px !important;
   }
 }
 
