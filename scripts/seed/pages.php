@@ -1295,6 +1295,35 @@ function wptpl_seed_page_ai_information(): string {
 	return wptpl_section( $blocks, '', 'container-narrow' );
 }
 
+/**
+ * A legal page: title, a "replace this" note, then one heading + placeholder
+ * body per section.
+ *
+ * The section headings are real — they are what each document has to cover —
+ * while the bodies are lorem. Compliance copy has to be written or reviewed by
+ * someone qualified, so seeding plausible-sounding legal text would be worse
+ * than useless: it reads as finished and invites publishing it as-is.
+ *
+ * @param string             $title    Page title.
+ * @param string             $intro    One-line description of the document.
+ * @param array<int, string> $sections Section headings, in order.
+ */
+function wptpl_seed_page_legal( string $title, string $intro, array $sections ): string {
+	$blocks = array(
+		wptpl_heading( $title, 1 ),
+		wptpl_paragraph( $intro ),
+		wptpl_paragraph( '<em>Placeholder. This document must be written or reviewed by qualified counsel before publishing — do not ship the text below.</em>' ),
+		wptpl_paragraph( '<em>Last updated: replace with the date this document was last reviewed.</em>' ),
+	);
+
+	foreach ( $sections as $heading ) {
+		$blocks[] = wptpl_heading( $heading, 2 );
+		$blocks[] = wptpl_paragraph( wptpl_lorem( 'long' ) );
+	}
+
+	return wptpl_section( $blocks, '', 'container-narrow' );
+}
+
 // ---------------------------------------------------------------------------
 // Orchestration
 // ---------------------------------------------------------------------------
@@ -1412,6 +1441,72 @@ function wptpl_seed_all_pages(): array {
 			'order'   => 9,
 		)
 	);
+	$ids['privacy'] = wptpl_seed_page(
+		array(
+			'slug'    => 'privacy',
+			'title'   => 'Privacy Policy',
+			'content' => wptpl_seed_page_legal(
+				'Privacy Policy',
+				'How this practice collects, uses, stores and shares personal information.',
+				array(
+					'Information we collect',
+					'How we use your information',
+					'Protected health information',
+					'How we share information',
+					'Cookies and analytics',
+					'Data retention',
+					'Your rights and choices',
+					'Children’s privacy',
+					'Changes to this policy',
+					'Contact us',
+				)
+			),
+			'order'   => 10,
+		)
+	);
+	$ids['terms'] = wptpl_seed_page(
+		array(
+			'slug'    => 'terms',
+			'title'   => 'Terms of Use',
+			'content' => wptpl_seed_page_legal(
+				'Terms of Use',
+				'The terms that govern use of this website.',
+				array(
+					'Acceptance of these terms',
+					'No therapeutic relationship',
+					'Not for emergencies',
+					'Use of this site',
+					'Intellectual property',
+					'Third-party links',
+					'Disclaimers',
+					'Limitation of liability',
+					'Governing law',
+					'Contact us',
+				)
+			),
+			'order'   => 11,
+		)
+	);
+	$ids['accessibility'] = wptpl_seed_page(
+		array(
+			'slug'    => 'accessibility',
+			'title'   => 'Accessibility Statement',
+			'content' => wptpl_seed_page_legal(
+				'Accessibility Statement',
+				'Our commitment to keeping this website usable by everyone, and how to tell us when it is not.',
+				array(
+					'Our commitment',
+					'Conformance status',
+					'Measures we take',
+					'Known limitations',
+					'Compatibility with assistive technology',
+					'Feedback and requests',
+					'Contact us',
+				)
+			),
+			'order'   => 12,
+		)
+	);
 
 	return $ids;
 }
@@ -1419,9 +1514,9 @@ function wptpl_seed_all_pages(): array {
 /**
  * Seed the menus and assign them to their theme locations.
  *
- * There is no Footer Legal menu: the compliance pages are held back until the
- * board signs off on their copy, so the location stays empty and the footer
- * renders nothing for it.
+ * The Footer Legal location holds the three compliance pages. Their bodies are
+ * placeholders — see wptpl_seed_page_legal() — but the pages and the menu ship
+ * so the footer is structurally complete and the copy has somewhere to land.
  *
  * @param array<string, mixed> $ids Page IDs from wptpl_seed_all_pages().
  */
@@ -1510,6 +1605,25 @@ function wptpl_seed_all_menus( array $ids ): void {
 			array(
 				'title' => 'Ask Claude about us',
 				'url'   => 'https://claude.ai/new?q=' . rawurlencode( $ask ),
+			),
+		)
+	);
+
+	wptpl_seed_menu(
+		'Footer Legal',
+		'footer_legal',
+		array(
+			array(
+				'title'   => 'Privacy Policy',
+				'page_id' => $ids['privacy'],
+			),
+			array(
+				'title'   => 'Terms of Use',
+				'page_id' => $ids['terms'],
+			),
+			array(
+				'title'   => 'Accessibility',
+				'page_id' => $ids['accessibility'],
 			),
 		)
 	);
