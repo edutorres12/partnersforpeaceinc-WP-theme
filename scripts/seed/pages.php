@@ -103,157 +103,149 @@ function wptpl_seed_retired_menus(): array {
  * numbered steps, FAQ, closing CTA.
  */
 function wptpl_seed_page_home(): string {
-	// Rows of three, however many services there are — the list is expected to
-	// change, and a hardcoded card count breaks the moment it does.
-	$service_cards = array();
-	foreach ( wptpl_seed_services() as $service ) {
-		$service_cards[] = wptpl_block(
-			'feature-card',
-			array(
-				'title'    => $service['title'],
-				'text'     => wptpl_lorem( 'short' ),
-				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/service-card.jpg',
-				'ctaText'  => 'Learn more',
-				'ctaUrl'   => '/services/' . $service['slug'] . '/',
-				'ctaStyle' => 'arrow',
-			)
+	// Service cards run in two banks. The first carries imagery and the
+	// wptpl-image-md size modifier; the second is text-only. Both banks use the
+	// same card otherwise, which is what makes the row read as one grid rather
+	// than two unrelated ones.
+	$service_card = static function ( array $service, bool $with_image, int $title, int $text ): string {
+		$attrs = array(
+			'title'    => wptpl_lorem_len( $title ),
+			'text'     => wptpl_lorem_len( $text ),
+			'ctaText'  => 'Learn more',
+			'ctaUrl'   => '/services/' . $service['slug'] . '/',
+			'ctaStyle' => 'arrow',
+			'centered' => true,
+			'bordered' => false,
 		);
-	}
-	// `wptpl-services-carousel` is what the mobile row-gap rule keys off, so the
-	// rows don't sit flush against each other once they stack on a phone. The
-	// first row is set off from the section header; the rows after it are set
-	// off from the row above by the same gap the columns use between cards.
-	$service_rows = array();
-	foreach ( array_chunk( $service_cards, 3 ) as $index => $row ) {
-		$service_rows[] = wptpl_columns(
-			array_map(
-				static function ( $card ) {
-					return array( $card );
-				},
-				$row
-			),
+		if ( $with_image ) {
+			$attrs['imageUrl']  = get_template_directory_uri() . '/assets/placeholders/service-card.jpg';
+			$attrs['className'] = 'wptpl-image-md';
+		}
+
+		return wptpl_block( 'feature-card', $attrs );
+	};
+
+	$services = wptpl_seed_services();
+	$lengths  = array(
+		array( 14, 203 ),
+		array( 18, 161 ),
+		array( 15, 131 ),
+		array( 67, 151 ),
+		array( 37, 120 ),
+		array( 19, 150 ),
+		array( 24, 139 ),
+		array( 64, 196 ),
+	);
+
+	// First bank takes imagery, the rest do not. Split three and the remainder
+	// rather than the reference's four-and-four: this sitemap has five services,
+	// and a four-up first row would leave a single card stranded in the second.
+	$rows  = array();
+	$banks = array_chunk( $services, 3 );
+	foreach ( $banks as $bank_index => $bank ) {
+		$cards = array();
+		foreach ( $bank as $i => $service ) {
+			$n       = ( $bank_index * 3 ) + $i;
+			$len     = $lengths[ $n % count( $lengths ) ];
+			$cards[] = array( $service_card( $service, 0 === $bank_index, $len[0], $len[1] ) );
+		}
+		$rows[] = wptpl_columns(
+			$cards,
 			array(),
 			'wptpl-services-carousel',
-			0 === $index ? '3rem' : '1.5rem'
+			0 === $bank_index ? '3rem' : '1.5rem'
 		);
 	}
-	$service_grid = implode(
-		'
-
-',
-		$service_rows
-	);
+	$service_grid = implode( "\n\n", $rows );
 
 	return implode(
 		"\n\n",
 		array(
-			// 1. Hero. Title, subtitle and one CTA — no eyebrow, no microcopy and
-			// no secondary CTA. The block still supports all three; the home hero
-			// just doesn't use them, so the template ships without placeholder
-			// copy ("Niche + location identifier", a consultation microcopy line)
-			// that a site would have to notice and delete.
+			// 1. Hero — title, subtitle and one CTA. No eyebrow, no microcopy,
+			// no secondary CTA: the reference uses none of the three.
 			wptpl_block(
 				'hero',
 				array(
-					'title'    => 'Warm, hopeful headline',
-					'subtitle' => wptpl_lorem( 'medium' ),
-					'ctaText'  => 'Primary CTA',
+					'title'    => wptpl_lorem_len( 61 ),
+					'subtitle' => wptpl_lorem_len( 294 ),
+					'ctaText'  => wptpl_lorem_len( 41 ),
 					'ctaUrl'   => '/contact/',
-					'layout'   => 'split',
 					'imageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
 				)
 			),
 
-			// 2. Trust bar.
+			// 2. Trust bar — three credentials, no icon. Wrapped in a full-width
+			// column so the row spans the band rather than the content column.
 			wptpl_section(
 				array(
-					wptpl_block(
-						'checklist',
+					wptpl_columns(
 						array(
-							'items'     => array(
-								array( 'text' => 'License info' ),
-								array( 'text' => 'Years experience' ),
-								array( 'text' => 'Specialization' ),
-								array( 'text' => 'Languages' ),
+							array(
+								wptpl_block(
+									'checklist',
+									array(
+										'items'     => array(
+											array( 'text' => wptpl_lorem_len( 36 ) ),
+											array( 'text' => wptpl_lorem_len( 32 ) ),
+											array( 'text' => wptpl_lorem_len( 49 ) ),
+										),
+										'direction' => 'horizontal',
+										'iconStyle' => 'none',
+									)
+								),
 							),
-							'direction' => 'horizontal',
-							'theme'     => 'dark',
-						)
+						),
+						array( '100%' )
 					),
 				),
-				'secondary',
+				'primary',
 				'container',
 				'wptpl-section-tight'
 			),
 
-			// 3. Empathy — three cards.
+			// 3. Three cards, icon beside the title. `horizontal-header` is what
+			// puts the icon and title on one line with the body beneath; without
+			// it the icon stacks above and the card grows a third taller.
 			wptpl_section(
 				array(
 					wptpl_block(
 						'section-header',
 						array(
-							'headline' => 'Empathetic headline',
-							'intro'    => wptpl_lorem( 'short' ),
+							'headline' => wptpl_lorem_len( 65 ),
+							'intro'    => wptpl_lorem_len( 68 ),
 						)
 					),
 					wptpl_columns(
 						array(
-							array(
-								wptpl_block(
-									'feature-card',
-									array(
-										'title'    => 'Pain point 1',
-										'text'     => wptpl_lorem( 'short' ),
-										'centered' => true,
-									)
-								),
-							),
-							array(
-								wptpl_block(
-									'feature-card',
-									array(
-										'title'    => 'Pain point 2',
-										'text'     => wptpl_lorem( 'short' ),
-										'centered' => true,
-									)
-								),
-							),
-							array(
-								wptpl_block(
-									'feature-card',
-									array(
-										'title'    => 'Pain point 3',
-										'text'     => wptpl_lorem( 'short' ),
-										'centered' => true,
-									)
-								),
-							),
+							array( wptpl_card_icon( 19, 152 ) ),
+							array( wptpl_card_icon( 50, 206 ) ),
+							array( wptpl_card_icon( 23, 176 ) ),
 						),
 						array(),
 						'',
 						'3rem'
 					),
 				),
-				'surface'
+				'muted'
 			),
 
-			// 4. Services grid — two rows of three.
+			// 4. Services grid.
 			wptpl_section(
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => 'Services headline' )
+						array( 'headline' => wptpl_lorem_len( 74 ) )
 					),
 					$service_grid,
 				)
 			),
 
-			// 5. Specialties pills.
+			// 5. Specialty pills on a dark band.
 			wptpl_section(
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => 'Specialties headline' )
+						array( 'headline' => wptpl_lorem_len( 40 ) )
 					),
 					wptpl_block(
 						'tag-list',
@@ -262,82 +254,101 @@ function wptpl_seed_page_home(): string {
 								'items' => array_map(
 									static function ( $n ) {
 										return array(
-											'label' => 'Specialty ' . $n,
+											'label' => wptpl_lorem_len( 12 + ( $n % 4 ) * 6 ),
 											'url'   => '',
 										);
 									},
-									range( 1, 12 )
+									range( 1, 14 )
 								),
 							),
 							wptpl_margin_top( '2rem' )
 						)
 					),
 				),
-				'surface'
+				'muted',
+				'container-md',
+				'wptpl-overlay-dark'
 			),
 
-			// 6. Bio — portrait beside copy.
+			// 6. Practitioner bio — fixed-width portrait beside the copy.
 			wptpl_section(
 				array(
 					wptpl_columns(
 						array(
-							array( wptpl_image( 'portrait', 'wptpl-portrait-fill' ) ),
+							array( wptpl_image( 'portrait', 'is-style-rounded-square wptpl-portrait-fill', '380px' ) ),
 							array(
-								wptpl_heading( 'Name + credentials', 2 ),
-								wptpl_paragraph( wptpl_lorem( 'long' ) ),
-								wptpl_paragraph( wptpl_lorem( 'medium' ) ),
-								wptpl_block(
-									'checklist',
+								wptpl_heading( 'Practitioner name', 2 ),
+								wptpl_paragraph( 'CREDENTIAL', 'wptpl-credential-label' ),
+								wptpl_paragraph( wptpl_lorem_len( 182 ) ),
+								wptpl_paragraph( wptpl_lorem_len( 150 ) ),
+								wptpl_paragraph( wptpl_lorem_len( 194 ) ),
+								wptpl_group(
 									array(
-										'items'     => array(
-											array( 'text' => 'Credential' ),
-											array( 'text' => 'Credential' ),
-											array( 'text' => 'Credential' ),
-											array( 'text' => 'Credential' ),
+										wptpl_block(
+											'checklist',
+											array(
+												'items'     => array(
+													array( 'text' => '<strong>' . wptpl_lorem_len( 35 ) . '</strong>' ),
+													array( 'text' => '<strong>' . wptpl_lorem_len( 76 ) . '</strong>' ),
+													array( 'text' => '<strong>' . wptpl_lorem_len( 29 ) . '</strong>' ),
+													array( 'text' => '<strong>' . wptpl_lorem_len( 29 ) . '</strong>' ),
+												),
+												'iconStyle' => 'plus',
+											)
 										),
-										'direction' => 'horizontal',
-									)
+									),
+									'',
+									'',
+									'',
+									'1rem'
 								),
+								wptpl_html( '<div style="margin-top:1.5rem"><a class="wptpl-btn-accent" href="/about-us/">Read the full story</a></div>' ),
 							),
 						),
-						array( '33.33%', '66.66%' )
+						array( '380px', '' ),
+						'',
+						'',
+						true
 					),
-				)
+				),
+				'primary-soft'
 			),
 
 			// 7. How to get started.
 			wptpl_block(
 				'steps',
 				array(
-					'heading'        => 'How to get started',
-					'intro'          => wptpl_lorem( 'short' ),
+					'heading'        => wptpl_lorem_len( 18 ),
+					'intro'          => wptpl_lorem_len( 34 ),
 					'items'          => array(
 						array(
-							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 31 ),
+							'text'  => wptpl_lorem_len( 158 ),
 						),
 						array(
-							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 28 ),
+							'text'  => wptpl_lorem_len( 102 ),
 						),
 						array(
-							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 29 ),
+							'text'  => wptpl_lorem_len( 98 ),
 						),
 					),
 					'showCta'        => true,
-					'ctaText'        => 'Primary CTA',
+					'ctaText'        => wptpl_lorem_len( 37 ),
 					'ctaUrl'         => '/contact/',
+					'overlayOpacity' => 0.6,
 					'usePlaceholder' => true,
 				)
 			),
 
-			// 8. FAQ.
+			// 8. FAQ — seven entries, sized like real answers so the accordion
+			// opens to a realistic height.
 			wptpl_section(
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => 'Frequently asked questions' )
+						array( 'headline' => 'FAQ' )
 					),
 					wptpl_block(
 						'faq',
@@ -345,42 +356,50 @@ function wptpl_seed_page_home(): string {
 							array(
 								'items' => array(
 									array(
-										'question' => 'Question one?',
-										'answer'   => wptpl_lorem( 'medium' ),
+										'question' => wptpl_lorem_len( 24 ),
+										'answer'   => wptpl_lorem_len( 198 ),
 									),
 									array(
-										'question' => 'Question two?',
-										'answer'   => wptpl_lorem( 'medium' ),
+										'question' => wptpl_lorem_len( 30 ),
+										'answer'   => wptpl_lorem_len( 339 ),
 									),
 									array(
-										'question' => 'Question three?',
-										'answer'   => wptpl_lorem( 'medium' ),
+										'question' => wptpl_lorem_len( 42 ),
+										'answer'   => wptpl_lorem_len( 325 ),
 									),
 									array(
-										'question' => 'Question four?',
-										'answer'   => wptpl_lorem( 'medium' ),
+										'question' => wptpl_lorem_len( 39 ),
+										'answer'   => wptpl_lorem_len( 340 ),
+									),
+									array(
+										'question' => wptpl_lorem_len( 27 ),
+										'answer'   => wptpl_lorem_len( 371 ),
+									),
+									array(
+										'question' => wptpl_lorem_len( 28 ),
+										'answer'   => wptpl_lorem_len( 242 ),
+									),
+									array(
+										'question' => wptpl_lorem_len( 21 ),
+										'answer'   => wptpl_lorem_len( 289 ),
 									),
 								),
 							),
 							wptpl_margin_top( '2rem' )
 						)
 					),
-				),
-				'surface',
-				// No container: wptpl/faq already renders inside
-				// wptpl-container-narrow.
-				''
+				)
 			),
 
-			// 9. Closing CTA.
+			// 9. Closing CTA over a photo.
 			wptpl_block(
 				'cta-banner',
 				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'dark',
+					'headline'           => wptpl_lorem_len( 75 ),
+					'ctaText'            => wptpl_lorem_len( 31 ),
+					'ctaUrl'             => '/contact/',
+					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/cta-bg.jpg',
+					'overlayOpacity'     => 0.65,
 				)
 			),
 		)
@@ -714,7 +733,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 				'hero',
 				array(
 					'title'              => $service['title'],
-					'subtitle'           => wptpl_lorem( 'medium' ),
+					'subtitle'           => wptpl_lorem_len( 125 ),
 					'layout'             => 'centered',
 					'alignment'          => 'center',
 					'ctaText'            => 'Primary CTA',
@@ -839,15 +858,15 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 							'items' => array(
 								array(
 									'question' => 'Question one?',
-									'answer'   => wptpl_lorem( 'medium' ),
+									'answer'   => wptpl_lorem_len( 125 ),
 								),
 								array(
 									'question' => 'Question two?',
-									'answer'   => wptpl_lorem( 'medium' ),
+									'answer'   => wptpl_lorem_len( 125 ),
 								),
 								array(
 									'question' => 'Question three?',
-									'answer'   => wptpl_lorem( 'medium' ),
+									'answer'   => wptpl_lorem_len( 125 ),
 								),
 							),
 						)
@@ -886,15 +905,15 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					'items'          => array(
 						array(
 							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
+							'text'  => wptpl_lorem_len( 56 ),
 						),
 						array(
 							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
+							'text'  => wptpl_lorem_len( 56 ),
 						),
 						array(
 							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
+							'text'  => wptpl_lorem_len( 56 ),
 						),
 					),
 					'showCta'        => true,
@@ -1036,7 +1055,7 @@ function wptpl_seed_page_blog(): string {
 			'feature-card',
 			array(
 				'title'     => 'Guide ' . $n,
-				'text'      => wptpl_lorem( 'short' ),
+				'text'      => wptpl_lorem_len( 56 ),
 				'imageUrl'  => get_template_directory_uri() . '/assets/placeholders/guide-card.jpg',
 				'ctaText'   => 'Download',
 				'ctaUrl'    => '/guide-landing/',
@@ -1055,7 +1074,7 @@ function wptpl_seed_page_blog(): string {
 						'section-header',
 						array(
 							'headline'     => 'Blog headline',
-							'intro'        => wptpl_lorem( 'medium' ),
+							'intro'        => wptpl_lorem_len( 125 ),
 							'headingLevel' => 1,
 							'className'    => 'wptpl-header-xwide',
 						)
@@ -1102,7 +1121,7 @@ function wptpl_seed_page_blog(): string {
 				'cta-banner',
 				array(
 					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
+					'text'     => wptpl_lorem_len( 56 ),
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
@@ -1128,7 +1147,7 @@ function wptpl_seed_page_therapists(): string {
 			'feature-card',
 			array(
 				'title'    => 'Therapist ' . $n,
-				'text'     => wptpl_lorem( 'short' ),
+				'text'     => wptpl_lorem_len( 56 ),
 				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
 				'centered' => true,
 			)
@@ -1142,7 +1161,7 @@ function wptpl_seed_page_therapists(): string {
 				'hero',
 				array(
 					'title'     => 'Meet our therapists',
-					'subtitle'  => wptpl_lorem( 'medium' ),
+					'subtitle'  => wptpl_lorem_len( 125 ),
 					'layout'    => 'centered',
 					'alignment' => 'center',
 					'ctaText'   => 'Primary CTA',
@@ -1181,7 +1200,7 @@ function wptpl_seed_page_therapists(): string {
 						'section-header',
 						array(
 							'headline' => 'How we work together',
-							'intro'    => wptpl_lorem( 'medium' ),
+							'intro'    => wptpl_lorem_len( 125 ),
 						)
 					),
 				),
@@ -1192,7 +1211,7 @@ function wptpl_seed_page_therapists(): string {
 				'cta-banner',
 				array(
 					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
+					'text'     => wptpl_lorem_len( 56 ),
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
@@ -1221,7 +1240,7 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 			'feature-card',
 			array(
 				'title'    => $card_noun . ' ' . $n,
-				'text'     => wptpl_lorem( 'short' ),
+				'text'     => wptpl_lorem_len( 56 ),
 				'centered' => true,
 			)
 		);
@@ -1234,7 +1253,7 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 				'hero',
 				array(
 					'title'     => $title,
-					'subtitle'  => wptpl_lorem( 'medium' ),
+					'subtitle'  => wptpl_lorem_len( 125 ),
 					'layout'    => 'centered',
 					'alignment' => 'center',
 					'ctaText'   => $cta,
@@ -1247,7 +1266,7 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 						'section-header',
 						array(
 							'headline'  => $body_head,
-							'intro'     => wptpl_lorem( 'long' ),
+							'intro'     => wptpl_lorem_len( 233 ),
 							'alignment' => 'left',
 						)
 					),
@@ -1279,15 +1298,15 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 					'items'   => array(
 						array(
 							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
+							'text'  => wptpl_lorem_len( 56 ),
 						),
 						array(
 							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
+							'text'  => wptpl_lorem_len( 56 ),
 						),
 						array(
 							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
+							'text'  => wptpl_lorem_len( 56 ),
 						),
 					),
 				)
@@ -1296,7 +1315,7 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 				'cta-banner',
 				array(
 					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
+					'text'     => wptpl_lorem_len( 56 ),
 					'ctaText'  => $cta,
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
@@ -1347,7 +1366,7 @@ function wptpl_seed_page_ai_information(): string {
 	foreach ( $sections as $heading => $what_goes_here ) {
 		$blocks[] = wptpl_heading( $heading, 2 );
 		$blocks[] = wptpl_paragraph( '<em>' . $what_goes_here . '</em>' );
-		$blocks[] = wptpl_paragraph( wptpl_lorem( 'long' ) );
+		$blocks[] = wptpl_paragraph( wptpl_lorem_len( 233 ) );
 	}
 
 	return wptpl_section( $blocks, '', 'container-narrow' );
@@ -1376,7 +1395,7 @@ function wptpl_seed_page_legal( string $title, string $intro, array $sections ):
 
 	foreach ( $sections as $heading ) {
 		$blocks[] = wptpl_heading( $heading, 2 );
-		$blocks[] = wptpl_paragraph( wptpl_lorem( 'long' ) );
+		$blocks[] = wptpl_paragraph( wptpl_lorem_len( 233 ) );
 	}
 
 	return wptpl_section( $blocks, '', 'container-narrow' );

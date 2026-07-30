@@ -56,14 +56,14 @@ function wptpl_seed_post_body(): string {
 	return implode(
 		"\n\n",
 		array(
-			wptpl_paragraph( wptpl_lorem( 'long' ) ),
+			wptpl_paragraph( wptpl_lorem_len( 233 ) ),
 			wptpl_heading( 'A section heading', 2 ),
-			wptpl_paragraph( wptpl_lorem( 'long' ) ),
+			wptpl_paragraph( wptpl_lorem_len( 233 ) ),
 			"<!-- wp:list -->\n<ul class=\"wp-block-list\"><li>List item one</li><li>List item two</li><li>List item three</li></ul>\n<!-- /wp:list -->",
 			wptpl_heading( 'Another section heading', 2 ),
-			wptpl_paragraph( wptpl_lorem( 'long' ) ),
-			"<!-- wp:quote -->\n<blockquote class=\"wp-block-quote\">" . wptpl_paragraph( wptpl_lorem( 'short' ) ) . "</blockquote>\n<!-- /wp:quote -->",
-			wptpl_paragraph( wptpl_lorem( 'medium' ) ),
+			wptpl_paragraph( wptpl_lorem_len( 233 ) ),
+			"<!-- wp:quote -->\n<blockquote class=\"wp-block-quote\">" . wptpl_paragraph( wptpl_lorem_len( 56 ) ) . "</blockquote>\n<!-- /wp:quote -->",
+			wptpl_paragraph( wptpl_lorem_len( 125 ) ),
 		)
 	);
 }
@@ -94,7 +94,7 @@ function wptpl_seed_post( string $slug, string $title, int $category, bool $stic
 					'post_status'   => 'publish',
 					'post_title'    => $title,
 					'post_name'     => $slug,
-					'post_excerpt'  => wptpl_lorem( 'medium' ),
+					'post_excerpt'  => wptpl_lorem_len( 125 ),
 					'post_content'  => wptpl_seed_post_body(),
 					'post_date'     => gmdate( 'Y-m-d H:i:s', strtotime( sprintf( '-%d days', $days_ago ) ) ),
 					'post_category' => $category ? array( $category ) : array(),
