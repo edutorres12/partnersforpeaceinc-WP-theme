@@ -153,7 +153,10 @@ function wptpl_seed_page_home(): string {
 			$cards,
 			array(),
 			'wptpl-services-carousel',
-			0 === $bank_index ? '3rem' : '1.5rem'
+			0 === $bank_index ? '3rem' : '1.5rem',
+			false,
+			array(),
+			'1.5rem'
 		);
 	}
 	$service_grid = implode( "\n\n", $rows );
@@ -178,24 +181,17 @@ function wptpl_seed_page_home(): string {
 			// column so the row spans the band rather than the content column.
 			wptpl_section(
 				array(
-					wptpl_columns(
+					wptpl_block(
+						'checklist',
 						array(
-							array(
-								wptpl_block(
-									'checklist',
-									array(
-										'items'     => array(
-											array( 'text' => wptpl_lorem_len( 36 ) ),
-											array( 'text' => wptpl_lorem_len( 32 ) ),
-											array( 'text' => wptpl_lorem_len( 49 ) ),
-										),
-										'direction' => 'horizontal',
-										'iconStyle' => 'none',
-									)
-								),
+							'items'     => array(
+								array( 'text' => wptpl_lorem_len( 36 ) ),
+								array( 'text' => wptpl_lorem_len( 32 ) ),
+								array( 'text' => wptpl_lorem_len( 49 ) ),
 							),
-						),
-						array( '100%' )
+							'direction' => 'horizontal',
+							'iconStyle' => 'none',
+						)
 					),
 				),
 				'primary',
@@ -212,8 +208,9 @@ function wptpl_seed_page_home(): string {
 					wptpl_block(
 						'section-header',
 						array(
-							'headline' => wptpl_lorem_len( 65 ),
-							'intro'    => wptpl_lorem_len( 68 ),
+							'headline'  => wptpl_lorem_len( 65 ),
+							'intro'     => wptpl_lorem_len( 68 ),
+							'textColor' => 'base',
 						)
 					),
 					wptpl_columns(
@@ -224,7 +221,10 @@ function wptpl_seed_page_home(): string {
 						),
 						array(),
 						'',
-						'3rem'
+						'3rem',
+						false,
+						array(),
+						'1.5rem'
 					),
 				),
 				'muted',
@@ -249,7 +249,10 @@ function wptpl_seed_page_home(): string {
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => wptpl_lorem_len( 40 ) )
+						array(
+							'headline'  => wptpl_lorem_len( 40 ),
+							'textColor' => 'base',
+						)
 					),
 					wptpl_block(
 						'tag-list',
@@ -462,12 +465,13 @@ function wptpl_seed_page_about(): string {
 				wptpl_columns(
 					array(
 						array(
-							wptpl_image( 'service-card', '', '96px' ),
+							wptpl_image( 'icon', '', '96px' ),
 							wptpl_block(
 								'section-header',
 								array(
 									'headline'  => wptpl_lorem_len( $head ),
 									'alignment' => 'left',
+									'textColor' => 'base',
 								)
 							),
 						),
@@ -477,10 +481,14 @@ function wptpl_seed_page_about(): string {
 					'',
 					'',
 					true,
-					array( '', 'wptpl-vrule' )
+					array( '', 'wptpl-vrule' ),
+					'50px'
 				),
 			),
-			$bg
+			$bg,
+			'container-md',
+			'',
+			'base'
 		);
 	};
 
@@ -506,6 +514,7 @@ function wptpl_seed_page_about(): string {
 										'alignment'    => 'left',
 										'headingLevel' => 1,
 										'className'    => 'wptpl-hero-header',
+										'textColor'    => 'base',
 									)
 								),
 								wptpl_heading( 'Role line, credentials', 2 ),
@@ -517,12 +526,15 @@ function wptpl_seed_page_about(): string {
 						array( '440px', '' ),
 						'',
 						'',
-						true
+						true,
+						array(),
+						'50px'
 					),
 				),
 				'primary',
 				'container-md',
-				'is-style-overlay-primary'
+				'is-style-overlay-primary',
+				'base'
 			),
 
 			// 2. Long-form story on a photo band, the copy held in a light card.
@@ -530,7 +542,10 @@ function wptpl_seed_page_about(): string {
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => wptpl_lorem_len( 62 ) )
+						array(
+							'headline'  => wptpl_lorem_len( 62 ),
+							'textColor' => 'base',
+						)
 					),
 					wptpl_group(
 						array(
@@ -556,7 +571,10 @@ function wptpl_seed_page_about(): string {
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => wptpl_lorem_len( 33 ) )
+						array(
+							'headline'  => wptpl_lorem_len( 33 ),
+							'textColor' => 'base',
+						)
 					),
 					wptpl_paragraph( wptpl_lorem_len( 134 ), '', 'center' ),
 					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem' ),
@@ -569,11 +587,14 @@ function wptpl_seed_page_about(): string {
 
 			// 6. Who this is for: a 2-up card row plus a lone third card, matched
 			// to the pair's rendered width by wptpl-card-solo.
-			wptpl_section(
+			wptpl_cover(
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => wptpl_lorem_len( 32 ) )
+						array(
+							'headline'  => wptpl_lorem_len( 32 ),
+							'textColor' => 'accent',
+						)
 					),
 					wptpl_columns(
 						array(
@@ -581,11 +602,13 @@ function wptpl_seed_page_about(): string {
 								wptpl_block(
 									'feature-card',
 									array(
-										'title'     => wptpl_lorem_len( 73 ),
-										'text'      => wptpl_lorem_len( 323 ),
-										'centered'  => true,
-										'bordered'  => false,
-										'className' => 'wptpl-title-sm',
+										'title'           => wptpl_lorem_len( 73 ),
+										'text'            => wptpl_lorem_len( 323 ),
+										'centered'        => true,
+										'bordered'        => false,
+										'className'       => 'wptpl-title-sm',
+										'backgroundColor' => 'accent',
+										'textColor'       => 'on-dark',
 									)
 								),
 							),
@@ -593,59 +616,69 @@ function wptpl_seed_page_about(): string {
 								wptpl_block(
 									'feature-card',
 									array(
-										'title'     => wptpl_lorem_len( 38 ),
-										'text'      => wptpl_lorem_len( 251 ),
-										'centered'  => true,
-										'bordered'  => false,
-										'className' => 'wptpl-title-sm',
+										'title'           => wptpl_lorem_len( 38 ),
+										'text'            => wptpl_lorem_len( 251 ),
+										'centered'        => true,
+										'bordered'        => false,
+										'className'       => 'wptpl-title-sm',
+										'backgroundColor' => 'accent',
+										'textColor'       => 'on-dark',
 									)
 								),
 							),
 						),
 						array(),
 						'',
-						'2.5rem'
+						'2.5rem',
+						false,
+						array(),
+						'1.5rem'
 					),
 					wptpl_block(
 						'feature-card',
 						array_merge(
 							array(
-								'title'     => wptpl_lorem_len( 47 ),
-								'text'      => wptpl_lorem_len( 178 ),
-								'centered'  => true,
-								'bordered'  => false,
-								'className' => 'wptpl-title-sm wptpl-card-solo',
+								'title'           => wptpl_lorem_len( 47 ),
+								'text'            => wptpl_lorem_len( 178 ),
+								'centered'        => true,
+								'bordered'        => false,
+								'className'       => 'wptpl-title-sm wptpl-card-solo',
+								'backgroundColor' => 'accent',
+								'textColor'       => 'on-dark',
 							),
 							wptpl_margin_top( '1.5rem' )
 						)
 					),
-				)
+				),
+				'guide-card',
+				'base',
+				0
 			),
 
-			// 7. How to get started.
-			wptpl_block(
-				'steps',
+			// 7. How to get started — built from core columns, not the steps
+			// block. The reference does it this way here, and the number circles
+			// overhang each column's top edge, which is what the
+			// `.wptpl-steps.has-global-padding` top-padding rule exists to clear.
+			wptpl_section(
 				array(
-					'heading'        => 'How to get started',
-					'items'          => array(
+					wptpl_columns(
 						array(
-							'title' => wptpl_lorem_len( 26 ),
-							'text'  => wptpl_lorem_len( 59 ),
+							wptpl_step_column( 1, 26, 59 ),
+							wptpl_step_column( 2, 14, 49 ),
+							wptpl_step_column( 3, 28, 73 ),
 						),
-						array(
-							'title' => wptpl_lorem_len( 14 ),
-							'text'  => wptpl_lorem_len( 49 ),
-						),
-						array(
-							'title' => wptpl_lorem_len( 28 ),
-							'text'  => wptpl_lorem_len( 73 ),
-						),
+						array(),
+						'',
+						'',
+						false,
+						array(),
+						'50px'
 					),
-					'showCta'        => true,
-					'ctaText'        => 'Primary CTA',
-					'ctaUrl'         => '/contact/',
-					'usePlaceholder' => true,
-				)
+				),
+				'muted',
+				'container-md',
+				'wptpl-steps',
+				'base'
 			),
 
 			wptpl_block(
@@ -723,10 +756,24 @@ function wptpl_seed_page_services(): string {
 				)
 			),
 
-			// One band holds the whole list. No closing CTA banner: every card
-			// already links onward, and a banner under them competes with all of
-			// them at once.
+			// One band holds the whole list.
 			wptpl_section( $rows, '', 'container-md', 'is-style-overlay-primary' ),
+
+			// Closing CTA. An earlier pass dropped this on the reasoning that the
+			// cards already link onward — but the reference has one, and it is the
+			// only route on the page to the contact form rather than to another
+			// service.
+			wptpl_block(
+				'cta-banner',
+				array(
+					'headline'           => wptpl_lorem_len( 61 ),
+					'text'               => WPTPL_BLANK,
+					'ctaText'            => wptpl_lorem_len( 31 ),
+					'ctaUrl'             => '/contact/',
+					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/cta-bg.jpg',
+					'overlayOpacity'     => 0.65,
+				)
+			),
 		)
 	);
 }
@@ -795,7 +842,10 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						array( '24%', '38%', '38%' )
 					),
 				),
-				'primary'
+				'primary',
+				'container-md',
+				'',
+				'base'
 			),
 
 			// Long-form explainer on a tinted band. Wider than container-narrow
@@ -804,10 +854,12 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 			wptpl_section(
 				array(
 					wptpl_paragraph( wptpl_lorem_len( 389 ) ),
+					wptpl_paragraph( wptpl_lorem_len( 196 ) ),
 				),
 				'muted',
 				'container-md',
-				'wptpl-overlay-dark'
+				'wptpl-overlay-dark',
+				'base'
 			),
 
 			// This is for you if.
@@ -864,7 +916,8 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 				),
 				'secondary',
 				'container-narrow',
-				'wptpl-overlay-dark'
+				'wptpl-overlay-dark',
+				'base'
 			),
 
 			// FAQ.
@@ -905,7 +958,10 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => 'Related services' )
+						array(
+							'headline'  => 'Related services',
+							'textColor' => 'base',
+						)
 					),
 					wptpl_block(
 						'tag-list',
@@ -917,7 +973,8 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 				),
 				'secondary',
 				'container-narrow',
-				'wptpl-section-tight'
+				'wptpl-section-tight',
+				'base'
 			),
 
 			wptpl_block(
@@ -986,8 +1043,9 @@ function wptpl_seed_page_contact(): string {
 						'section-header',
 						array(
 							'headline'     => wptpl_lorem_len( 66 ),
-							'intro'        => 'Intro line',
+							'intro'        => wptpl_lorem_len( 14 ),
 							'headingLevel' => 1,
+							'textColor'    => 'base',
 						)
 					),
 				),
@@ -1035,24 +1093,27 @@ function wptpl_seed_page_contact(): string {
 			wptpl_block(
 				'steps',
 				array(
-					'heading'        => 'What happens next',
+					// No heading: the band is the last thing on the page and the
+					// numbered steps carry their own meaning. Titles run long and
+					// bodies short here — the reverse of the home page's steps —
+					// because each step is a sentence, not a label with an
+					// explanation under it.
 					'items'          => array(
 						array(
-							'title' => wptpl_lorem_len( 24 ),
-							'text'  => wptpl_lorem_len( 100 ),
+							'title' => wptpl_lorem_len( 44 ),
+							'text'  => wptpl_lorem_len( 62 ),
 						),
 						array(
-							'title' => wptpl_lorem_len( 20 ),
-							'text'  => wptpl_lorem_len( 100 ),
+							'title' => wptpl_lorem_len( 47 ),
+							'text'  => wptpl_lorem_len( 53 ),
 						),
 						array(
-							'title' => wptpl_lorem_len( 26 ),
-							'text'  => wptpl_lorem_len( 100 ),
+							'title' => wptpl_lorem_len( 30 ),
+							'text'  => wptpl_lorem_len( 71 ),
 						),
 					),
 					'overlayOpacity' => 0.7,
 					'overlayColor'   => 'primary',
-					'usePlaceholder' => true,
 					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
@@ -1099,12 +1160,14 @@ function wptpl_seed_page_blog(): string {
 							'intro'        => wptpl_lorem_len( 125 ),
 							'headingLevel' => 1,
 							'className'    => 'wptpl-header-xwide',
+							'textColor'    => 'base',
 						)
 					),
 				),
 				'primary',
 				'container',
-				'wptpl-flush-x'
+				'wptpl-flush-x',
+				'base'
 			),
 
 			wptpl_section(
@@ -1113,7 +1176,8 @@ function wptpl_seed_page_blog(): string {
 				),
 				'primary',
 				'container',
-				'wptpl-section-sm'
+				'wptpl-section-sm',
+				'base'
 			),
 
 			wptpl_section(
@@ -1202,7 +1266,11 @@ function wptpl_seed_page_therapists(): string {
 							array( $card( 3 ) ),
 						),
 						array(),
-						'wptpl-services-carousel'
+						'wptpl-services-carousel',
+						'',
+						false,
+						array(),
+						'1.5rem'
 					),
 					wptpl_columns(
 						array(
@@ -1212,6 +1280,9 @@ function wptpl_seed_page_therapists(): string {
 						),
 						array(),
 						'wptpl-services-carousel',
+						'1.5rem',
+						false,
+						array(),
 						'1.5rem'
 					),
 				)
