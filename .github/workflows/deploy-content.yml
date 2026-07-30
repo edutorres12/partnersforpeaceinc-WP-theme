@@ -15,16 +15,18 @@
 #                              hPanel → Advanced → SSH Access → Add key.
 #   HOSTINGER_HOST             e.g. 123.45.67.89 or xxxxx.hostinger.com
 #   HOSTINGER_USER             e.g. u123456789
+#   WP_PATH                    absolute path to the WordPress root, e.g.
+#                              /home/u123456789/domains/example.com/public_html
 #
 #   Variables                  Value
 #   HOSTINGER_PORT             65002 (Hostinger's SSH port; default if unset)
-#   WP_PATH                    absolute path to the WordPress root, e.g.
-#                              /home/u123456789/domains/example.com/public_html
 #   THEME_DIR                  path to the theme, relative to WP_PATH. Default:
 #                              wp-content/themes/partnersforpeace
 #
-# Host/user are secrets so they stay out of logs; the paths are variables so
-# failures are actually debuggable.
+# WP_PATH is a secret because it embeds the account username. The cost is that
+# GitHub masks it in the logs, so it shows up as *** in every error message that
+# quotes it — when a path problem needs debugging, echo THEME_DIR (a variable)
+# and work from there.
 
 name: Deploy content
 
@@ -71,7 +73,7 @@ jobs:
           SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           HOST: ${{ secrets.HOSTINGER_HOST }}
           SSH_USER: ${{ secrets.HOSTINGER_USER }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
         run: |
           set -euo pipefail
           MISSING=""
@@ -158,12 +160,12 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
           THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
         run: |
           set -euo pipefail
           if [ -z "${WP_PATH:-}" ]; then
-            echo "::error::The WP_PATH repository variable is not set."
+            echo "::error::The WP_PATH repository secret is not set."
             exit 1
           fi
           ssh -i ~/.ssh/id_deploy -p "$PORT" "$USER@$HOST" bash -s <<REMOTE
@@ -180,7 +182,7 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
           THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
         run: |
           set -euo pipefail
@@ -199,7 +201,7 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
         run: |
           set -euo pipefail
           # Backups go to the home directory, never inside public_html — a .sql
@@ -244,7 +246,7 @@ jobs:
           HOST: ${{ secrets.HOSTINGER_HOST }}
           USER: ${{ secrets.HOSTINGER_USER }}
           PORT: ${{ vars.HOSTINGER_PORT || '65002' }}
-          WP_PATH: ${{ vars.WP_PATH }}
+          WP_PATH: ${{ secrets.WP_PATH }}
           THEME_DIR: ${{ vars.THEME_DIR || 'wp-content/themes/partnersforpeace' }}
           SEED_ARGS: ${{ steps.mode.outputs.seed_args }}
         run: |

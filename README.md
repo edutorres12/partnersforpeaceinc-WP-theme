@@ -431,15 +431,16 @@ the secret below.
 | `HOSTINGER_SSH_KEY` | contents of `deploy_key` |
 | `HOSTINGER_HOST` | e.g. `123.45.67.89` |
 | `HOSTINGER_USER` | e.g. `u123456789` |
+| `WP_PATH` | absolute path to the WordPress root |
 
 | Variable | Value |
 |---|---|
 | `HOSTINGER_PORT` | `65002` (Hostinger's SSH port; the default if unset) |
-| `WP_PATH` | absolute path to the WordPress root |
 | `THEME_DIR` | theme path relative to `WP_PATH` (default `wp-content/themes/partnersforpeace`) |
 
-Host and user are secrets so they stay out of the logs; the paths are plain
-variables so a failure is actually debuggable.
+`WP_PATH` is a secret because it embeds the account username. GitHub masks
+secrets in the logs, so it appears as `***` in any error message that quotes it
+— to debug a path problem, echo `THEME_DIR` (a plain variable) instead.
 
 Note that a Hostinger SSH key grants access to the whole hosting account, not a
 single site. Keep unrelated client sites on a different account.
