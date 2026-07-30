@@ -78,11 +78,6 @@ function wptpl_seed_retired_slugs(): array {
 		'crisis-resources',
 		'guide-landing',
 		'guide-thank-you',
-		// Compliance pages are held back until the board signs off on their copy
-		// (licensure, HIPAA, Good Faith Estimate, 911/988 disclosures).
-		'privacy',
-		'terms',
-		'accessibility',
 	);
 }
 
@@ -96,10 +91,7 @@ function wptpl_seed_retired_slugs(): array {
  * @return array<int, string>
  */
 function wptpl_seed_retired_menus(): array {
-	return array(
-		// Dropped with the compliance pages it linked to.
-		'Footer Legal',
-	);
+	return array();
 }
 
 // ---------------------------------------------------------------------------
@@ -927,80 +919,98 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
  * is right and swapping in the real shortcode is a one-line edit.
  */
 function wptpl_seed_page_contact(): string {
+	// Practice-info rows: a bold label beside its value, as a 40/60 split so
+	// every value starts on the same vertical line however long its label is.
+	$info_row = static function ( string $label, int $value ): string {
+		return wptpl_columns(
+			array(
+				array( wptpl_paragraph( '<strong>' . $label . '</strong>' ) ),
+				array( wptpl_paragraph( wptpl_lorem_len( $value ), 'has-small-font-size' ) ),
+			),
+			array( '40%', '60%' )
+		);
+	};
+
 	return implode(
 		"\n\n",
 		array(
-			wptpl_block(
-				'hero',
+			// 1. Masthead over a photo — a section-header carrying the H1, not a
+			// hero block. Contact opens on the page title and goes straight to the
+			// form; a hero's CTA would only point back at the page you are on.
+			wptpl_cover(
 				array(
-					'eyebrow'   => 'Contact',
-					'title'     => 'Contact headline',
-					'subtitle'  => wptpl_lorem( 'medium' ),
-					'layout'    => 'centered',
-					'alignment' => 'center',
-					'ctaText'   => '',
-					'ctaUrl'    => '',
-				)
+					wptpl_block(
+						'section-header',
+						array(
+							'headline'     => wptpl_lorem_len( 66 ),
+							'intro'        => 'Intro line',
+							'headingLevel' => 1,
+						)
+					),
+				),
+				'hero'
 			),
 
+			// 2. Form beside the practice-info card.
 			wptpl_section(
 				array(
 					wptpl_columns(
 						array(
 							array(
-								wptpl_wrap(
-									'group',
-									array( 'className' => 'wptpl-form' ),
-									'<div class="wp-block-group wptpl-form">',
-									'</div>',
+								wptpl_group(
 									array(
-										wptpl_heading( 'Send a message', 2 ),
 										wptpl_paragraph( 'Replace this block with the form plugin shortcode. The theme styles any form inside a <code>wptpl-form</code> wrapper.' ),
-										wptpl_paragraph( 'Fields to reproduce: name, email, phone (optional), preferred language, preferred session type, and an open message field.' ),
-									)
+									),
+									'',
+									'',
+									'wptpl-form'
 								),
+								wptpl_paragraph( wptpl_lorem_len( 87 ), '', '' ),
 							),
 							array(
-								wptpl_heading( 'Practice info', 2 ),
-								wptpl_paragraph( '<strong>Location</strong><br>' . wptpl_lorem( 'short' ) ),
-								wptpl_paragraph( '<strong>Hours</strong><br>Monday – Friday' ),
-								wptpl_paragraph( '<strong>Response time</strong><br>' . wptpl_lorem( 'short' ) ),
+								wptpl_group(
+									array(
+										wptpl_heading( 'Practice info', 2, 'wptpl-h2-as-h3' ),
+										$info_row( 'Hours', 32 ),
+										$info_row( 'Location', 54 ),
+									),
+									'secondary',
+									'on-dark'
+								),
 							),
 						),
 						array( '62%', '38%' )
 					),
-				)
+				),
+				'surface',
+				'container-md',
+				'is-style-overlay-base'
 			),
 
+			// 3. What happens next — the steps band closes the page. No CTA banner
+			// after it: the form above is the call to action.
 			wptpl_block(
 				'steps',
 				array(
-					'heading' => 'What happens next',
-					'items'   => array(
+					'heading'        => 'What happens next',
+					'items'          => array(
 						array(
-							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 24 ),
+							'text'  => wptpl_lorem_len( 100 ),
 						),
 						array(
-							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 20 ),
+							'text'  => wptpl_lorem_len( 100 ),
 						),
 						array(
-							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 26 ),
+							'text'  => wptpl_lorem_len( 100 ),
 						),
 					),
-				)
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '#book',
-					'theme'    => 'dark',
+					'overlayOpacity' => 0.7,
+					'overlayColor'   => 'primary',
+					'usePlaceholder' => true,
+					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 		)
