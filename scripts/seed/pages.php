@@ -200,7 +200,8 @@ function wptpl_seed_page_home(): string {
 				),
 				'primary',
 				'container',
-				'wptpl-section-tight'
+				'wptpl-section-tight',
+				'base'
 			),
 
 			// 3. Three cards, icon beside the title. `horizontal-header` is what
@@ -226,7 +227,10 @@ function wptpl_seed_page_home(): string {
 						'3rem'
 					),
 				),
-				'muted'
+				'muted',
+				'container-md',
+				'',
+				'base'
 			),
 
 			// 4. Services grid.
@@ -267,7 +271,8 @@ function wptpl_seed_page_home(): string {
 				),
 				'muted',
 				'container-md',
-				'wptpl-overlay-dark'
+				'wptpl-overlay-dark',
+				'base'
 			),
 
 			// 6. Practitioner bio — fixed-width portrait beside the copy.
@@ -278,8 +283,22 @@ function wptpl_seed_page_home(): string {
 							array( wptpl_image( 'portrait', 'is-style-rounded-square wptpl-portrait-fill', '380px' ) ),
 							array(
 								wptpl_heading( 'Practitioner name', 2 ),
-								wptpl_paragraph( 'CREDENTIAL', 'wptpl-credential-label' ),
-								wptpl_paragraph( wptpl_lorem_len( 182 ) ),
+								// The credential line is set large and widely tracked, so it
+								// reads as a label rather than as the first line of the bio.
+								// The class only carries the tablet/mobile step-down; the
+								// desktop treatment lives here.
+								wptpl_paragraph(
+									'CREDENTIAL',
+									'wptpl-credential-label',
+									'',
+									array(
+										'fontSize'      => '27px',
+										'fontWeight'    => '700',
+										'letterSpacing' => '0.2em',
+									),
+									'12px'
+								),
+								wptpl_paragraph( wptpl_lorem_len( 182 ), '', '', array(), '12px' ),
 								wptpl_paragraph( wptpl_lorem_len( 150 ) ),
 								wptpl_paragraph( wptpl_lorem_len( 194 ) ),
 								wptpl_group(
@@ -308,7 +327,9 @@ function wptpl_seed_page_home(): string {
 						array( '380px', '' ),
 						'',
 						'',
-						true
+						true,
+						array(),
+						'50px'
 					),
 				),
 				'primary-soft'
@@ -396,6 +417,7 @@ function wptpl_seed_page_home(): string {
 				'cta-banner',
 				array(
 					'headline'           => wptpl_lorem_len( 75 ),
+					'text'               => WPTPL_BLANK,
 					'ctaText'            => wptpl_lorem_len( 31 ),
 					'ctaUrl'             => '/contact/',
 					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/cta-bg.jpg',

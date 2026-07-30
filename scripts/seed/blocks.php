@@ -16,6 +16,19 @@
 declare( strict_types = 1 );
 
 /**
+ * Marks an attribute that must be emitted as an empty string rather than
+ * dropped.
+ *
+ * Omitting an attribute is not the same as blanking it: several blocks declare
+ * placeholder defaults in their block.json, and a block rendered without the
+ * attribute falls back to that default. `wptpl/cta-banner` is the case that bit
+ * — leaving `text` out renders its stock "Lorem ipsum…" body under every
+ * headline. Passing a bare `''` does not help either, since the filter below
+ * strips empty values. Pass this instead.
+ */
+const WPTPL_BLANK = "\0wptpl-blank";
+
+/**
  * Encode block attributes the way the block editor does: no attribute at all
  * when the set is empty, otherwise compact JSON with unescaped slashes and
  * unicode so the markup stays readable in the code editor.
@@ -32,6 +45,12 @@ function wptpl_attrs( array $attrs ): string {
 	if ( ! $attrs ) {
 		return '';
 	}
+	$attrs = array_map(
+		static function ( $value ) {
+			return WPTPL_BLANK === $value ? '' : $value;
+		},
+		$attrs
+	);
 	return ' ' . wp_json_encode( $attrs, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 }
 
@@ -96,12 +115,19 @@ function wptpl_wrap( string $name, array $attrs, string $open, string $close, ar
  * with `wptpl-container-narrow` baked in, so wrapping it in a second narrow
  * container just nests one cap inside an identical one.
  *
+ * `$text` is not optional decoration on a dark band. The body text color comes
+ * from theme.json and is tuned for the light page background, so a band that
+ * sets a dark background without also setting a light text color renders dark
+ * text on dark — legible in the editor, invisible on the front end. Any band
+ * whose background is darker than the page needs this.
+ *
  * @param array<int, string> $inner     Inner block markup.
  * @param string             $bg        Palette slug for the band background, or '' for none.
  * @param string             $container One of container, container-md, container-narrow, or '' for none.
  * @param string             $extra     Extra CSS classes for the band.
+ * @param string             $text      Palette slug for the text color, or '' to inherit.
  */
-function wptpl_section( array $inner, string $bg = '', string $container = 'container-md', string $extra = '' ): string {
+function wptpl_section( array $inner, string $bg = '', string $container = 'container-md', string $extra = '', string $text = '' ): string {
 	$band_classes = trim( 'wptpl-section ' . $extra );
 
 	$band_attrs = array(
@@ -110,6 +136,10 @@ function wptpl_section( array $inner, string $bg = '', string $container = 'cont
 	);
 	$band_html_classes = 'wp-block-group alignfull ' . $band_classes;
 
+	if ( '' !== $text ) {
+		$band_attrs['textColor'] = $text;
+		$band_html_classes      .= ' has-' . $text . '-color has-text-color';
+	}
 	if ( '' !== $bg ) {
 		$band_attrs['backgroundColor'] = $bg;
 		$band_html_classes           .= ' has-' . $bg . '-background-color has-background';
@@ -170,14 +200,20 @@ function wptpl_margin_top( string $value ): array {
  * top-aligning them. It is what an image-beside-copy row needs whenever the two
  * columns are different heights, which is most of them.
  *
+ * `$block_gap` sets the channel between the columns. Leaving it unset falls back
+ * to WordPress's own default, which is narrow enough that adjacent cards read as
+ * one block rather than as separate cards — the reference sets it explicitly on
+ * every row where the gap matters, most often 50px.
+ *
  * @param array<int, array<int, string>> $columns         Inner markup per column.
  * @param array<int, string>             $widths          Optional per-column width (e.g. "60%").
  * @param string                         $classname       Extra CSS classes for the row.
  * @param string                         $margin_top      Top margin (e.g. "3rem"), or '' for none.
  * @param bool                           $vertical_center Vertically center the columns.
  * @param array<int, string>             $col_classes     Optional per-column CSS classes (e.g. wptpl-vrule).
+ * @param string                         $block_gap       Gap between columns (e.g. "50px"), or '' for the default.
  */
-function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array() ): string {
+function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array(), string $block_gap = '' ): string {
 	$rendered = array();
 
 	foreach ( $columns as $index => $blocks ) {
@@ -217,9 +253,19 @@ function wptpl_columns( array $columns, array $widths = array(), string $classna
 		$row_attrs['className'] = $classname;
 		$row_classes           .= ' ' . $classname;
 	}
+	$spacing = array();
 	if ( '' !== $margin_top ) {
-		$row_attrs['style'] = array( 'spacing' => array( 'margin' => array( 'top' => $margin_top ) ) );
-		$row_style          = sprintf( ' style="margin-top:%s"', $margin_top );
+		$spacing['margin'] = array( 'top' => $margin_top );
+		$row_style         = sprintf( ' style="margin-top:%s"', $margin_top );
+	}
+	if ( '' !== $block_gap ) {
+		// `left` only: WordPress reads the horizontal half of blockGap for a
+		// columns row, and writing both halves makes the editor show a linked
+		// gap control the design never asked for.
+		$spacing['blockGap'] = array( 'left' => $block_gap );
+	}
+	if ( $spacing ) {
+		$row_attrs['style'] = array( 'spacing' => $spacing );
 	}
 
 	return wptpl_wrap(
@@ -271,7 +317,7 @@ function wptpl_heading( string $text, int $level = 2, string $classname = '', st
  * @param string $classname Extra CSS classes.
  * @param string $align     Text alignment.
  */
-function wptpl_paragraph( string $text, string $classname = '', string $align = '' ): string {
+function wptpl_paragraph( string $text, string $classname = '', string $align = '', array $typography = array(), string $margin_top = '' ): string {
 	$attrs = array();
 	if ( '' !== $classname ) {
 		$attrs['className'] = $classname;
@@ -280,13 +326,35 @@ function wptpl_paragraph( string $text, string $classname = '', string $align = 
 		$attrs['align'] = $align;
 	}
 
-	$classes = trim( ( '' !== $align ? 'has-text-align-' . $align . ' ' : '' ) . $classname );
-	$attr    = '' !== $classes ? sprintf( ' class="%s"', $classes ) : '';
+	$style = array();
+	$css   = '';
+	if ( '' !== $margin_top ) {
+		$style['spacing'] = array( 'margin' => array( 'top' => $margin_top ) );
+		$css             .= 'margin-top:' . $margin_top . ';';
+	}
+	if ( $typography ) {
+		$style['typography'] = $typography;
+		foreach ( $typography as $prop => $value ) {
+			// camelCase attribute names, kebab-case CSS — the editor writes both,
+			// and the saved HTML has to carry the CSS half or the paragraph loses
+			// its treatment until someone opens the block.
+			$css .= strtolower( preg_replace( '/([a-z])([A-Z])/', '$1-$2', $prop ) ) . ':' . $value . ';';
+		}
+	}
+	if ( $style ) {
+		$attrs['style'] = $style;
+	}
+
+	$classes  = trim( ( '' !== $align ? 'has-text-align-' . $align . ' ' : '' ) . $classname );
+	$html_att = '' !== $classes ? sprintf( ' class="%s"', $classes ) : '';
+	if ( '' !== $css ) {
+		$html_att .= sprintf( ' style="%s"', esc_attr( rtrim( $css, ';' ) ) );
+	}
 
 	return sprintf(
 		"<!-- wp:paragraph%s -->\n<p%s>%s</p>\n<!-- /wp:paragraph -->",
 		wptpl_attrs( $attrs ),
-		$attr,
+		$html_att,
 		$text
 	);
 }
@@ -449,8 +517,12 @@ function wptpl_html( string $html ): string {
  * `horizontal-header` is what puts the icon and the title on one line with the
  * body beneath them. Without it the icon stacks above the title and the card
  * grows about a third taller, which breaks the row when its neighbours are
- * shorter. The icon and background slots ship with placeholders so both are
- * visible in the editor and swapping them is a field edit.
+ * shorter.
+ *
+ * The icon slot uses the square 96px placeholder. It deliberately carries no
+ * background image: the reference dresses these cards in a paper texture, which
+ * is part of its identity, and a photo placeholder in that slot renders behind
+ * the copy and makes the card unreadable.
  *
  * @param int $title Approximate title length.
  * @param int $text  Approximate body length.
@@ -459,12 +531,11 @@ function wptpl_card_icon( int $title, int $text ): string {
 	return wptpl_block(
 		'feature-card',
 		array(
-			'title'              => wptpl_lorem_len( $title ),
-			'text'               => wptpl_lorem_len( $text ),
-			'layout'             => 'horizontal-header',
-			'bordered'           => false,
-			'iconImageUrl'       => get_template_directory_uri() . '/assets/placeholders/guide-card.jpg',
-			'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/service-card.jpg',
+			'title'        => wptpl_lorem_len( $title ),
+			'text'         => wptpl_lorem_len( $text ),
+			'layout'       => 'horizontal-header',
+			'bordered'     => false,
+			'iconImageUrl' => get_template_directory_uri() . '/assets/placeholders/icon.jpg',
 		)
 	);
 }

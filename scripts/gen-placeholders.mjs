@@ -28,6 +28,10 @@ const FILES = [
 	{ name: 'cta-bg', w: 1920, h: 900, label: 'Background image' },
 	{ name: 'service-card', w: 800, h: 500, label: 'Image' },
 	{ name: 'guide-card', w: 800, h: 500, label: 'Image' },
+	// Square and small: this one stands in for an icon beside a card title,
+	// not for photography. A 16:9 photo placeholder in that slot renders as a
+	// wide box overlapping the copy next to it.
+	{ name: 'icon', w: 96, h: 96, label: '' },
 ];
 
 /**
