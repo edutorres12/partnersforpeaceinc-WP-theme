@@ -1151,19 +1151,27 @@ function wptpl_seed_page_therapists(): string {
 			),
 			wptpl_section(
 				array(
+					// Two banks of cards in one band, same shape as the home service
+					// grid — so the same class, which is what the mobile row-gap
+					// rule keys off, and the same gap between the banks.
 					wptpl_columns(
 						array(
 							array( $card( 1 ) ),
 							array( $card( 2 ) ),
 							array( $card( 3 ) ),
-						)
+						),
+						array(),
+						'wptpl-services-carousel'
 					),
 					wptpl_columns(
 						array(
 							array( $card( 4 ) ),
 							array( $card( 5 ) ),
 							array( $card( 6 ) ),
-						)
+						),
+						array(),
+						'wptpl-services-carousel',
+						'1.5rem'
 					),
 				)
 			),
@@ -1249,12 +1257,17 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 			),
 			wptpl_section(
 				array(
+					// Carries the services-carousel class so the cards get a
+					// row-gap once they stack on a phone; without it they sit
+					// flush against each other.
 					wptpl_columns(
 						array(
 							array( $card( 1 ) ),
 							array( $card( 2 ) ),
 							array( $card( 3 ) ),
-						)
+						),
+						array(),
+						'wptpl-services-carousel'
 					),
 				),
 				'surface'
