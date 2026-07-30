@@ -126,11 +126,24 @@ jobs:
             echo "front_page=$(wp option get page_on_front)"
           } | tee "$GITHUB_WORKSPACE/counts.txt"
 
-          # The seven service subpages must be nested, not top-level.
+          # Every service subpage must be nested under /services/, not top-level.
+          #
+          # The expected count comes from the seeder itself. It used to be
+          # hardcoded to 7, which silently went stale the moment the service
+          # list was renamed down to 5 — the check then failed on every PR for a
+          # reason that had nothing to do with the PR. Reading it from
+          # wptpl_seed_services() means the list can change freely and this
+          # still tests what it is meant to test: that they end up nested.
+          EXPECTED="$(wp eval 'require_once ABSPATH . "wp-content/themes/wptpl-theme/scripts/seed/pages.php"; echo count( wptpl_seed_services() );' | tr -d '\r')"
           NESTED="$(wp post list --post_type=page --post_parent="$(wp post list --post_type=page --name=services --field=ID)" --format=count)"
+          echo "expected_services=$EXPECTED" | tee -a "$GITHUB_WORKSPACE/counts.txt"
           echo "nested_services=$NESTED" | tee -a "$GITHUB_WORKSPACE/counts.txt"
-          if [ "$NESTED" -ne 7 ]; then
-            echo "::error::expected 7 service subpages nested under /services/, found $NESTED"
+          if [ -z "$EXPECTED" ] || [ "$EXPECTED" -lt 1 ]; then
+            echo "::error::could not read the service list from wptpl_seed_services()"
+            exit 1
+          fi
+          if [ "$NESTED" -ne "$EXPECTED" ]; then
+            echo "::error::expected $EXPECTED service subpages nested under /services/, found $NESTED"
             exit 1
           fi
 
