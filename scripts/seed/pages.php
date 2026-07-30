@@ -629,63 +629,64 @@ function wptpl_seed_page_about(): string {
  * Services: hero over a photo, a six-card grid, one wide bilingual card, CTA.
  */
 function wptpl_seed_page_services(): string {
+	// Two per row, not three. These cards carry a title, a paragraph and an
+	// arrow link with no image, so at three-up the text column gets narrow
+	// enough that every title wraps. Each is an H2 held at the H3 visual size:
+	// they are the page's real section headings, so the level has to be right
+	// even though the design does not want them at H2 scale.
 	$cards = array();
 	foreach ( wptpl_seed_services() as $service ) {
 		$cards[] = wptpl_block(
 			'feature-card',
 			array(
-				'title'    => $service['title'],
-				'text'     => wptpl_lorem( 'short' ),
-				'ctaText'  => 'Learn more',
-				'ctaUrl'   => '/services/' . $service['slug'] . '/',
-				'ctaStyle' => 'arrow',
+				'title'        => $service['title'],
+				'text'         => wptpl_lorem_len( 170 ),
+				'headingLevel' => 2,
+				'showImage'    => false,
+				'ctaText'      => 'Learn more',
+				'ctaUrl'       => '/services/' . $service['slug'] . '/',
+				'ctaStyle'     => 'arrow',
+				'className'    => 'wptpl-h2-as-h3',
 			)
 		);
 	}
 
-	// Rows of three, however many services there are.
 	$rows = array();
-	foreach ( array_chunk( $cards, 3 ) as $row ) {
+	foreach ( array_chunk( $cards, 2 ) as $index => $row ) {
 		$rows[] = wptpl_columns(
 			array_map(
 				static function ( $card ) {
 					return array( $card );
 				},
 				$row
-			)
+			),
+			array(),
+			'',
+			0 === $index ? '' : '1.5rem'
 		);
 	}
 
 	return implode(
-		'
-
-',
+		"\n\n",
 		array(
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'            => 'Services',
 					'title'              => 'Services headline',
-					'subtitle'           => wptpl_lorem( 'medium' ),
-					'layout'             => 'centered',
+					'subtitle'           => wptpl_lorem_len( 73 ),
 					'alignment'          => 'center',
 					'ctaText'            => 'Primary CTA',
 					'ctaUrl'             => '/contact/',
 					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'overlayOpacity'     => 0.6,
 					'className'          => 'wptpl-hero-dark',
 				)
 			),
-			wptpl_section( $rows ),
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'dark',
-				)
-			),
+
+			// One band holds the whole list. No closing CTA banner: every card
+			// already links onward, and a banner under them competes with all of
+			// them at once.
+			wptpl_section( $rows, '', 'container-md', 'is-style-overlay-primary' ),
 		)
 	);
 }
@@ -735,6 +736,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Symptom' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -744,6 +746,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Symptom' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -752,15 +755,20 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						),
 						array( '24%', '38%', '38%' )
 					),
-				)
+				),
+				'primary'
 			),
 
+			// Long-form explainer on a tinted band. Wider than container-narrow
+			// so the paragraph does not run as a thin ribbon down the middle of
+			// the page, and long enough to sit like the copy it stands in for.
 			wptpl_section(
 				array(
-					wptpl_paragraph( wptpl_lorem( 'long' ) ),
+					wptpl_paragraph( wptpl_lorem_len( 389 ) ),
 				),
-				'surface',
-				'container-narrow'
+				'muted',
+				'container-md',
+				'wptpl-overlay-dark'
 			),
 
 			// This is for you if.
@@ -773,6 +781,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Reason' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -782,6 +791,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Reason' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -799,6 +809,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					wptpl_block(
 						'tag-list',
 						array(
+							'rowBreak'  => 3,
 							'items'     => array_map(
 								static function ( $n ) {
 									return array(
@@ -813,7 +824,8 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'secondary',
-				'container-narrow'
+				'container-narrow',
+				'wptpl-overlay-dark'
 			),
 
 			// FAQ.
@@ -843,7 +855,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						)
 					),
 				),
-				'surface',
+				'',
 				// No container: wptpl/faq already renders inside
 				// wptpl-container-narrow.
 				''
@@ -865,7 +877,8 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'secondary',
-				'container-narrow'
+				'container-narrow',
+				'wptpl-section-tight'
 			),
 
 			wptpl_block(
@@ -889,18 +902,9 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					'showCta'        => true,
 					'ctaText'        => 'Primary CTA',
 					'ctaUrl'         => '/contact/',
+					'overlayOpacity' => 0.7,
 					'usePlaceholder' => true,
-				)
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'light',
+					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 		)
