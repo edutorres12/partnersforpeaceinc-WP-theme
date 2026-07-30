@@ -973,7 +973,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						array(
 							'items'     => $related,
 							'className' => 'wptpl-tags-light wptpl-tags-lg',
-						)
+						) + wptpl_margin_top( '2.5rem' )
 					),
 				),
 				'secondary',

@@ -513,11 +513,30 @@ function wptpl_group( array $inner, string $bg = '', string $text = '', string $
 		$css                             .= 'margin-top:' . $margin_top . ';';
 	}
 	if ( '' !== $padding ) {
+		// Accepts CSS shorthand. The block attribute is per-side, so the
+		// shorthand has to be expanded — writing "3.5rem 1.5rem 1.5rem" into
+		// `top` produces `padding-top: 3.5rem 1.5rem 1.5rem`, which is invalid
+		// and drops the whole declaration.
+		$parts = preg_split( '/\s+/', trim( $padding ) );
+		switch ( count( $parts ) ) {
+			case 1:
+				$sides = array( $parts[0], $parts[0], $parts[0], $parts[0] );
+				break;
+			case 2:
+				$sides = array( $parts[0], $parts[1], $parts[0], $parts[1] );
+				break;
+			case 3:
+				$sides = array( $parts[0], $parts[1], $parts[2], $parts[1] );
+				break;
+			default:
+				$sides = array( $parts[0], $parts[1], $parts[2], $parts[3] );
+				break;
+		}
 		$block_style['spacing']['padding'] = array(
-			'top'    => $padding,
-			'right'  => $padding,
-			'bottom' => $padding,
-			'left'   => $padding,
+			'top'    => $sides[0],
+			'right'  => $sides[1],
+			'bottom' => $sides[2],
+			'left'   => $sides[3],
 		);
 		$css                              .= 'padding:' . $padding . ';';
 	}
