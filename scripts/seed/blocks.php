@@ -36,12 +36,27 @@ function wptpl_attrs( array $attrs ): string {
 }
 
 /**
+ * Blocks that are section bands in their own right: they render their own
+ * full-bleed background (a color, a photo or an overlay) and carry the 100px
+ * band rhythm as `py-[6.25rem]`, so they are never meant to sit inside the
+ * content column. Each declares `align: ["wide","full"]` in its block.json;
+ * without `align: full` in the markup WordPress renders them constrained and
+ * the background stops short of the viewport edge.
+ *
+ * @var array<int, string>
+ */
+const WPTPL_FULL_BLEED_BLOCKS = array( 'hero', 'steps', 'cta-banner' );
+
+/**
  * A self-closing dynamic block.
  *
  * @param string               $name  Block name without the namespace, e.g. "hero".
  * @param array<string, mixed> $attrs Block attributes.
  */
 function wptpl_block( string $name, array $attrs = array() ): string {
+	if ( in_array( $name, WPTPL_FULL_BLEED_BLOCKS, true ) && ! isset( $attrs['align'] ) ) {
+		$attrs['align'] = 'full';
+	}
 	return sprintf( '<!-- wp:wptpl/%s%s /-->', $name, wptpl_attrs( $attrs ) );
 }
 
@@ -70,9 +85,20 @@ function wptpl_wrap( string $name, array $attrs, string $open, string $close, ar
  * an `alignfull` group carrying the vertical rhythm class, wrapping a container
  * group that supplies the horizontal inset.
  *
+ * The band declares `layout: constrained`. Without it WordPress renders the
+ * group as `is-layout-flow`, which neither constrains its children to
+ * `settings.layout.contentSize` nor emits `has-global-padding` — so alignfull
+ * children inside the band have nothing to align against and any rule scoped to
+ * `has-global-padding` silently misses.
+ *
+ * Pass `''` for `$container` to skip the inner container group. Use that when
+ * the inner block already supplies its own width tier — `wptpl/faq` renders
+ * with `wptpl-container-narrow` baked in, so wrapping it in a second narrow
+ * container just nests one cap inside an identical one.
+ *
  * @param array<int, string> $inner     Inner block markup.
  * @param string             $bg        Palette slug for the band background, or '' for none.
- * @param string             $container One of container, container-md, container-narrow.
+ * @param string             $container One of container, container-md, container-narrow, or '' for none.
  * @param string             $extra     Extra CSS classes for the band.
  */
 function wptpl_section( array $inner, string $bg = '', string $container = 'container-md', string $extra = '' ): string {
@@ -89,30 +115,63 @@ function wptpl_section( array $inner, string $bg = '', string $container = 'cont
 		$band_html_classes           .= ' has-' . $bg . '-background-color has-background';
 	}
 
-	$container_group = wptpl_wrap(
-		'group',
-		array( 'className' => 'wptpl-' . $container ),
-		sprintf( '<div class="wp-block-group wptpl-%s">', $container ),
-		'</div>',
-		$inner
-	);
+	$band_attrs['layout'] = array( 'type' => 'constrained' );
+
+	if ( '' === $container ) {
+		$band_inner = $inner;
+	} else {
+		$band_inner = array(
+			wptpl_wrap(
+				'group',
+				array( 'className' => 'wptpl-' . $container ),
+				sprintf( '<div class="wp-block-group wptpl-%s">', $container ),
+				'</div>',
+				$inner
+			),
+		);
+	}
 
 	return wptpl_wrap(
 		'group',
 		$band_attrs,
 		sprintf( '<div class="%s">', $band_html_classes ),
 		'</div>',
-		array( $container_group )
+		$band_inner
+	);
+}
+
+/**
+ * The `style` attribute for a top margin, in the shape the block editor saves.
+ *
+ * A section-header's own bottom margin is sized for the paragraph that usually
+ * follows it, not for a grid of cards or a bank of pills, so content placed
+ * under one reads as stuck to it. Spread this into the following block's
+ * attributes to set the gap the design calls for.
+ *
+ * @param string $value Margin value, e.g. "2rem".
+ * @return array<string, mixed>
+ */
+function wptpl_margin_top( string $value ): array {
+	return array(
+		'style' => array( 'spacing' => array( 'margin' => array( 'top' => $value ) ) ),
 	);
 }
 
 /**
  * A columns row. Each entry of `$columns` is a list of inner block markup.
  *
- * @param array<int, array<int, string>> $columns Inner markup per column.
- * @param array<int, string>             $widths  Optional per-column width (e.g. "60%").
+ * `$margin_top` exists because a bare columns row butts straight up against
+ * whatever precedes it — a section-header's own bottom margin is sized for a
+ * paragraph, not for a grid of cards, so a card row placed under one reads as
+ * stuck to it. Pass the gap the design calls for (3rem under a section header,
+ * 1.5rem between two banks of cards in the same row group).
+ *
+ * @param array<int, array<int, string>> $columns    Inner markup per column.
+ * @param array<int, string>             $widths     Optional per-column width (e.g. "60%").
+ * @param string                         $classname  Extra CSS classes for the row.
+ * @param string                         $margin_top Top margin (e.g. "3rem"), or '' for none.
  */
-function wptpl_columns( array $columns, array $widths = array() ): string {
+function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '' ): string {
 	$rendered = array();
 
 	foreach ( $columns as $index => $blocks ) {
@@ -131,10 +190,23 @@ function wptpl_columns( array $columns, array $widths = array() ): string {
 		);
 	}
 
+	$row_attrs   = array();
+	$row_classes = 'wp-block-columns';
+	$row_style   = '';
+
+	if ( '' !== $classname ) {
+		$row_attrs['className'] = $classname;
+		$row_classes           .= ' ' . $classname;
+	}
+	if ( '' !== $margin_top ) {
+		$row_attrs['style'] = array( 'spacing' => array( 'margin' => array( 'top' => $margin_top ) ) );
+		$row_style          = sprintf( ' style="margin-top:%s"', $margin_top );
+	}
+
 	return wptpl_wrap(
 		'columns',
-		array(),
-		'<div class="wp-block-columns">',
+		$row_attrs,
+		sprintf( '<div class="%s"%s>', $row_classes, $row_style ),
 		'</div>',
 		$rendered
 	);

@@ -128,15 +128,22 @@ function wptpl_seed_page_home(): string {
 			)
 		);
 	}
+	// `wptpl-services-carousel` is what the mobile row-gap rule keys off, so the
+	// rows don't sit flush against each other once they stack on a phone. The
+	// first row is set off from the section header; the rows after it are set
+	// off from the row above by the same gap the columns use between cards.
 	$service_rows = array();
-	foreach ( array_chunk( $service_cards, 3 ) as $row ) {
+	foreach ( array_chunk( $service_cards, 3 ) as $index => $row ) {
 		$service_rows[] = wptpl_columns(
 			array_map(
 				static function ( $card ) {
 					return array( $card );
 				},
 				$row
-			)
+			),
+			array(),
+			'wptpl-services-carousel',
+			0 === $index ? '3rem' : '1.5rem'
 		);
 	}
 	$service_grid = implode(
@@ -149,20 +156,20 @@ function wptpl_seed_page_home(): string {
 	return implode(
 		"\n\n",
 		array(
-			// 1. Hero.
+			// 1. Hero. Title, subtitle and one CTA — no eyebrow, no microcopy and
+			// no secondary CTA. The block still supports all three; the home hero
+			// just doesn't use them, so the template ships without placeholder
+			// copy ("Niche + location identifier", a consultation microcopy line)
+			// that a site would have to notice and delete.
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'          => 'Niche + location identifier',
-					'title'            => 'Warm, hopeful headline',
-					'subtitle'         => wptpl_lorem( 'medium' ),
-					'ctaText'          => 'Primary CTA',
-					'ctaUrl'           => '/contact/',
-					'secondaryCtaText' => 'Secondary CTA',
-					'secondaryCtaUrl'  => '/services/',
-					'microcopy'        => 'Free 15-minute consultation · No commitment · Virtual sessions',
-					'layout'           => 'split',
-					'imageUrl'         => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'title'    => 'Warm, hopeful headline',
+					'subtitle' => wptpl_lorem( 'medium' ),
+					'ctaText'  => 'Primary CTA',
+					'ctaUrl'   => '/contact/',
+					'layout'   => 'split',
+					'imageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
 				)
 			),
 
@@ -194,7 +201,6 @@ function wptpl_seed_page_home(): string {
 					wptpl_block(
 						'section-header',
 						array(
-							'eyebrow'  => 'Validating subheading',
 							'headline' => 'Empathetic headline',
 							'intro'    => wptpl_lorem( 'short' ),
 						)
@@ -231,7 +237,10 @@ function wptpl_seed_page_home(): string {
 									)
 								),
 							),
-						)
+						),
+						array(),
+						'',
+						'3rem'
 					),
 				),
 				'surface'
@@ -242,10 +251,7 @@ function wptpl_seed_page_home(): string {
 				array(
 					wptpl_block(
 						'section-header',
-						array(
-							'eyebrow'  => 'Services intro',
-							'headline' => 'Services headline',
-						)
+						array( 'headline' => 'Services headline' )
 					),
 					$service_grid,
 				)
@@ -260,16 +266,19 @@ function wptpl_seed_page_home(): string {
 					),
 					wptpl_block(
 						'tag-list',
-						array(
-							'items' => array_map(
-								static function ( $n ) {
-									return array(
-										'label' => 'Specialty ' . $n,
-										'url'   => '',
-									);
-								},
-								range( 1, 12 )
+						array_merge(
+							array(
+								'items' => array_map(
+									static function ( $n ) {
+										return array(
+											'label' => 'Specialty ' . $n,
+											'url'   => '',
+										);
+									},
+									range( 1, 12 )
+								),
 							),
+							wptpl_margin_top( '2rem' )
 						)
 					),
 				),
@@ -341,30 +350,35 @@ function wptpl_seed_page_home(): string {
 					),
 					wptpl_block(
 						'faq',
-						array(
-							'items' => array(
-								array(
-									'question' => 'Question one?',
-									'answer'   => wptpl_lorem( 'medium' ),
-								),
-								array(
-									'question' => 'Question two?',
-									'answer'   => wptpl_lorem( 'medium' ),
-								),
-								array(
-									'question' => 'Question three?',
-									'answer'   => wptpl_lorem( 'medium' ),
-								),
-								array(
-									'question' => 'Question four?',
-									'answer'   => wptpl_lorem( 'medium' ),
+						array_merge(
+							array(
+								'items' => array(
+									array(
+										'question' => 'Question one?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
+									array(
+										'question' => 'Question two?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
+									array(
+										'question' => 'Question three?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
+									array(
+										'question' => 'Question four?',
+										'answer'   => wptpl_lorem( 'medium' ),
+									),
 								),
 							),
+							wptpl_margin_top( '2rem' )
 						)
 					),
 				),
 				'surface',
-				'container-narrow'
+				// No container: wptpl/faq already renders inside
+				// wptpl-container-narrow.
+				''
 			),
 
 			// 9. Closing CTA.
@@ -800,7 +814,9 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'surface',
-				'container-narrow'
+				// No container: wptpl/faq already renders inside
+				// wptpl-container-narrow.
+				''
 			),
 
 			// Related services.
