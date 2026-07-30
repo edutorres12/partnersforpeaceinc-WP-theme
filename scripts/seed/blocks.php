@@ -166,17 +166,32 @@ function wptpl_margin_top( string $value ): array {
  * stuck to it. Pass the gap the design calls for (3rem under a section header,
  * 1.5rem between two banks of cards in the same row group).
  *
- * @param array<int, array<int, string>> $columns    Inner markup per column.
- * @param array<int, string>             $widths     Optional per-column width (e.g. "60%").
- * @param string                         $classname  Extra CSS classes for the row.
- * @param string                         $margin_top Top margin (e.g. "3rem"), or '' for none.
+ * `$vertical_center` centers the columns against each other rather than
+ * top-aligning them. It is what an image-beside-copy row needs whenever the two
+ * columns are different heights, which is most of them.
+ *
+ * @param array<int, array<int, string>> $columns         Inner markup per column.
+ * @param array<int, string>             $widths          Optional per-column width (e.g. "60%").
+ * @param string                         $classname       Extra CSS classes for the row.
+ * @param string                         $margin_top      Top margin (e.g. "3rem"), or '' for none.
+ * @param bool                           $vertical_center Vertically center the columns.
+ * @param array<int, string>             $col_classes     Optional per-column CSS classes (e.g. wptpl-vrule).
  */
-function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '' ): string {
+function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array() ): string {
 	$rendered = array();
 
 	foreach ( $columns as $index => $blocks ) {
-		$attrs = array();
-		$style = '';
+		$attrs   = array();
+		$style   = '';
+		$classes = 'wp-block-column';
+		if ( $vertical_center ) {
+			$attrs['verticalAlignment'] = 'center';
+			$classes                   .= ' is-vertically-aligned-center';
+		}
+		if ( isset( $col_classes[ $index ] ) && '' !== $col_classes[ $index ] ) {
+			$attrs['className'] = $col_classes[ $index ];
+			$classes           .= ' ' . $col_classes[ $index ];
+		}
 		if ( isset( $widths[ $index ] ) && '' !== $widths[ $index ] ) {
 			$attrs['width'] = $widths[ $index ];
 			$style          = sprintf( ' style="flex-basis:%s"', $widths[ $index ] );
@@ -184,7 +199,7 @@ function wptpl_columns( array $columns, array $widths = array(), string $classna
 		$rendered[] = wptpl_wrap(
 			'column',
 			$attrs,
-			sprintf( '<div class="wp-block-column"%s>', $style ),
+			sprintf( '<div class="%s"%s>', esc_attr( $classes ), $style ),
 			'</div>',
 			$blocks
 		);
@@ -194,6 +209,10 @@ function wptpl_columns( array $columns, array $widths = array(), string $classna
 	$row_classes = 'wp-block-columns';
 	$row_style   = '';
 
+	if ( $vertical_center ) {
+		$row_attrs['verticalAlignment'] = 'center';
+		$row_classes                   .= ' are-vertically-aligned-center';
+	}
 	if ( '' !== $classname ) {
 		$row_attrs['className'] = $classname;
 		$row_classes           .= ' ' . $classname;
@@ -275,10 +294,60 @@ function wptpl_paragraph( string $text, string $classname = '', string $align = 
 /**
  * A core separator using the theme's wide style.
  */
-function wptpl_separator(): string {
-	return "<!-- wp:separator {\"className\":\"is-style-wide\"} -->\n"
-		. '<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>' . "\n"
-		. '<!-- /wp:separator -->';
+function wptpl_separator( string $classname = '' ): string {
+	$classes = trim( 'is-style-wide ' . $classname );
+
+	return sprintf(
+		"<!-- wp:separator%s -->\n<hr class=\"wp-block-separator has-alpha-channel-opacity %s\"/>\n<!-- /wp:separator -->",
+		wptpl_attrs( array( 'className' => $classes ) ),
+		esc_attr( $classes )
+	);
+}
+
+/**
+ * A full-width photo band: a core Cover carrying a placeholder image with a
+ * color wash over it, wrapping its own content.
+ *
+ * Sections that sit on photography are structural, not decorative — the band
+ * exists whether or not the final image has been chosen — so the wireframe
+ * ships them with a placeholder and the overlay already wired. Swapping the
+ * image and the overlay color is then a two-field edit in the editor.
+ *
+ * @param array<int, string> $inner   Inner block markup.
+ * @param string             $file    Placeholder image basename.
+ * @param string             $overlay Palette slug for the wash.
+ * @param int                $dim     Overlay opacity, 0-100.
+ * @param string             $text    Optional palette slug for the text color.
+ */
+function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '' ): string {
+	$url   = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
+	$attrs = array(
+		'url'                 => $url,
+		'dimRatio'            => $dim,
+		'overlayColor'        => $overlay,
+		'isUserOverlayColor'  => true,
+		'minHeight'           => 0,
+		'sizeSlug'            => 'large',
+		'align'               => 'full',
+		'layout'              => array( 'type' => 'constrained' ),
+	);
+	$classes = 'wp-block-cover alignfull';
+	if ( '' !== $text ) {
+		$attrs['textColor'] = $text;
+		$classes           .= ' has-' . $text . '-color has-text-color';
+	}
+
+	$open = sprintf(
+		'<div class="%s"><span aria-hidden="true" class="wp-block-cover__background has-%s-background-color has-background-dim-%d has-background-dim"></span>'
+			. '<img class="wp-block-cover__image-background" alt="" src="%s" data-object-fit="cover"/>'
+			. '<div class="wp-block-cover__inner-container">',
+		esc_attr( $classes ),
+		esc_attr( $overlay ),
+		$dim,
+		esc_url( $url )
+	);
+
+	return wptpl_wrap( 'cover', $attrs, $open, '</div></div>', $inner );
 }
 
 /**
@@ -287,20 +356,148 @@ function wptpl_separator(): string {
  * @param string $file One of hero, portrait, steps-bg, cta-bg, service-card, guide-card.
  * @param string $classname Extra CSS classes.
  */
-function wptpl_image( string $file, string $classname = '' ): string {
+function wptpl_image( string $file, string $classname = '', string $width = '' ): string {
 	$url   = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
-	$attrs = array( 'sizeSlug' => 'large' );
+	$attrs = array();
+	if ( '' !== $width ) {
+		$attrs['width']  = $width;
+		$attrs['height'] = 'auto';
+	}
+	$attrs['sizeSlug'] = 'large';
 	if ( '' !== $classname ) {
 		$attrs['className'] = $classname;
 	}
 	$classes = trim( 'wp-block-image size-large ' . $classname );
+	$style   = ( '' !== $width ) ? sprintf( ' style="width:%s;height:auto"', esc_attr( $width ) ) : '';
 
 	return sprintf(
-		"<!-- wp:image%s -->\n<figure class=\"%s\"><img src=\"%s\" alt=\"\"/></figure>\n<!-- /wp:image -->",
+		"<!-- wp:image%s -->\n<figure class=\"%s\"><img src=\"%s\" alt=\"\"%s/></figure>\n<!-- /wp:image -->",
 		wptpl_attrs( $attrs ),
 		$classes,
-		esc_url( $url )
+		esc_url( $url ),
+		$style
 	);
+}
+
+/**
+ * A core Group wrapping inner blocks, with optional background/text colors.
+ *
+ * `wptpl_section()` builds full-width section BANDS; this is the plain group
+ * used inside them — a tinted card, a column's contents, a constrained run of
+ * copy. It never carries `alignfull` or the section rhythm class.
+ *
+ * @param array<int, string> $inner      Inner block markup.
+ * @param string             $bg         Palette slug for the background, or ''.
+ * @param string             $text       Palette slug for the text color, or ''.
+ * @param string             $classname  Extra CSS classes.
+ * @param string             $margin_top Top margin (e.g. "2.5rem"), or ''.
+ */
+function wptpl_group( array $inner, string $bg = '', string $text = '', string $classname = '', string $margin_top = '' ): string {
+	$attrs   = array();
+	$classes = 'wp-block-group';
+	$style   = '';
+
+	if ( '' !== $classname ) {
+		$attrs['className'] = $classname;
+		$classes           .= ' ' . $classname;
+	}
+	if ( '' !== $bg ) {
+		$attrs['backgroundColor'] = $bg;
+	}
+	if ( '' !== $text ) {
+		$attrs['textColor'] = $text;
+		$classes           .= ' has-' . $text . '-color';
+	}
+	if ( '' !== $bg ) {
+		$classes .= ' has-' . $bg . '-background-color';
+	}
+	if ( '' !== $text || '' !== $bg ) {
+		$classes .= ( '' !== $text ? ' has-text-color' : '' ) . ( '' !== $bg ? ' has-background' : '' );
+	}
+	if ( '' !== $margin_top ) {
+		$attrs['style'] = array( 'spacing' => array( 'margin' => array( 'top' => $margin_top ) ) );
+		$style          = sprintf( ' style="margin-top:%s"', esc_attr( $margin_top ) );
+	}
+
+	$attrs['layout'] = array( 'type' => 'constrained' );
+
+	return wptpl_wrap(
+		'group',
+		$attrs,
+		sprintf( '<div class="%s"%s>', esc_attr( $classes ), $style ),
+		'</div>',
+		$inner
+	);
+}
+
+/**
+ * A raw core/html block.
+ *
+ * Used for the two things the block set has no first-class element for: the
+ * numbered circles on hand-built step rows, and a standalone link styled as a
+ * button outside a CTA block.
+ *
+ * @param string $html Markup to emit verbatim.
+ */
+function wptpl_html( string $html ): string {
+	return "<!-- wp:html -->\n" . $html . "\n<!-- /wp:html -->";
+}
+
+/**
+ * Lorem ipsum sized to an approximate character count.
+ *
+ * The three fixed lengths below are enough when a field just needs *some*
+ * placeholder. They are not enough when the point is for the wireframe to sit
+ * the way the finished page will: a heading that wraps to two lines, a bio
+ * that fills its column, a card whose body is shorter than its neighbour's.
+ * Those depend on how much text is there, so this builds to a target length,
+ * breaking into sentences so a long field does not read as one unbroken run.
+ *
+ * Result lands at or just under `$chars`, always ending in a period.
+ *
+ * @param int $chars Approximate target length.
+ */
+function wptpl_lorem_len( int $chars ): string {
+	static $words = null;
+	if ( null === $words ) {
+		$words = explode(
+			' ',
+			'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et '
+			. 'dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip '
+			. 'ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu '
+			. 'fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt '
+			. 'mollit anim id est laborum curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius '
+			. 'turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim'
+		);
+	}
+
+	$chars  = max( 12, $chars );
+	$total  = count( $words );
+	$budget = $chars - 1; // the closing period takes the last character
+	$out    = '';
+	$len    = 0;
+	$i      = 0;
+
+	while ( $len < $budget ) {
+		$word = $words[ $i % $total ];
+		++$i;
+		$next     = ( '' === $out ) ? ucfirst( $word ) : $out . ' ' . $word;
+		$next_len = strlen( $next );
+		if ( $next_len > $budget ) {
+			break;
+		}
+		$out = $next;
+		$len = $next_len;
+		// Break the run into sentences so a long field does not read as one
+		// unbroken line — matches how real copy sits in these fields.
+		if ( 0 === $i % 14 && $len < $budget - 19 ) {
+			$out .= '. ' . ucfirst( $words[ $i % $total ] );
+			$len  = strlen( $out );
+			++$i;
+		}
+	}
+
+	return $out . '.';
 }
 
 /**

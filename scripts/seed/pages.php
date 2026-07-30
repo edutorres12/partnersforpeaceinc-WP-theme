@@ -78,11 +78,6 @@ function wptpl_seed_retired_slugs(): array {
 		'crisis-resources',
 		'guide-landing',
 		'guide-thank-you',
-		// Compliance pages are held back until the board signs off on their copy
-		// (licensure, HIPAA, Good Faith Estimate, 911/988 disclosures).
-		'privacy',
-		'terms',
-		'accessibility',
 	);
 }
 
@@ -96,10 +91,7 @@ function wptpl_seed_retired_slugs(): array {
  * @return array<int, string>
  */
 function wptpl_seed_retired_menus(): array {
-	return array(
-		// Dropped with the compliance pages it linked to.
-		'Footer Legal',
-	);
+	return array();
 }
 
 // ---------------------------------------------------------------------------
@@ -118,7 +110,6 @@ function wptpl_seed_page_home(): string {
 		$service_cards[] = wptpl_block(
 			'feature-card',
 			array(
-				'eyebrow'  => 'Category tag',
 				'title'    => $service['title'],
 				'text'     => wptpl_lorem( 'short' ),
 				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/service-card.jpg',
@@ -405,113 +396,143 @@ function wptpl_seed_page_home(): string {
  * what sessions look like, who it is for, steps, closing CTA.
  */
 function wptpl_seed_page_about(): string {
+	// Modalities card: four approaches sharing one 500px content column, split
+	// by wptpl-sep-wide dividers so heading, body and rule all line up.
 	$modalities = array();
 	foreach ( range( 1, 4 ) as $n ) {
-		$modalities[] = wptpl_heading( 'Approach ' . $n, 3 );
-		$modalities[] = wptpl_paragraph( wptpl_lorem( 'medium' ) );
+		$modalities[] = wptpl_heading( wptpl_lorem_len( 38 ), 3, '', 'center' );
+		$modalities[] = wptpl_paragraph( wptpl_lorem_len( 115 ) );
 		if ( 4 !== $n ) {
-			$modalities[] = wptpl_separator();
+			$modalities[] = wptpl_separator( 'wptpl-sep-wide' );
 		}
 	}
+
+	// The two icon-beside-copy bands are the same shape, so build them once.
+	// The body column carries wptpl-vrule: a bar between the columns that
+	// overhangs the copy top and bottom, hidden once the columns stack.
+	$rule_band = static function ( string $bg, int $head, array $paragraphs ): string {
+		$body = array();
+		foreach ( $paragraphs as $length ) {
+			$body[] = wptpl_paragraph( wptpl_lorem_len( $length ) );
+		}
+
+		return wptpl_section(
+			array(
+				wptpl_columns(
+					array(
+						array(
+							wptpl_image( 'service-card', '', '96px' ),
+							wptpl_block(
+								'section-header',
+								array(
+									'headline'  => wptpl_lorem_len( $head ),
+									'alignment' => 'left',
+								)
+							),
+						),
+						$body,
+					),
+					array(),
+					'',
+					'',
+					true,
+					array( '', 'wptpl-vrule' )
+				),
+			),
+			$bg
+		);
+	};
 
 	return implode(
 		"\n\n",
 		array(
-			wptpl_block(
-				'hero',
-				array(
-					'eyebrow'   => 'About',
-					'title'     => 'About headline',
-					'subtitle'  => 'Role line, credentials',
-					'layout'    => 'centered',
-					'alignment' => 'center',
-					'ctaText'   => 'Primary CTA',
-					'ctaUrl'    => '/contact/',
-				)
-			),
-
-			// Pull quote.
-			wptpl_section(
-				array(
-					wptpl_paragraph( '<em>' . wptpl_lorem( 'medium' ) . '</em>', '', 'center' ),
-				),
-				'surface',
-				'container-narrow'
-			),
-
-			// Portrait + story.
+			// 1. Masthead: portrait beside the name, role line and opening story.
 			wptpl_section(
 				array(
 					wptpl_columns(
 						array(
-							array( wptpl_image( 'portrait', 'wptpl-portrait-fill' ) ),
 							array(
-								wptpl_heading( 'My story', 2 ),
-								wptpl_paragraph( wptpl_lorem( 'long' ) ),
-								wptpl_paragraph( wptpl_lorem( 'medium' ) ),
+								wptpl_group(
+									array( wptpl_image( 'portrait', 'is-style-rounded-square', '440px' ) ),
+									'white'
+								),
+							),
+							array(
+								wptpl_block(
+									'section-header',
+									array(
+										'headline'     => 'Practitioner name',
+										'alignment'    => 'left',
+										'headingLevel' => 1,
+										'className'    => 'wptpl-hero-header',
+									)
+								),
+								wptpl_heading( 'Role line, credentials', 2 ),
+								wptpl_paragraph( wptpl_lorem_len( 205 ) ),
+								wptpl_paragraph( wptpl_lorem_len( 277 ) ),
+								wptpl_paragraph( wptpl_lorem_len( 78 ) ),
 							),
 						),
-						array( '40%', '60%' )
+						array( '440px', '' ),
+						'',
+						'',
+						true
 					),
-				)
+				),
+				'primary',
+				'container-md',
+				'is-style-overlay-primary'
 			),
 
-			// Approach.
-			wptpl_section(
+			// 2. Long-form story on a photo band, the copy held in a light card.
+			wptpl_cover(
 				array(
 					wptpl_block(
 						'section-header',
+						array( 'headline' => wptpl_lorem_len( 62 ) )
+					),
+					wptpl_group(
 						array(
-							'eyebrow'  => 'Approach',
-							'headline' => 'My approach',
-							'intro'    => wptpl_lorem( 'medium' ),
-						)
+							wptpl_paragraph( wptpl_lorem_len( 460 ) ),
+							wptpl_paragraph( wptpl_lorem_len( 520 ) ),
+							wptpl_paragraph( wptpl_lorem_len( 442 ) ),
+							wptpl_html( '<div style="margin-top:1.5rem"><a class="wptpl-btn-accent" href="/contact/">Primary CTA</a></div>' ),
+						),
+						'on-dark',
+						'',
+						'',
+						'2.5rem'
 					),
 				),
-				'surface',
-				'container-narrow'
+				'cta-bg'
 			),
 
-			// Four modalities.
+			// 3. Approach — icon + title beside the copy, split by a rule.
+			$rule_band( 'muted', 47, array( 283, 194, 161 ) ),
+
+			// 4. Modalities card on a photo band.
+			wptpl_cover(
+				array(
+					wptpl_block(
+						'section-header',
+						array( 'headline' => wptpl_lorem_len( 33 ) )
+					),
+					wptpl_paragraph( wptpl_lorem_len( 134 ), '', 'center' ),
+					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem' ),
+				),
+				'steps-bg'
+			),
+
+			// 5. What working together looks like — same shape as band 3.
+			$rule_band( 'primary', 36, array( 190, 108 ) ),
+
+			// 6. Who this is for: a 2-up card row plus a lone third card, matched
+			// to the pair's rendered width by wptpl-card-solo.
 			wptpl_section(
 				array(
 					wptpl_block(
 						'section-header',
-						array( 'headline' => 'Evidence-based approaches' )
-					),
-					wptpl_wrap(
-						'group',
-						array(),
-						'<div class="wp-block-group">',
-						'</div>',
-						$modalities
-					),
-				),
-				'',
-				'container-narrow'
-			),
-
-			// What sessions look like.
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'headline' => 'What working together looks like',
-							'intro'    => wptpl_lorem( 'medium' ),
-						)
-					),
-				),
-				'surface',
-				'container-narrow'
-			),
-
-			// Who this is for — copy beside an image, three audience cards.
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array( 'headline' => 'Who this practice was built for' )
+						array( 'headline' => wptpl_lorem_len( 32 ) )
 					),
 					wptpl_columns(
 						array(
@@ -519,9 +540,10 @@ function wptpl_seed_page_about(): string {
 								wptpl_block(
 									'feature-card',
 									array(
-										'title'     => 'Audience one',
-										'text'      => wptpl_lorem( 'short' ),
+										'title'     => wptpl_lorem_len( 73 ),
+										'text'      => wptpl_lorem_len( 323 ),
 										'centered'  => true,
+										'bordered'  => false,
 										'className' => 'wptpl-title-sm',
 									)
 								),
@@ -530,58 +552,65 @@ function wptpl_seed_page_about(): string {
 								wptpl_block(
 									'feature-card',
 									array(
-										'title'     => 'Audience two',
-										'text'      => wptpl_lorem( 'short' ),
+										'title'     => wptpl_lorem_len( 38 ),
+										'text'      => wptpl_lorem_len( 251 ),
 										'centered'  => true,
+										'bordered'  => false,
 										'className' => 'wptpl-title-sm',
 									)
 								),
 							),
-						)
+						),
+						array(),
+						'',
+						'2.5rem'
 					),
 					wptpl_block(
 						'feature-card',
-						array(
-							'title'             => 'Audience three',
-							'text'              => wptpl_lorem( 'short' ),
-							'centered'          => true,
-							'halfWidthCentered' => true,
-							'className'         => 'wptpl-title-sm',
+						array_merge(
+							array(
+								'title'     => wptpl_lorem_len( 47 ),
+								'text'      => wptpl_lorem_len( 178 ),
+								'centered'  => true,
+								'bordered'  => false,
+								'className' => 'wptpl-title-sm wptpl-card-solo',
+							),
+							wptpl_margin_top( '1.5rem' )
 						)
 					),
 				)
 			),
 
-			// Steps.
+			// 7. How to get started.
 			wptpl_block(
 				'steps',
 				array(
-					'heading' => 'How to get started',
-					'items'   => array(
+					'heading'        => 'How to get started',
+					'items'          => array(
 						array(
-							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 26 ),
+							'text'  => wptpl_lorem_len( 59 ),
 						),
 						array(
-							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 14 ),
+							'text'  => wptpl_lorem_len( 49 ),
 						),
 						array(
-							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 28 ),
+							'text'  => wptpl_lorem_len( 73 ),
 						),
 					),
-					'showCta' => true,
-					'ctaText' => 'Primary CTA',
-					'ctaUrl'  => '/contact/',
+					'showCta'        => true,
+					'ctaText'        => 'Primary CTA',
+					'ctaUrl'         => '/contact/',
+					'usePlaceholder' => true,
 				)
 			),
 
 			wptpl_block(
 				'cta-banner',
 				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
+					'headline' => wptpl_lorem_len( 61 ),
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
@@ -599,63 +628,64 @@ function wptpl_seed_page_about(): string {
  * Services: hero over a photo, a six-card grid, one wide bilingual card, CTA.
  */
 function wptpl_seed_page_services(): string {
+	// Two per row, not three. These cards carry a title, a paragraph and an
+	// arrow link with no image, so at three-up the text column gets narrow
+	// enough that every title wraps. Each is an H2 held at the H3 visual size:
+	// they are the page's real section headings, so the level has to be right
+	// even though the design does not want them at H2 scale.
 	$cards = array();
 	foreach ( wptpl_seed_services() as $service ) {
 		$cards[] = wptpl_block(
 			'feature-card',
 			array(
-				'title'    => $service['title'],
-				'text'     => wptpl_lorem( 'short' ),
-				'ctaText'  => 'Learn more',
-				'ctaUrl'   => '/services/' . $service['slug'] . '/',
-				'ctaStyle' => 'arrow',
+				'title'        => $service['title'],
+				'text'         => wptpl_lorem_len( 170 ),
+				'headingLevel' => 2,
+				'showImage'    => false,
+				'ctaText'      => 'Learn more',
+				'ctaUrl'       => '/services/' . $service['slug'] . '/',
+				'ctaStyle'     => 'arrow',
+				'className'    => 'wptpl-h2-as-h3',
 			)
 		);
 	}
 
-	// Rows of three, however many services there are.
 	$rows = array();
-	foreach ( array_chunk( $cards, 3 ) as $row ) {
+	foreach ( array_chunk( $cards, 2 ) as $index => $row ) {
 		$rows[] = wptpl_columns(
 			array_map(
 				static function ( $card ) {
 					return array( $card );
 				},
 				$row
-			)
+			),
+			array(),
+			'',
+			0 === $index ? '' : '1.5rem'
 		);
 	}
 
 	return implode(
-		'
-
-',
+		"\n\n",
 		array(
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'            => 'Services',
 					'title'              => 'Services headline',
-					'subtitle'           => wptpl_lorem( 'medium' ),
-					'layout'             => 'centered',
+					'subtitle'           => wptpl_lorem_len( 73 ),
 					'alignment'          => 'center',
 					'ctaText'            => 'Primary CTA',
 					'ctaUrl'             => '/contact/',
 					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'overlayOpacity'     => 0.6,
 					'className'          => 'wptpl-hero-dark',
 				)
 			),
-			wptpl_section( $rows ),
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'dark',
-				)
-			),
+
+			// One band holds the whole list. No closing CTA banner: every card
+			// already links onward, and a banner under them competes with all of
+			// them at once.
+			wptpl_section( $rows, '', 'container-md', 'is-style-overlay-primary' ),
 		)
 	);
 }
@@ -683,7 +713,6 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'            => 'Service',
 					'title'              => $service['title'],
 					'subtitle'           => wptpl_lorem( 'medium' ),
 					'layout'             => 'centered',
@@ -705,6 +734,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Symptom' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -714,6 +744,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Symptom' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -722,15 +753,20 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						),
 						array( '24%', '38%', '38%' )
 					),
-				)
+				),
+				'primary'
 			),
 
+			// Long-form explainer on a tinted band. Wider than container-narrow
+			// so the paragraph does not run as a thin ribbon down the middle of
+			// the page, and long enough to sit like the copy it stands in for.
 			wptpl_section(
 				array(
-					wptpl_paragraph( wptpl_lorem( 'long' ) ),
+					wptpl_paragraph( wptpl_lorem_len( 389 ) ),
 				),
-				'surface',
-				'container-narrow'
+				'muted',
+				'container-md',
+				'wptpl-overlay-dark'
 			),
 
 			// This is for you if.
@@ -743,6 +779,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Reason' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -752,6 +789,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								wptpl_block(
 									'checklist',
 									array(
+										'iconStyle' => 'plus',
 										'items'     => $checklist( 'Reason' ),
 										'className' => 'wptpl-checklist-tight',
 									)
@@ -769,6 +807,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					wptpl_block(
 						'tag-list',
 						array(
+							'rowBreak'  => 3,
 							'items'     => array_map(
 								static function ( $n ) {
 									return array(
@@ -783,7 +822,8 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'secondary',
-				'container-narrow'
+				'container-narrow',
+				'wptpl-overlay-dark'
 			),
 
 			// FAQ.
@@ -813,7 +853,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						)
 					),
 				),
-				'surface',
+				'',
 				// No container: wptpl/faq already renders inside
 				// wptpl-container-narrow.
 				''
@@ -835,7 +875,8 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'secondary',
-				'container-narrow'
+				'container-narrow',
+				'wptpl-section-tight'
 			),
 
 			wptpl_block(
@@ -859,18 +900,9 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					'showCta'        => true,
 					'ctaText'        => 'Primary CTA',
 					'ctaUrl'         => '/contact/',
+					'overlayOpacity' => 0.7,
 					'usePlaceholder' => true,
-				)
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'light',
+					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 		)
@@ -889,80 +921,98 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
  * is right and swapping in the real shortcode is a one-line edit.
  */
 function wptpl_seed_page_contact(): string {
+	// Practice-info rows: a bold label beside its value, as a 40/60 split so
+	// every value starts on the same vertical line however long its label is.
+	$info_row = static function ( string $label, int $value ): string {
+		return wptpl_columns(
+			array(
+				array( wptpl_paragraph( '<strong>' . $label . '</strong>' ) ),
+				array( wptpl_paragraph( wptpl_lorem_len( $value ), 'has-small-font-size' ) ),
+			),
+			array( '40%', '60%' )
+		);
+	};
+
 	return implode(
 		"\n\n",
 		array(
-			wptpl_block(
-				'hero',
+			// 1. Masthead over a photo — a section-header carrying the H1, not a
+			// hero block. Contact opens on the page title and goes straight to the
+			// form; a hero's CTA would only point back at the page you are on.
+			wptpl_cover(
 				array(
-					'eyebrow'   => 'Contact',
-					'title'     => 'Contact headline',
-					'subtitle'  => wptpl_lorem( 'medium' ),
-					'layout'    => 'centered',
-					'alignment' => 'center',
-					'ctaText'   => '',
-					'ctaUrl'    => '',
-				)
+					wptpl_block(
+						'section-header',
+						array(
+							'headline'     => wptpl_lorem_len( 66 ),
+							'intro'        => 'Intro line',
+							'headingLevel' => 1,
+						)
+					),
+				),
+				'hero'
 			),
 
+			// 2. Form beside the practice-info card.
 			wptpl_section(
 				array(
 					wptpl_columns(
 						array(
 							array(
-								wptpl_wrap(
-									'group',
-									array( 'className' => 'wptpl-form' ),
-									'<div class="wp-block-group wptpl-form">',
-									'</div>',
+								wptpl_group(
 									array(
-										wptpl_heading( 'Send a message', 2 ),
 										wptpl_paragraph( 'Replace this block with the form plugin shortcode. The theme styles any form inside a <code>wptpl-form</code> wrapper.' ),
-										wptpl_paragraph( 'Fields to reproduce: name, email, phone (optional), preferred language, preferred session type, and an open message field.' ),
-									)
+									),
+									'',
+									'',
+									'wptpl-form'
 								),
+								wptpl_paragraph( wptpl_lorem_len( 87 ), '', '' ),
 							),
 							array(
-								wptpl_heading( 'Practice info', 2 ),
-								wptpl_paragraph( '<strong>Location</strong><br>' . wptpl_lorem( 'short' ) ),
-								wptpl_paragraph( '<strong>Hours</strong><br>Monday – Friday' ),
-								wptpl_paragraph( '<strong>Response time</strong><br>' . wptpl_lorem( 'short' ) ),
+								wptpl_group(
+									array(
+										wptpl_heading( 'Practice info', 2, 'wptpl-h2-as-h3' ),
+										$info_row( 'Hours', 32 ),
+										$info_row( 'Location', 54 ),
+									),
+									'secondary',
+									'on-dark'
+								),
 							),
 						),
 						array( '62%', '38%' )
 					),
-				)
+				),
+				'surface',
+				'container-md',
+				'is-style-overlay-base'
 			),
 
+			// 3. What happens next — the steps band closes the page. No CTA banner
+			// after it: the form above is the call to action.
 			wptpl_block(
 				'steps',
 				array(
-					'heading' => 'What happens next',
-					'items'   => array(
+					'heading'        => 'What happens next',
+					'items'          => array(
 						array(
-							'title' => 'Step one',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 24 ),
+							'text'  => wptpl_lorem_len( 100 ),
 						),
 						array(
-							'title' => 'Step two',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 20 ),
+							'text'  => wptpl_lorem_len( 100 ),
 						),
 						array(
-							'title' => 'Step three',
-							'text'  => wptpl_lorem( 'short' ),
+							'title' => wptpl_lorem_len( 26 ),
+							'text'  => wptpl_lorem_len( 100 ),
 						),
 					),
-				)
-			),
-
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem( 'short' ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '#book',
-					'theme'    => 'dark',
+					'overlayOpacity' => 0.7,
+					'overlayColor'   => 'primary',
+					'usePlaceholder' => true,
+					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 		)
@@ -1004,7 +1054,6 @@ function wptpl_seed_page_blog(): string {
 					wptpl_block(
 						'section-header',
 						array(
-							'eyebrow'      => 'Blog',
 							'headline'     => 'Blog headline',
 							'intro'        => wptpl_lorem( 'medium' ),
 							'headingLevel' => 1,
@@ -1078,7 +1127,6 @@ function wptpl_seed_page_therapists(): string {
 		return wptpl_block(
 			'feature-card',
 			array(
-				'eyebrow'  => 'Credentials',
 				'title'    => 'Therapist ' . $n,
 				'text'     => wptpl_lorem( 'short' ),
 				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
@@ -1093,7 +1141,6 @@ function wptpl_seed_page_therapists(): string {
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'   => 'Our team',
 					'title'     => 'Meet our therapists',
 					'subtitle'  => wptpl_lorem( 'medium' ),
 					'layout'    => 'centered',
@@ -1104,19 +1151,27 @@ function wptpl_seed_page_therapists(): string {
 			),
 			wptpl_section(
 				array(
+					// Two banks of cards in one band, same shape as the home service
+					// grid — so the same class, which is what the mobile row-gap
+					// rule keys off, and the same gap between the banks.
 					wptpl_columns(
 						array(
 							array( $card( 1 ) ),
 							array( $card( 2 ) ),
 							array( $card( 3 ) ),
-						)
+						),
+						array(),
+						'wptpl-services-carousel'
 					),
 					wptpl_columns(
 						array(
 							array( $card( 4 ) ),
 							array( $card( 5 ) ),
 							array( $card( 6 ) ),
-						)
+						),
+						array(),
+						'wptpl-services-carousel',
+						'1.5rem'
 					),
 				)
 			),
@@ -1155,13 +1210,12 @@ function wptpl_seed_page_therapists(): string {
  * A conversion page: hero, body section, three supporting cards, steps, CTA.
  * Payment, Donate and Church Partnerships share this shape.
  *
- * @param string $eyebrow   Section eyebrow.
  * @param string $title     Page title.
  * @param string $body_head Heading for the body section.
  * @param string $card_noun Noun used for the three supporting cards.
  * @param string $cta       Label for the calls to action.
  */
-function wptpl_seed_page_conversion( string $eyebrow, string $title, string $body_head, string $card_noun, string $cta ): string {
+function wptpl_seed_page_conversion( string $title, string $body_head, string $card_noun, string $cta ): string {
 	$card = static function ( int $n ) use ( $card_noun ) {
 		return wptpl_block(
 			'feature-card',
@@ -1179,7 +1233,6 @@ function wptpl_seed_page_conversion( string $eyebrow, string $title, string $bod
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'   => $eyebrow,
 					'title'     => $title,
 					'subtitle'  => wptpl_lorem( 'medium' ),
 					'layout'    => 'centered',
@@ -1204,12 +1257,17 @@ function wptpl_seed_page_conversion( string $eyebrow, string $title, string $bod
 			),
 			wptpl_section(
 				array(
+					// Carries the services-carousel class so the cards get a
+					// row-gap once they stack on a phone; without it they sit
+					// flush against each other.
 					wptpl_columns(
 						array(
 							array( $card( 1 ) ),
 							array( $card( 2 ) ),
 							array( $card( 3 ) ),
-						)
+						),
+						array(),
+						'wptpl-services-carousel'
 					),
 				),
 				'surface'
@@ -1413,7 +1471,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'church-partnerships',
 			'title'   => 'Church Partnerships',
-			'content' => wptpl_seed_page_conversion( 'For churches', 'Church partnerships', 'Partnering with your congregation', 'Partnership', 'Start a conversation' ),
+			'content' => wptpl_seed_page_conversion( 'Church partnerships', 'Partnering with your congregation', 'Partnership', 'Start a conversation' ),
 			'order'   => 6,
 		)
 	);
@@ -1421,7 +1479,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'payment',
 			'title'   => 'Payment &amp; Insurance',
-			'content' => wptpl_seed_page_conversion( 'Payment', 'Payment &amp; insurance', 'What sessions cost', 'Option', 'Ask about fees' ),
+			'content' => wptpl_seed_page_conversion( 'Payment &amp; insurance', 'What sessions cost', 'Option', 'Ask about fees' ),
 			'order'   => 7,
 		)
 	);
@@ -1429,7 +1487,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'donate',
 			'title'   => 'Donate',
-			'content' => wptpl_seed_page_conversion( 'Support the ministry', 'Donate', 'Where your gift goes', 'Fund', 'Give today' ),
+			'content' => wptpl_seed_page_conversion( 'Donate', 'Where your gift goes', 'Fund', 'Give today' ),
 			'order'   => 8,
 		)
 	);
