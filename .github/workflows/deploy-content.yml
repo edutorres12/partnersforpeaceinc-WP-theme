@@ -1,9 +1,12 @@
 # Deploys the theme to the WordPress host over SSH and runs the seeder.
 #
-# On a push to main it only ever DRY-RUNS the seeder: the theme is updated and
-# the plan is printed to the job summary, but nothing is written to the database.
-# Writing requires a manual run from the Actions tab, so a merge can never
-# rewrite site content on its own.
+# On a push to main it updates the theme and runs the seeder in `apply` mode:
+# whatever the seeder is missing gets created, and pages that already exist are
+# left alone (seed-wp.php:20). The database is backed up first, every time.
+#
+# The destructive modes stay manual: `apply-force` replaces the content of every
+# seeded page — discarding copy written in the WordPress editor — and `prune`
+# trashes retired pages. Neither can be reached by a merge.
 #
 # Setup (once) — Settings → Secrets and variables → Actions:
 #
@@ -38,10 +41,10 @@ on:
       mode:
         description: What to run on the server
         type: choice
-        default: dry-run
+        default: apply
         options:
-          - dry-run
           - apply
+          - dry-run
           - apply-force
       confirm:
         description: Type FORCE to allow apply-force. Ignored for the other modes.
@@ -107,11 +110,14 @@ jobs:
           CONFIRM: ${{ inputs.confirm }}
         run: |
           set -euo pipefail
-          # A push to main never writes. Only a manual dispatch can.
+          # A push to main applies. `apply` only ever creates what is missing —
+          # existing pages are left alone — so a merge publishes new content
+          # without overwriting copy edited on the site. apply-force and prune
+          # are destructive and stay reachable only by manual dispatch.
           if [ "$EVENT" != "workflow_dispatch" ]; then
-            MODE="dry-run"
+            MODE="apply"
           else
-            MODE="${INPUT_MODE:-dry-run}"
+            MODE="${INPUT_MODE:-apply}"
           fi
 
           if [ "$MODE" = "apply-force" ] && [ "$CONFIRM" != "FORCE" ]; then

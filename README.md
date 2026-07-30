@@ -386,14 +386,22 @@ thing; the runner is where the machine proves nothing is broken.
 
 `.github/workflows/deploy-content.yml` updates the theme on the WordPress host
 over SSH and runs the seeder there, so a content change is: edit
-`scripts/seed/pages.php` → PR → merge → run the workflow.
+`scripts/seed/pages.php` → PR → merge. The merge ships it.
 
-**A merge can never rewrite site content.** A push to `main` updates the theme and
-runs the seeder in **dry-run** only; the plan lands in the job summary and
-nothing touches the database. Writing requires opening the Actions tab and
-running the workflow manually with `mode: apply`. `apply-force` — which replaces
-the content of every seeded page and discards edits made in the WordPress editor
-— additionally requires typing `FORCE` into the confirm field.
+**A push to `main` applies.** The theme is updated and the seeder runs in
+`apply` mode: pages it is missing get created, pages that already exist are
+left alone. New content in `pages.php` reaches the site on merge; copy someone
+wrote in the WordPress editor is not touched. The database is backed up first,
+every time.
+
+**A merge still cannot rewrite existing content.** The two destructive modes are
+manual-dispatch only. `apply-force` replaces the content of every seeded page
+and discards editor edits — it additionally requires typing `FORCE` into the
+confirm field. `prune` trashes pages the template no longer owns. Neither is
+reachable from a push.
+
+`mode: dry-run` is still selectable from the Actions tab when you want to read a
+plan against production before shipping it, but nothing runs it automatically.
 
 Before any write the workflow exports the database to `~/wptpl-backups/` on the
 server (gzipped, ten most recent kept). Backups live in the home directory, not
