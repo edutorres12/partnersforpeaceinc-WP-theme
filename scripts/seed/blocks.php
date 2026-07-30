@@ -399,6 +399,19 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 		'align'               => 'full',
 		'layout'              => array( 'type' => 'constrained' ),
 	);
+	// A Cover sizes itself to its content, so without this the band hugs whatever
+	// is inside it and reads as a strip rather than as a section. Every other
+	// band gets its rhythm from `.wptpl-section`; this one has to state it,
+	// because the class would fight the Cover's own layout.
+	$attrs['style'] = array(
+		'spacing' => array(
+			'padding' => array(
+				'top'    => 'var(--wp--preset--spacing--50)',
+				'bottom' => 'var(--wp--preset--spacing--50)',
+			),
+		),
+	);
+
 	$classes = 'wp-block-cover alignfull';
 	if ( '' !== $text ) {
 		$attrs['textColor'] = $text;
@@ -413,6 +426,11 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 		esc_attr( $overlay ),
 		$dim,
 		esc_url( $url )
+	);
+	$open = str_replace(
+		'class="' . esc_attr( $classes ) . '"',
+		'class="' . esc_attr( $classes ) . '" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50)"',
+		$open
 	);
 
 	return wptpl_wrap( 'cover', $attrs, $open, '</div></div>', $inner );
@@ -541,17 +559,31 @@ function wptpl_group( array $inner, string $bg = '', string $text = '', string $
  */
 function wptpl_step_column( int $number, int $title, int $text ): array {
 	return array(
+		// The circle sits above the card and half outside it, so it is emitted
+		// as a sibling with a negative bottom margin rather than as the card's
+		// first child — inside the card its own top padding would push it back
+		// in, and the card's rounding would clip the half meant to escape.
 		wptpl_html(
 			sprintf(
-				'<div style="margin:-5rem auto 1.5rem;width:5rem;height:5rem;border-radius:50%%;'
-					. 'display:flex;align-items:center;justify-content:center;'
+				'<div style="position:relative;z-index:1;margin:0 auto -2.5rem;width:5rem;height:5rem;'
+					. 'border-radius:50%%;display:flex;align-items:center;justify-content:center;'
 					. 'font-size:2rem;font-weight:700;background:var(--wp--preset--color--accent);'
 					. 'color:var(--wp--preset--color--on-dark)">%d</div>',
 				$number
 			)
 		),
-		wptpl_heading( wptpl_lorem_len( $title ), 2, '', 'center' ),
-		wptpl_paragraph( wptpl_lorem_len( $text ), '', 'center' ),
+		wptpl_group(
+			array(
+				wptpl_heading( wptpl_lorem_len( $title ), 2, '', 'center' ),
+				wptpl_paragraph( wptpl_lorem_len( $text ), '', 'center' ),
+			),
+			'',
+			'',
+			'wptpl-step-card',
+			'',
+			'3.5rem 1.5rem 1.5rem',
+			'12px'
+		),
 	);
 }
 
