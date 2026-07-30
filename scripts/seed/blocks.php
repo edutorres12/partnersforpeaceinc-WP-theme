@@ -499,6 +499,38 @@ function wptpl_group( array $inner, string $bg = '', string $text = '', string $
 }
 
 /**
+ * One column of a hand-built steps row: a numbered circle, a title and a body.
+ *
+ * The `wptpl/steps` block owns its whole band — heading, intro, background and
+ * CTA. Some sections want only the three numbered columns inside a band they
+ * already control, and that is what the reference builds here out of core
+ * blocks. The circle is raw HTML because no block renders one, and it is pulled
+ * up so it overhangs the column's top edge; the
+ * `.wptpl-steps.has-global-padding` rule in tailwind.css adds the top padding
+ * that keeps it from colliding with whatever sits above.
+ *
+ * @param int $number Step number.
+ * @param int $title  Approximate title length.
+ * @param int $text   Approximate body length.
+ * @return array<int, string>
+ */
+function wptpl_step_column( int $number, int $title, int $text ): array {
+	return array(
+		wptpl_html(
+			sprintf(
+				'<div style="margin:-5rem auto 1.5rem;width:5rem;height:5rem;border-radius:50%%;'
+					. 'display:flex;align-items:center;justify-content:center;'
+					. 'font-size:2rem;font-weight:700;background:var(--wp--preset--color--accent);'
+					. 'color:var(--wp--preset--color--on-dark)">%d</div>',
+				$number
+			)
+		),
+		wptpl_heading( wptpl_lorem_len( $title ), 2, '', 'center' ),
+		wptpl_paragraph( wptpl_lorem_len( $text ), '', 'center' ),
+	);
+}
+
+/**
  * A raw core/html block.
  *
  * Used for the two things the block set has no first-class element for: the
@@ -531,11 +563,16 @@ function wptpl_card_icon( int $title, int $text ): string {
 	return wptpl_block(
 		'feature-card',
 		array(
-			'title'        => wptpl_lorem_len( $title ),
-			'text'         => wptpl_lorem_len( $text ),
-			'layout'       => 'horizontal-header',
-			'bordered'     => false,
-			'iconImageUrl' => get_template_directory_uri() . '/assets/placeholders/icon.jpg',
+			'title'           => wptpl_lorem_len( $title ),
+			'text'            => wptpl_lorem_len( $text ),
+			'layout'          => 'horizontal-header',
+			'bordered'        => false,
+			'iconImageUrl'    => get_template_directory_uri() . '/assets/placeholders/icon.jpg',
+			// The card is light and sits on a dark band. Without its own colors it
+			// inherits the band's light text, and the title disappears into the
+			// card. Both have to be set on the card, not on the band.
+			'backgroundColor' => 'base',
+			'textColor'       => 'muted',
 		)
 	);
 }
