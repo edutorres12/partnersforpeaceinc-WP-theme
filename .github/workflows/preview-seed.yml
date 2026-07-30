@@ -175,8 +175,21 @@ jobs:
 
           FAIL=0
           : > "$GITHUB_WORKSPACE/render.txt"
+
+          # The service paths come from the seeder, for the same reason the
+          # nested-count check does: this list used to name `service-one` and
+          # `service-two` from the placeholder sitemap, and 33c9abc renamed them
+          # without touching the workflow — so the step 404'd on two pages that
+          # no longer exist and reported it as a render failure. Deriving them
+          # also means every service page gets rendered, not an arbitrary two.
+          SERVICE_PATHS="$(wp eval 'require_once ABSPATH . "wp-content/themes/wptpl-theme/scripts/seed/pages.php"; foreach ( wptpl_seed_services() as $s ) { echo "/services/", $s["slug"], "/\n"; }' | tr -d '\r' | tr '\n' ' ')"
+          if [ -z "$SERVICE_PATHS" ]; then
+            echo "::error::could not read the service list from wptpl_seed_services()"
+            exit 1
+          fi
+
           PATHS="/ /about-us/ /meet-our-therapists/ /services/
-                 /services/service-one/ /services/service-two/
+                 $SERVICE_PATHS
                  /blog/ /contact/ /church-partnerships/ /payment/ /donate/
                  /ai-information/ /featured-post/ /sample-post-one/"
           for P in $PATHS; do
