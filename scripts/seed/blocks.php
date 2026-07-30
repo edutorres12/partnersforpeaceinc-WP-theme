@@ -444,6 +444,32 @@ function wptpl_html( string $html ): string {
 }
 
 /**
+ * A feature-card with an icon beside its title.
+ *
+ * `horizontal-header` is what puts the icon and the title on one line with the
+ * body beneath them. Without it the icon stacks above the title and the card
+ * grows about a third taller, which breaks the row when its neighbours are
+ * shorter. The icon and background slots ship with placeholders so both are
+ * visible in the editor and swapping them is a field edit.
+ *
+ * @param int $title Approximate title length.
+ * @param int $text  Approximate body length.
+ */
+function wptpl_card_icon( int $title, int $text ): string {
+	return wptpl_block(
+		'feature-card',
+		array(
+			'title'              => wptpl_lorem_len( $title ),
+			'text'               => wptpl_lorem_len( $text ),
+			'layout'             => 'horizontal-header',
+			'bordered'           => false,
+			'iconImageUrl'       => get_template_directory_uri() . '/assets/placeholders/guide-card.jpg',
+			'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/service-card.jpg',
+		)
+	);
+}
+
+/**
  * Lorem ipsum sized to an approximate character count.
  *
  * The three fixed lengths below are enough when a field just needs *some*
@@ -471,12 +497,20 @@ function wptpl_lorem_len( int $chars ): string {
 		);
 	}
 
+	// Every call starts further into the word list than the last. Without this
+	// each short field got the same opening words, so a row of three cards read
+	// as the same sentence three times — which looks like a bug in the layout
+	// rather than like placeholder copy. The counter is per-process and the
+	// call order is fixed, so a re-run still produces identical markup.
+	static $cursor = 0;
+
 	$chars  = max( 12, $chars );
 	$total  = count( $words );
 	$budget = $chars - 1; // the closing period takes the last character
 	$out    = '';
 	$len    = 0;
-	$i      = 0;
+	$i      = $cursor;
+	$cursor = ( $cursor + 5 ) % $total;
 
 	while ( $len < $budget ) {
 		$word = $words[ $i % $total ];
@@ -484,7 +518,25 @@ function wptpl_lorem_len( int $chars ): string {
 		$next     = ( '' === $out ) ? ucfirst( $word ) : $out . ' ' . $word;
 		$next_len = strlen( $next );
 		if ( $next_len > $budget ) {
-			break;
+			// Too long only because of THIS word. A shorter one further along
+			// may still fit, and on a short target that is the difference
+			// between hitting the length and falling a third short of it.
+			$fitted = false;
+			for ( $skip = 1; $skip <= 6; $skip++ ) {
+				$candidate = $words[ ( $i + $skip ) % $total ];
+				$try       = ( '' === $out ) ? ucfirst( $candidate ) : $out . ' ' . $candidate;
+				if ( strlen( $try ) <= $budget ) {
+					$out    = $try;
+					$len    = strlen( $try );
+					$i     += $skip + 1;
+					$fitted = true;
+					break;
+				}
+			}
+			if ( ! $fitted ) {
+				break;
+			}
+			continue;
 		}
 		$out = $next;
 		$len = $next_len;
@@ -498,25 +550,4 @@ function wptpl_lorem_len( int $chars ): string {
 	}
 
 	return $out . '.';
-}
-
-/**
- * Lorem ipsum of a requested length, so the seeded pages read like the
- * wireframes rather than like real copy.
- *
- * @param string $length One of short, medium, long.
- */
-function wptpl_lorem( string $length = 'medium' ): string {
-	$short  = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-	$medium = $short . ' Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
-	$long   = $medium . ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
-
-	switch ( $length ) {
-		case 'short':
-			return $short;
-		case 'long':
-			return $long;
-		default:
-			return $medium;
-	}
 }
