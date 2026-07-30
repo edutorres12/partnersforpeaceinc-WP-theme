@@ -110,7 +110,6 @@ function wptpl_seed_page_home(): string {
 		$service_cards[] = wptpl_block(
 			'feature-card',
 			array(
-				'eyebrow'  => 'Category tag',
 				'title'    => $service['title'],
 				'text'     => wptpl_lorem( 'short' ),
 				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/service-card.jpg',
@@ -714,7 +713,6 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'            => 'Service',
 					'title'              => $service['title'],
 					'subtitle'           => wptpl_lorem( 'medium' ),
 					'layout'             => 'centered',
@@ -1056,7 +1054,6 @@ function wptpl_seed_page_blog(): string {
 					wptpl_block(
 						'section-header',
 						array(
-							'eyebrow'      => 'Blog',
 							'headline'     => 'Blog headline',
 							'intro'        => wptpl_lorem( 'medium' ),
 							'headingLevel' => 1,
@@ -1130,7 +1127,6 @@ function wptpl_seed_page_therapists(): string {
 		return wptpl_block(
 			'feature-card',
 			array(
-				'eyebrow'  => 'Credentials',
 				'title'    => 'Therapist ' . $n,
 				'text'     => wptpl_lorem( 'short' ),
 				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
@@ -1145,7 +1141,6 @@ function wptpl_seed_page_therapists(): string {
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'   => 'Our team',
 					'title'     => 'Meet our therapists',
 					'subtitle'  => wptpl_lorem( 'medium' ),
 					'layout'    => 'centered',
@@ -1207,13 +1202,12 @@ function wptpl_seed_page_therapists(): string {
  * A conversion page: hero, body section, three supporting cards, steps, CTA.
  * Payment, Donate and Church Partnerships share this shape.
  *
- * @param string $eyebrow   Section eyebrow.
  * @param string $title     Page title.
  * @param string $body_head Heading for the body section.
  * @param string $card_noun Noun used for the three supporting cards.
  * @param string $cta       Label for the calls to action.
  */
-function wptpl_seed_page_conversion( string $eyebrow, string $title, string $body_head, string $card_noun, string $cta ): string {
+function wptpl_seed_page_conversion( string $title, string $body_head, string $card_noun, string $cta ): string {
 	$card = static function ( int $n ) use ( $card_noun ) {
 		return wptpl_block(
 			'feature-card',
@@ -1231,7 +1225,6 @@ function wptpl_seed_page_conversion( string $eyebrow, string $title, string $bod
 			wptpl_block(
 				'hero',
 				array(
-					'eyebrow'   => $eyebrow,
 					'title'     => $title,
 					'subtitle'  => wptpl_lorem( 'medium' ),
 					'layout'    => 'centered',
@@ -1465,7 +1458,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'church-partnerships',
 			'title'   => 'Church Partnerships',
-			'content' => wptpl_seed_page_conversion( 'For churches', 'Church partnerships', 'Partnering with your congregation', 'Partnership', 'Start a conversation' ),
+			'content' => wptpl_seed_page_conversion( 'Church partnerships', 'Partnering with your congregation', 'Partnership', 'Start a conversation' ),
 			'order'   => 6,
 		)
 	);
@@ -1473,7 +1466,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'payment',
 			'title'   => 'Payment &amp; Insurance',
-			'content' => wptpl_seed_page_conversion( 'Payment', 'Payment &amp; insurance', 'What sessions cost', 'Option', 'Ask about fees' ),
+			'content' => wptpl_seed_page_conversion( 'Payment &amp; insurance', 'What sessions cost', 'Option', 'Ask about fees' ),
 			'order'   => 7,
 		)
 	);
@@ -1481,7 +1474,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'donate',
 			'title'   => 'Donate',
-			'content' => wptpl_seed_page_conversion( 'Support the ministry', 'Donate', 'Where your gift goes', 'Fund', 'Give today' ),
+			'content' => wptpl_seed_page_conversion( 'Donate', 'Where your gift goes', 'Fund', 'Give today' ),
 			'order'   => 8,
 		)
 	);
