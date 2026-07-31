@@ -457,9 +457,18 @@ function wptpl_separator( string $classname = '' ): string {
  * @param string             $overlay Palette slug for the wash.
  * @param int                $dim     Overlay opacity, 0-100.
  * @param string             $text    Optional palette slug for the text color.
+ * @param string             $width   Content width for the band, e.g. "815px" or
+ *                                    "var(--wptpl-container-narrow)". A Cover has no
+ *                                    section class to take a container tier from, so
+ *                                    without this it falls back to theme.json's 1400px
+ *                                    and its headings run the full width of the page.
  */
-function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '' ): string {
-	$url   = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
+function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '', string $width = '' ): string {
+	$url    = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
+	$layout = array( 'type' => 'constrained' );
+	if ( '' !== $width ) {
+		$layout['contentSize'] = $width;
+	}
 	$attrs = array(
 		'url'                 => $url,
 		'dimRatio'            => $dim,
@@ -468,7 +477,7 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 		'minHeight'           => 0,
 		'sizeSlug'            => 'large',
 		'align'               => 'full',
-		'layout'              => array( 'type' => 'constrained' ),
+		'layout'              => $layout,
 	);
 	// A Cover sizes itself to its content, so without this the band hugs whatever
 	// is inside it and reads as a strip rather than as a section. Every other

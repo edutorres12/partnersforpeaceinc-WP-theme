@@ -525,9 +525,22 @@ function wptpl_seed_page_about(): string {
 									)
 								),
 								wptpl_heading( 'Role line, credentials', 2 ),
-								wptpl_paragraph( wptpl_lorem_len( 205 ) ),
+								// The reference runs the credential line a step up and
+								// bold, and closes on a bold line. Left plain, all three
+								// paragraphs render at one weight and the column reads
+								// as an undifferentiated block of text however much gap
+								// sits between them.
+								wptpl_paragraph(
+									wptpl_lorem_len( 205 ),
+									'has-custom-font-size',
+									'',
+									array(
+										'fontSize'   => '1.125rem',
+										'fontWeight' => '700',
+									)
+								),
 								wptpl_paragraph( wptpl_lorem_len( 277 ) ),
-								wptpl_paragraph( wptpl_lorem_len( 78 ) ),
+								wptpl_paragraph( wptpl_lorem_len( 78 ), '', '', array( 'fontWeight' => '700' ) ),
 							),
 						),
 						array( '440px', '' ),
@@ -573,7 +586,14 @@ function wptpl_seed_page_about(): string {
 						'card-prose'
 					),
 				),
-				'cta-bg'
+				'cta-bg',
+				'secondary',
+				55,
+				'',
+				// The reference holds this band at 815px. Without it the Cover
+				// falls back to theme.json's 1400px and the headline above the
+				// card runs the full width of the page.
+				'815px'
 			),
 
 			// 3. Approach — icon + title beside the copy, split by a rule.
@@ -603,7 +623,11 @@ function wptpl_seed_page_about(): string {
 					),
 					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem', 'card' ),
 				),
-				'steps-bg'
+				'steps-bg',
+				'secondary',
+				55,
+				'',
+				'var(--wptpl-container-narrow)'
 			),
 
 			// 5. What working together looks like — same shape as band 3.
