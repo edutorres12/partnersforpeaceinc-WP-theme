@@ -156,7 +156,7 @@ function wptpl_seed_page_home(): string {
 			0 === $bank_index ? '3rem' : '1.5rem',
 			false,
 			array(),
-			'1.5rem'
+			'cards'
 		);
 	}
 	$service_grid = implode( "\n\n", $rows );
@@ -224,7 +224,7 @@ function wptpl_seed_page_home(): string {
 						'3rem',
 						false,
 						array(),
-						'1.5rem'
+						'cards'
 					),
 				),
 				'muted',
@@ -332,7 +332,7 @@ function wptpl_seed_page_home(): string {
 						'',
 						true,
 						array(),
-						'50px'
+						'split'
 					),
 				),
 				'primary-soft'
@@ -482,7 +482,7 @@ function wptpl_seed_page_about(): string {
 					'',
 					true,
 					array( '', 'wptpl-vrule' ),
-					'50px'
+					'split'
 				),
 			),
 			$bg,
@@ -528,7 +528,7 @@ function wptpl_seed_page_about(): string {
 						'',
 						true,
 						array(),
-						'50px'
+						'split'
 					),
 				),
 				'primary',
@@ -560,8 +560,7 @@ function wptpl_seed_page_about(): string {
 						'contrast',
 						'wptpl-card-prose',
 						'2.5rem',
-						'50px',
-						'22px'
+						'card'
 					),
 				),
 				'cta-bg'
@@ -581,7 +580,7 @@ function wptpl_seed_page_about(): string {
 						)
 					),
 					wptpl_paragraph( wptpl_lorem_len( 134 ), '', 'center' ),
-					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem', '50px', '22px' ),
+					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem', 'card' ),
 				),
 				'steps-bg'
 			),
@@ -636,7 +635,7 @@ function wptpl_seed_page_about(): string {
 						'2.5rem',
 						false,
 						array(),
-						'1.5rem'
+						'cards'
 					),
 					wptpl_block(
 						'feature-card',
@@ -748,7 +747,7 @@ function wptpl_seed_page_services(): string {
 			0 === $index ? '' : '1.5rem',
 			false,
 			array(),
-			'1.5rem'
+			'cards'
 		);
 	}
 
@@ -1054,7 +1053,7 @@ function wptpl_seed_page_contact(): string {
 			'1.5rem',
 			false,
 			array(),
-			'1.25rem'
+			'rows'
 		);
 	};
 
@@ -1106,8 +1105,7 @@ function wptpl_seed_page_contact(): string {
 									'on-dark',
 									'wptpl-card-rows',
 									'',
-									'40px',
-									'22px'
+									'card-tight'
 								),
 							),
 						),
@@ -1116,7 +1114,7 @@ function wptpl_seed_page_contact(): string {
 						'',
 						false,
 						array(),
-						'56px'
+						'split'
 					),
 				),
 				'surface',
@@ -1298,7 +1296,7 @@ function wptpl_seed_page_therapists(): string {
 						'',
 						false,
 						array(),
-						'1.5rem'
+						'cards'
 					),
 					wptpl_columns(
 						array(
@@ -1311,7 +1309,7 @@ function wptpl_seed_page_therapists(): string {
 						'1.5rem',
 						false,
 						array(),
-						'1.5rem'
+						'cards'
 					),
 				)
 			),
@@ -1411,7 +1409,7 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 						'',
 						false,
 						array(),
-						'1.5rem'
+						'cards'
 					),
 				),
 				'surface'

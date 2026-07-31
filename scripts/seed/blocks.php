@@ -67,6 +67,32 @@ function wptpl_attrs( array $attrs ): string {
 const WPTPL_FULL_BLEED_BLOCKS = array( 'hero', 'steps', 'cta-banner' );
 
 /**
+ * Named column gaps. Passing one of these to `wptpl_columns()` writes the class
+ * `wptpl-row-<name>` instead of an inline `blockGap`, so the actual measurement
+ * lives in one custom property in `src/tailwind.css` rather than in every call
+ * site — retuning it is a CSS edit, not a re-seed of every page.
+ *
+ *   cards → gaps between cards in a card row
+ *   split → image-beside-copy and form-beside-card rows
+ *   rows  → label/value pairs stacked inside a card
+ *
+ * Anything else is still written inline, which is what a genuine one-off wants.
+ *
+ * @var array<int, string>
+ */
+const WPTPL_ROW_GAPS = array( 'cards', 'split', 'rows' );
+
+/**
+ * Named card boxes. Passing one of these as `wptpl_group()`'s `$padding` writes
+ * the class `wptpl-<name>` instead of an inline padding and radius, for the same
+ * reason as `WPTPL_ROW_GAPS`. `card-tight` is the narrower box the practice-info
+ * card uses; its radius is shared with `card`.
+ *
+ * @var array<int, string>
+ */
+const WPTPL_CARD_BOXES = array( 'card', 'card-tight' );
+
+/**
  * A self-closing dynamic block.
  *
  * @param string               $name  Block name without the namespace, e.g. "hero".
@@ -200,10 +226,14 @@ function wptpl_margin_top( string $value ): array {
  * top-aligning them. It is what an image-beside-copy row needs whenever the two
  * columns are different heights, which is most of them.
  *
- * `$block_gap` sets the channel between the columns. Leaving it unset falls back
- * to WordPress's own default, which is narrow enough that adjacent cards read as
+ * `$gap` sets the channel between the columns. Leaving it unset falls back to
+ * WordPress's own default, which is narrow enough that adjacent cards read as
  * one block rather than as separate cards — the reference sets it explicitly on
- * every row where the gap matters, most often 50px.
+ * every row where the gap matters.
+ *
+ * Pass one of `WPTPL_ROW_GAPS` ('cards', 'split', 'rows') and the row gets the
+ * matching class, with the measurement held in CSS. A raw length still works and
+ * is written inline, for the rare row that is genuinely its own case.
  *
  * @param array<int, array<int, string>> $columns         Inner markup per column.
  * @param array<int, string>             $widths          Optional per-column width (e.g. "60%").
@@ -211,9 +241,9 @@ function wptpl_margin_top( string $value ): array {
  * @param string                         $margin_top      Top margin (e.g. "3rem"), or '' for none.
  * @param bool                           $vertical_center Vertically center the columns.
  * @param array<int, string>             $col_classes     Optional per-column CSS classes (e.g. wptpl-vrule).
- * @param string                         $block_gap       Gap between columns (e.g. "50px"), or '' for the default.
+ * @param string                         $gap             A WPTPL_ROW_GAPS name, a raw length, or '' for the default.
  */
-function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array(), string $block_gap = '' ): string {
+function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array(), string $gap = '' ): string {
 	$rendered = array();
 
 	foreach ( $columns as $index => $blocks ) {
@@ -245,24 +275,27 @@ function wptpl_columns( array $columns, array $widths = array(), string $classna
 	$row_classes = 'wp-block-columns';
 	$row_style   = '';
 
+	$named_gap = in_array( $gap, WPTPL_ROW_GAPS, true );
+	$row_class = $named_gap ? trim( $classname . ' wptpl-row-' . $gap ) : $classname;
+
 	if ( $vertical_center ) {
 		$row_attrs['verticalAlignment'] = 'center';
 		$row_classes                   .= ' are-vertically-aligned-center';
 	}
-	if ( '' !== $classname ) {
-		$row_attrs['className'] = $classname;
-		$row_classes           .= ' ' . $classname;
+	if ( '' !== $row_class ) {
+		$row_attrs['className'] = $row_class;
+		$row_classes           .= ' ' . $row_class;
 	}
 	$spacing = array();
 	if ( '' !== $margin_top ) {
 		$spacing['margin'] = array( 'top' => $margin_top );
 		$row_style         = sprintf( ' style="margin-top:%s"', $margin_top );
 	}
-	if ( '' !== $block_gap ) {
+	if ( '' !== $gap && ! $named_gap ) {
 		// `left` only: WordPress reads the horizontal half of blockGap for a
 		// columns row, and writing both halves makes the editor show a linked
 		// gap control the design never asked for.
-		$spacing['blockGap'] = array( 'left' => $block_gap );
+		$spacing['blockGap'] = array( 'left' => $gap );
 	}
 	if ( $spacing ) {
 		$row_attrs['style'] = array( 'spacing' => $spacing );
@@ -476,12 +509,17 @@ function wptpl_image( string $file, string $classname = '', string $width = '' )
  * the copy jammed against its edges. `$padding` and `$radius` are what turn it
  * into one, and any group that sets a background needs both.
  *
+ * Pass one of `WPTPL_CARD_BOXES` ('card', 'card-tight') as `$padding` and the
+ * group gets that class instead, taking both its padding and its radius from
+ * CSS; `$radius` is then redundant and ignored. A raw length still works and is
+ * written inline, for a box that really is a one-off.
+ *
  * @param array<int, string> $inner      Inner block markup.
  * @param string             $bg         Palette slug for the background, or ''.
  * @param string             $text       Palette slug for the text color, or ''.
  * @param string             $classname  Extra CSS classes.
  * @param string             $margin_top Top margin (e.g. "2.5rem"), or ''.
- * @param string             $padding    Inner padding (e.g. "50px"), or ''.
+ * @param string             $padding    A WPTPL_CARD_BOXES name, a raw padding, or ''.
  * @param string             $radius     Corner radius (e.g. "22px"), or ''.
  */
 function wptpl_group( array $inner, string $bg = '', string $text = '', string $classname = '', string $margin_top = '', string $padding = '', string $radius = '' ): string {
@@ -490,6 +528,11 @@ function wptpl_group( array $inner, string $bg = '', string $text = '', string $
 	$style   = '';
 	$css     = '';
 
+	if ( in_array( $padding, WPTPL_CARD_BOXES, true ) ) {
+		$classname = trim( $classname . ' wptpl-' . $padding );
+		$padding   = '';
+		$radius    = '';
+	}
 	if ( '' !== $classname ) {
 		$attrs['className'] = $classname;
 		$classes           .= ' ' . $classname;
