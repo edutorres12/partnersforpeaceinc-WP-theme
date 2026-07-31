@@ -27,7 +27,7 @@ while ( have_posts() ) :
 		? trim( (string) get_post_meta( get_post_thumbnail_id( get_the_ID() ), '_wp_attachment_image_alt', true ) )
 		: '';
 	?>
-	<article <?php post_class( 'wptpl-single py-16' ); ?>>
+	<article <?php post_class( 'wptpl-single' ); ?>>
 		<div class="wptpl-container-narrow">
 			<header class="wptpl-single__header">
 				<h1 class="wptpl-single__title"><?php the_title(); ?></h1>

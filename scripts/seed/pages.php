@@ -541,7 +541,7 @@ function wptpl_seed_page_about(): string {
 						'',
 						'',
 						true,
-						array(),
+						array( '', 'wptpl-bio-copy' ),
 						'split'
 					),
 				),
@@ -661,7 +661,7 @@ function wptpl_seed_page_about(): string {
 									'feature-card',
 									array(
 										'title'           => wptpl_lorem_len( 38 ),
-										'text'            => wptpl_lorem_len( 251 ),
+										'text'            => wptpl_lorem_len( 300 ),
 										'centered'        => true,
 										'bordered'        => false,
 										'className'       => 'wptpl-title-sm',
@@ -675,7 +675,7 @@ function wptpl_seed_page_about(): string {
 									'feature-card',
 									array(
 										'title'           => wptpl_lorem_len( 47 ),
-										'text'            => wptpl_lorem_len( 178 ),
+										'text'            => wptpl_lorem_len( 296 ),
 										'centered'        => true,
 										'bordered'        => false,
 										'className'       => 'wptpl-title-sm',
@@ -1317,16 +1317,17 @@ function wptpl_seed_page_blog(): string {
 				'var(--wptpl-container-wide)'
 			),
 
-			// The filter sits on the page background, not on a band of its own:
-			// it belongs to the list below it, and tinting it made it read as
-			// part of the masthead above.
+			// Tinted, like the reference's. The pills are outlined and lettered in
+			// a light color — on the page background their borders all but
+			// vanish and only the active pill stays legible.
 			wptpl_section(
 				array(
 					wptpl_block( 'category-filter' ),
 				),
-				'',
+				'primary',
 				'container',
-				'wptpl-section-sm'
+				'wptpl-section-sm',
+				'base'
 			),
 
 			// The featured post and the grid below it are the two halves of the
@@ -1408,9 +1409,14 @@ function wptpl_seed_page_therapists(): string {
 				'hero',
 				array(
 					'title'     => 'Meet our therapists',
-					'subtitle'  => wptpl_lorem_len( 125 ),
-					'layout'    => 'centered',
-					'alignment' => 'center',
+					'subtitle'           => wptpl_lorem_len( 125 ),
+					// A photo band with a dark wash, like the services hero. These
+					// were the only heroes on the site carrying no imagery, which
+					// left four pages opening on a bare strip of text.
+					'alignment'          => 'center',
+					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'overlayOpacity'     => 0.6,
+					'className'          => 'wptpl-hero-dark',
 					'ctaText'   => 'Primary CTA',
 					'ctaUrl'    => '/contact/',
 				)
@@ -1494,9 +1500,14 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 				'hero',
 				array(
 					'title'     => $title,
-					'subtitle'  => wptpl_lorem_len( 125 ),
-					'layout'    => 'centered',
-					'alignment' => 'center',
+					'subtitle'           => wptpl_lorem_len( 125 ),
+					// A photo band with a dark wash, like the services hero. These
+					// were the only heroes on the site carrying no imagery, which
+					// left four pages opening on a bare strip of text.
+					'alignment'          => 'center',
+					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'overlayOpacity'     => 0.6,
+					'className'          => 'wptpl-hero-dark',
 					'ctaText'   => $cta,
 					'ctaUrl'    => '/contact/',
 				)
@@ -1506,9 +1517,11 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 					wptpl_block(
 						'section-header',
 						array(
-							'headline'  => $body_head,
-							'intro'     => wptpl_lorem_len( 233 ),
-							'alignment' => 'left',
+							// Centred, like every other lone section-header on the
+							// site. Left-aligned in a 760px column it sat off to one
+							// side of a band with nothing to balance it.
+							'headline' => $body_head,
+							'intro'    => wptpl_lorem_len( 233 ),
 						)
 					),
 				),
@@ -1517,9 +1530,8 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 			),
 			wptpl_section(
 				array(
-					// Carries the services-carousel class so the cards get a
-					// row-gap once they stack on a phone; without it they sit
-					// flush against each other.
+					// Same grid as every other card row on the site, so the three
+					// share one height however unevenly their copy runs.
 					wptpl_columns(
 						array(
 							array( $card( 1 ) ),
@@ -1527,11 +1539,7 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 							array( $card( 3 ) ),
 						),
 						array(),
-						'wptpl-services-carousel',
-						'',
-						false,
-						array(),
-						'cards'
+						'wptpl-services-carousel wptpl-card-grid'
 					),
 				),
 				'surface'

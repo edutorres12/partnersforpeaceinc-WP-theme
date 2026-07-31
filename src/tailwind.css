@@ -212,12 +212,16 @@
 .wptpl-card-grid > .wp-block-column {
   grid-column: span 2;
 }
-/* A last row holding one card of a three-up grid centres on the middle track. */
-.wptpl-card-grid > .wp-block-column:last-child:nth-child(3n + 1) {
+/* A last row holding one card of a three-up grid centres on the middle track.
+   `:not(.is-2-up)` matters: in a two-up grid the every-third-card arithmetic
+   describes nothing, and card 4 of 5 matched `3n + 1` and got shoved to track 2
+   — which turned the list into a staircase. */
+.wptpl-card-grid:not(.is-2-up) > .wp-block-column:last-child:nth-child(3n + 1) {
   grid-column: 3 / span 2;
 }
 /* Two cards left over: shift the first half a card right and the pair centres. */
-.wptpl-card-grid > .wp-block-column:nth-last-child(2):nth-child(3n + 1) {
+.wptpl-card-grid:not(.is-2-up)
+  > .wp-block-column:nth-last-child(2):nth-child(3n + 1) {
   grid-column: 2 / span 2;
 }
 /* The two-up grid only ever has one card left over. */
@@ -232,8 +236,9 @@
     grid-template-columns: repeat(4, 1fr);
   }
   .wptpl-card-grid > .wp-block-column,
-  .wptpl-card-grid > .wp-block-column:last-child:nth-child(3n + 1),
-  .wptpl-card-grid > .wp-block-column:nth-last-child(2):nth-child(3n + 1) {
+  .wptpl-card-grid:not(.is-2-up) > .wp-block-column:last-child:nth-child(3n + 1),
+  .wptpl-card-grid:not(.is-2-up)
+    > .wp-block-column:nth-last-child(2):nth-child(3n + 1) {
     grid-column: span 2;
   }
   .wptpl-card-grid > .wp-block-column:last-child:nth-child(odd) {
@@ -248,8 +253,9 @@
     grid-template-columns: 1fr;
   }
   .wptpl-card-grid > .wp-block-column,
-  .wptpl-card-grid > .wp-block-column:last-child:nth-child(3n + 1),
-  .wptpl-card-grid > .wp-block-column:nth-last-child(2):nth-child(3n + 1),
+  .wptpl-card-grid:not(.is-2-up) > .wp-block-column:last-child:nth-child(3n + 1),
+  .wptpl-card-grid:not(.is-2-up)
+    > .wp-block-column:nth-last-child(2):nth-child(3n + 1),
   .wptpl-card-grid > .wp-block-column:last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
@@ -1053,6 +1059,21 @@ body.error404 .wptpl-main {
   }
 }
 
+/* A bio column: a name, a role line, a bold lead and body copy stacked in one
+   column. WordPress's 24px block gap is measured for consecutive paragraphs, so
+   at these type sizes the four blocks ran together as a single slab. Give the
+   column its own rhythm — a wider gap under the name and the role line than
+   between the paragraphs. Add `wptpl-bio-copy` as the column's CSS class. */
+.wptpl-bio-copy > * + * {
+  margin-top: 1.5rem;
+}
+.wptpl-bio-copy > .wptpl-section-header + .wp-block-heading {
+  margin-top: 0.75rem;
+}
+.wptpl-bio-copy > .wp-block-heading + * {
+  margin-top: 1.75rem;
+}
+
 /* A column whose only job is to label the rows beside it. Centring the heading
    itself does nothing — the column is the flex item, so the column is what has
    to centre its contents. */
@@ -1279,6 +1300,26 @@ body.error404 .wptpl-main {
    kept explicit so the previous edge-to-edge override isn't reintroduced.) */
 .wptpl-single .wptpl-container-narrow {
   padding-inline: var(--wptpl-gutter);
+}
+/* Vertical rhythm on the same ladder as every section band on the site
+   (100 / 72 / 48). The template carried `py-16` — a flat 64px at every
+   breakpoint — so a post opened tighter than any other page and its footer sat
+   closer than any other page's. */
+.wptpl-single {
+  padding-top: var(--wp--preset--spacing--50, 6.25rem);
+  padding-bottom: var(--wp--preset--spacing--50, 6.25rem);
+}
+@media (max-width: 1023px) {
+  .wptpl-single {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+}
+@media (max-width: 767px) {
+  .wptpl-single {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
 }
 
 /* Page content built as a `.wptpl-container-narrow` Group (page.php renders the
