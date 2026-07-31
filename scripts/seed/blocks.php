@@ -73,24 +73,31 @@ const WPTPL_FULL_BLEED_BLOCKS = array( 'hero', 'steps', 'cta-banner' );
  * site — retuning it is a CSS edit, not a re-seed of every page.
  *
  *   cards → gaps between cards in a card row
- *   split → image-beside-copy and form-beside-card rows
+ *   split → image-beside-copy rows
+ *   form  → the contact form beside its info card (the reference runs this one
+ *           6px wider than `split`; it is its own variant rather than a raw
+ *           length so the two can never silently converge)
  *   rows  → label/value pairs stacked inside a card
  *
  * Anything else is still written inline, which is what a genuine one-off wants.
  *
  * @var array<int, string>
  */
-const WPTPL_ROW_GAPS = array( 'cards', 'split', 'rows' );
+const WPTPL_ROW_GAPS = array( 'cards', 'split', 'form', 'rows' );
 
 /**
  * Named card boxes. Passing one of these as `wptpl_group()`'s `$padding` writes
  * the class `wptpl-<name>` instead of an inline padding and radius, for the same
- * reason as `WPTPL_ROW_GAPS`. `card-tight` is the narrower box the practice-info
- * card uses; its radius is shared with `card`.
+ * reason as `WPTPL_ROW_GAPS`.
+ *
+ *   card       → the standard box
+ *   card-prose → the long-form card: capped width and deep side padding, which
+ *                is what holds its reading column at the reference's 615px
+ *   card-tight → the practice-info box, smaller padding and radius
  *
  * @var array<int, string>
  */
-const WPTPL_CARD_BOXES = array( 'card', 'card-tight' );
+const WPTPL_CARD_BOXES = array( 'card', 'card-prose', 'card-tight' );
 
 /**
  * A self-closing dynamic block.
@@ -242,17 +249,32 @@ function wptpl_margin_top( string $value ): array {
  * @param bool                           $vertical_center Vertically center the columns.
  * @param array<int, string>             $col_classes     Optional per-column CSS classes (e.g. wptpl-vrule).
  * @param string                         $gap             A WPTPL_ROW_GAPS name, a raw length, or '' for the default.
+ * @param string                         $margin_bottom   Bottom margin (e.g. "1.5rem"), or '' for none. Rows stacked
+ *                                                        inside a card space themselves this way in the reference, so
+ *                                                        the first one sits directly under the card's heading.
+ * @param array<string|int, string>      $valign          Vertical alignment: 'row' => the row's own, and an integer key
+ *                                                        per column that needs to differ from it. Use when a row is
+ *                                                        top-aligned but one column has to sit centered against the
+ *                                                        others (the label column beside two checklists). `$vertical_center`
+ *                                                        stays the shorthand for "center everything".
  */
-function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array(), string $gap = '' ): string {
+function wptpl_columns( array $columns, array $widths = array(), string $classname = '', string $margin_top = '', bool $vertical_center = false, array $col_classes = array(), string $gap = '', string $margin_bottom = '', array $valign = array() ): string {
 	$rendered = array();
 
 	foreach ( $columns as $index => $blocks ) {
 		$attrs   = array();
 		$style   = '';
 		$classes = 'wp-block-column';
-		if ( $vertical_center ) {
-			$attrs['verticalAlignment'] = 'center';
-			$classes                   .= ' is-vertically-aligned-center';
+
+		$col_valign = '';
+		if ( isset( $valign[ $index ] ) && '' !== $valign[ $index ] ) {
+			$col_valign = $valign[ $index ];
+		} elseif ( $vertical_center ) {
+			$col_valign = 'center';
+		}
+		if ( '' !== $col_valign ) {
+			$attrs['verticalAlignment'] = $col_valign;
+			$classes                   .= ' is-vertically-aligned-' . $col_valign;
 		}
 		if ( isset( $col_classes[ $index ] ) && '' !== $col_classes[ $index ] ) {
 			$attrs['className'] = $col_classes[ $index ];
@@ -278,18 +300,34 @@ function wptpl_columns( array $columns, array $widths = array(), string $classna
 	$named_gap = in_array( $gap, WPTPL_ROW_GAPS, true );
 	$row_class = $named_gap ? trim( $classname . ' wptpl-row-' . $gap ) : $classname;
 
-	if ( $vertical_center ) {
-		$row_attrs['verticalAlignment'] = 'center';
-		$row_classes                   .= ' are-vertically-aligned-center';
+	$row_valign = '';
+	if ( isset( $valign['row'] ) && '' !== $valign['row'] ) {
+		$row_valign = $valign['row'];
+	} elseif ( $vertical_center ) {
+		$row_valign = 'center';
+	}
+	if ( '' !== $row_valign ) {
+		$row_attrs['verticalAlignment'] = $row_valign;
+		$row_classes                   .= ' are-vertically-aligned-' . $row_valign;
 	}
 	if ( '' !== $row_class ) {
 		$row_attrs['className'] = $row_class;
 		$row_classes           .= ' ' . $row_class;
 	}
 	$spacing = array();
+	$margin  = array();
+	$css     = '';
 	if ( '' !== $margin_top ) {
-		$spacing['margin'] = array( 'top' => $margin_top );
-		$row_style         = sprintf( ' style="margin-top:%s"', $margin_top );
+		$margin['top'] = $margin_top;
+		$css          .= 'margin-top:' . $margin_top . ';';
+	}
+	if ( '' !== $margin_bottom ) {
+		$margin['bottom'] = $margin_bottom;
+		$css             .= 'margin-bottom:' . $margin_bottom . ';';
+	}
+	if ( $margin ) {
+		$spacing['margin'] = $margin;
+		$row_style         = sprintf( ' style="%s"', rtrim( $css, ';' ) );
 	}
 	if ( '' !== $gap && ! $named_gap ) {
 		// `left` only: WordPress reads the horizontal half of blockGap for a
@@ -472,10 +510,13 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 /**
  * Placeholder image from the theme's own wireframe boxes.
  *
- * @param string $file One of hero, portrait, steps-bg, cta-bg, service-card, guide-card.
+ * @param string $file One of hero, portrait, steps-bg, cta-bg, service-card, guide-card, icon.
  * @param string $classname Extra CSS classes.
+ * @param string $width Rendered width (e.g. "440px"), or '' to leave it to the layout.
+ * @param string $align Block alignment, e.g. "center". An icon above a heading needs it:
+ *                      the column's `text-align` does not move a figure.
  */
-function wptpl_image( string $file, string $classname = '', string $width = '' ): string {
+function wptpl_image( string $file, string $classname = '', string $width = '', string $align = '' ): string {
 	$url   = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
 	$attrs = array();
 	if ( '' !== $width ) {
@@ -483,10 +524,13 @@ function wptpl_image( string $file, string $classname = '', string $width = '' )
 		$attrs['height'] = 'auto';
 	}
 	$attrs['sizeSlug'] = 'large';
+	if ( '' !== $align ) {
+		$attrs['align'] = $align;
+	}
 	if ( '' !== $classname ) {
 		$attrs['className'] = $classname;
 	}
-	$classes = trim( 'wp-block-image size-large ' . $classname );
+	$classes = trim( 'wp-block-image size-large ' . ( '' !== $align ? 'align' . $align . ' ' : '' ) . $classname );
 	$style   = ( '' !== $width ) ? sprintf( ' style="width:%s;height:auto"', esc_attr( $width ) ) : '';
 
 	return sprintf(

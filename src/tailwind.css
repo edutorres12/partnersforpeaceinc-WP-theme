@@ -152,11 +152,25 @@
      `wptpl-card`, …) and the measurement lives here — one edit, no re-seed.
      See WPTPL_ROW_GAPS / WPTPL_CARD_BOXES in scripts/seed/blocks.php. */
   --wptpl-gap-cards: 1.5rem;  /* between cards in a card row              */
-  --wptpl-gap-split: 50px;    /* image-beside-copy, form-beside-card rows */
+  --wptpl-gap-split: 50px;    /* image-beside-copy rows                   */
+  --wptpl-gap-form: 56px;     /* the contact form beside its info card    */
   --wptpl-gap-rows: 1.25rem;  /* label/value pairs stacked in a card      */
+
+  /* The card box comes in three sizes, all from the reference: the standard
+     card, the prose card (same height, much deeper sides so the reading column
+     lands at 615px), and the tight card the contact page's practice info uses. */
   --wptpl-card-pad: 50px;
+  --wptpl-card-pad-prose-x: 100px;
   --wptpl-card-pad-tight: 40px;
-  --wptpl-card-radius: 22px;
+  --wptpl-card-radius: 20px;
+  --wptpl-card-radius-tight: 18px;
+
+  /* Outer widths for the two constrained cards. The reference sets these as
+     block `contentSize` values; holding them here keeps the two cards from
+     drifting apart when one gets retuned. */
+  --wptpl-card-prose-w: 815px;
+  --wptpl-card-inset-w: 760px;
+  --wptpl-card-inset-content-w: 500px;
 }
 
 /* The classes those tokens drive. Deliberately single-class selectors placed
@@ -166,17 +180,58 @@
    still wins. They also have to live OUTSIDE @layer because they only ever
    appear in the seeder's markup, which Tailwind does not scan — inside a layer
    the purge would strip them. */
+/* A short last bank in a card grid. The service grid runs three-up, and when the
+   list does not divide by three the remainder lands in a row of its own — two
+   columns that each stretch to half the band, so the last bank's cards render
+   half again as wide as the ones above them and the grid stops reading as one
+   grid. Pin every card in a two-card bank to a third of the row, the same track
+   the three-up bank uses, and center what is left over.
+
+   Desktop only: below 1024px the three-up rows are re-laid as a two-column grid
+   (see RESPONSIVE OVERRIDES), so a two-card bank already matches them there. */
+@media (min-width: 1024px) {
+  .wptpl-row-cards:has(> .wp-block-column:nth-child(2)):not(
+      :has(> .wp-block-column:nth-child(3))
+    ) {
+    justify-content: center;
+  }
+  .wptpl-row-cards:has(> .wp-block-column:nth-child(2)):not(
+      :has(> .wp-block-column:nth-child(3))
+    )
+    > .wp-block-column {
+    flex: 0 0 calc((100% - 2 * var(--wptpl-gap-cards)) / 3);
+  }
+}
+
 .wptpl-row-cards { gap: var(--wptpl-gap-cards); }
 .wptpl-row-split { gap: var(--wptpl-gap-split); }
+.wptpl-row-form  { gap: var(--wptpl-gap-form); }
 .wptpl-row-rows  { gap: var(--wptpl-gap-rows); }
 
 .wptpl-card {
   padding: var(--wptpl-card-pad);
   border-radius: var(--wptpl-card-radius);
 }
+/* The long-form card on About. The reference holds it at 815px and pads its
+   sides by 100px, which is what puts the reading column at 615px — measure the
+   rendered card and that is the number you get. Padding alone would not do it:
+   without the cap the card grows with its container and the line length grows
+   with it (it measured 710px before this rule existed). */
+.wptpl-card-prose {
+  max-width: var(--wptpl-card-prose-w);
+  margin-inline: auto;
+  padding: var(--wptpl-card-pad) var(--wptpl-card-pad-prose-x);
+  border-radius: var(--wptpl-card-radius);
+}
 .wptpl-card-tight {
   padding: var(--wptpl-card-pad-tight);
-  border-radius: var(--wptpl-card-radius);
+  border-radius: var(--wptpl-card-radius-tight);
+}
+/* A card whose body is a stack of label/value rows. Its heading needs a wider
+   gap under it than the rows leave between themselves, or the first row reads
+   as part of the title. Add `wptpl-card-rows` as the card's CSS class. */
+.wptpl-card-rows > :is(h2, h3) {
+  margin-bottom: 1.75rem;
 }
 
 /* ---------------------------------------------------------------
@@ -917,6 +972,16 @@ body.error404 .wptpl-main {
 .wp-block-columns:has(> .wptpl-vrule) > .wp-block-column:not(.wptpl-vrule) {
   text-align: center;
 }
+/* …and the section-header inside it. `text-align` on the column is inherited,
+   and inheritance loses to any direct rule — the block hardcodes `text-left` on
+   its own wrapper, so the heading stayed left while the icon above it centred.
+   This selector outranks that utility, and being unlayered it also beats
+   Tailwind's utilities layer. */
+.wp-block-columns:has(> .wptpl-vrule)
+  > .wp-block-column:not(.wptpl-vrule)
+  .wptpl-section-header {
+  text-align: center;
+}
 .wp-block-columns:has(> .wptpl-vrule)
   > .wp-block-column:not(.wptpl-vrule)
   :is(img, figure) {
@@ -1290,13 +1355,21 @@ body.error404 .wptpl-main {
    overrides in the RESPONSIVE OVERRIDES section drop the cap and pin the side
    padding to the gutter. Add `wptpl-card-inset` as the card's CSS class. */
 .wptpl-card-inset.wptpl-card-inset {
-  max-width: 600px;
+  max-width: var(--wptpl-card-inset-w);
   margin-inline: auto;
 }
 .wptpl-card-inset.wptpl-card-inset > * {
-  max-width: 500px;
+  max-width: var(--wptpl-card-inset-content-w);
   margin-left: auto;
   margin-right: auto;
+}
+/* The reference sets these titles inline at 1.25rem/1.3 — a step down from the
+   theme's h3 so four of them stacked in one card read as labels rather than as
+   four separate sections. Owning it here means the card's own rhythm survives
+   any change to the global h3. */
+.wptpl-card-inset.wptpl-card-inset :is(h2, h3, h4) {
+  font-size: 1.25rem;
+  line-height: 1.3;
 }
 
 /* Larger role/subtitle line under a hero's name or title. Bumps the
