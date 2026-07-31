@@ -445,7 +445,9 @@ function wptpl_seed_page_about(): string {
 	$modalities = array();
 	foreach ( range( 1, 4 ) as $n ) {
 		$modalities[] = wptpl_heading( wptpl_lorem_len( 38 ), 3, '', 'center' );
-		$modalities[] = wptpl_paragraph( wptpl_lorem_len( 115 ) );
+		// Centered like its heading. Left-aligned, each body sits off-axis from
+		// the title above it and the dividers stop reading as separators.
+		$modalities[] = wptpl_paragraph( wptpl_lorem_len( 115 ), '', 'center' );
 		if ( 4 !== $n ) {
 			$modalities[] = wptpl_separator( 'wptpl-sep-wide' );
 		}
@@ -465,12 +467,17 @@ function wptpl_seed_page_about(): string {
 				wptpl_columns(
 					array(
 						array(
-							wptpl_image( 'icon', '', '96px' ),
+							wptpl_image( 'icon', '', '96px', 'center' ),
+							// Centered, not left: this column is a label for the copy
+							// beside it, and the icon above the headline is centered.
+							// Left-aligned the headline drifts off the icon's axis and
+							// reads as a stray caption. The reference leaves the block
+							// at its own default, which is center.
 							wptpl_block(
 								'section-header',
 								array(
 									'headline'  => wptpl_lorem_len( $head ),
-									'alignment' => 'left',
+									'alignment' => 'center',
 									'textColor' => 'base',
 								)
 							),
@@ -532,7 +539,10 @@ function wptpl_seed_page_about(): string {
 					),
 				),
 				'primary',
-				'container-md',
+				// The widest tier, like the reference. This band is a portrait
+				// beside a whole opening story; at container-md the copy column
+				// loses ~200px and the story runs a paragraph longer.
+				'container',
 				'is-style-overlay-primary',
 				'base'
 			),
@@ -549,18 +559,18 @@ function wptpl_seed_page_about(): string {
 					),
 					wptpl_group(
 						array(
-							wptpl_paragraph( wptpl_lorem_len( 460 ) ),
-							wptpl_paragraph( wptpl_lorem_len( 520 ) ),
-							wptpl_paragraph( wptpl_lorem_len( 442 ) ),
+							wptpl_paragraph( wptpl_lorem_len( 460 ), '', 'center' ),
+							wptpl_paragraph( wptpl_lorem_len( 520 ), '', 'center' ),
+							wptpl_paragraph( wptpl_lorem_len( 442 ), '', 'center' ),
 						),
 						// The card is light and sits inside a band whose text color
 						// is light, so without its own dark text it renders white
 						// on near-white.
 						'on-dark',
 						'contrast',
-						'wptpl-card-prose',
+						'',
 						'2.5rem',
-						'card'
+						'card-prose'
 					),
 				),
 				'cta-bg'
@@ -579,7 +589,18 @@ function wptpl_seed_page_about(): string {
 							'textColor' => 'base',
 						)
 					),
-					wptpl_paragraph( wptpl_lorem_len( 134 ), '', 'center' ),
+					// The lead under the header runs a step larger and bold: it is a
+					// standfirst for the card below, not body copy.
+					wptpl_paragraph(
+						wptpl_lorem_len( 134 ),
+						'has-custom-font-size',
+						'center',
+						array(
+							'fontSize'   => '1.25rem',
+							'fontWeight' => '700',
+						),
+						'1rem'
+					),
 					wptpl_group( $modalities, 'accent', 'on-dark', 'wptpl-card-inset', '2.5rem', 'card' ),
 				),
 				'steps-bg'
@@ -658,19 +679,19 @@ function wptpl_seed_page_about(): string {
 				0
 			),
 
-			// 7. How to get started — built from core columns, not the steps
-			// block. The reference does it this way here, and the number circles
-			// overhang each column's top edge, which is what the
-			// `.wptpl-steps.has-global-padding` top-padding rule exists to clear.
-			// The wptpl/steps block, not a hand-built columns row. The reference
-			// builds this one by hand, but doing the same here left About with
-			// step cards a different size from every other steps band on the
-			// site — two implementations of one section drift apart the moment
-			// either is touched. One block, one shape, everywhere.
+			// 7. How to get started. The reference builds this band by hand from
+			// core columns, but doing the same here left About with step cards a
+			// different size from every other steps band on the site — two
+			// implementations of one section drift apart the moment either is
+			// touched. One block, one shape, everywhere.
+			//
+			// No heading and no photo, which is what the reference's band has:
+			// three bordered cards on the page background, nothing above them.
+			// The heading plus the block's own header margin plus the band
+			// padding stacked into a bank of empty space above the cards.
 			wptpl_block(
 				'steps',
 				array(
-					'heading'        => 'How to get started',
 					'items'          => array(
 						array(
 							'title' => wptpl_lorem_len( 26 ),
@@ -685,8 +706,6 @@ function wptpl_seed_page_about(): string {
 							'text'  => wptpl_lorem_len( 73 ),
 						),
 					),
-					'overlayOpacity' => 0.65,
-					'usePlaceholder' => true,
 				)
 			),
 
@@ -856,7 +875,21 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								),
 							),
 						),
-						array( '24%', '38%', '38%' )
+						array( '24%', '38%', '38%' ),
+						'',
+						'',
+						false,
+						array(),
+						'split',
+						'',
+						// The label column centres against the two checklists beside
+						// it; the checklists stay top-aligned so their first items
+						// line up with each other. Without this the label sits at the
+						// top of a much taller row and reads as a stray heading.
+						array(
+							'row' => 'top',
+							0     => 'center',
+						)
 					),
 				),
 				'primary',
@@ -865,13 +898,22 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 				'base'
 			),
 
-			// Long-form explainer on a tinted band. Wider than container-narrow
-			// so the paragraph does not run as a thin ribbon down the middle of
-			// the page, and long enough to sit like the copy it stands in for.
+			// A single pull quote on a tinted band, centered and a step above body
+			// size. One paragraph, not two: this band is a beat between the two
+			// checklist sections, and a second paragraph turns it back into
+			// ordinary copy.
 			wptpl_section(
 				array(
-					wptpl_paragraph( wptpl_lorem_len( 389 ) ),
-					wptpl_paragraph( wptpl_lorem_len( 196 ) ),
+					wptpl_paragraph(
+						wptpl_lorem_len( 389 ),
+						'',
+						'center',
+						array(
+							'fontSize'   => '20px',
+							'lineHeight' => '1.3',
+							'fontWeight' => '600',
+						)
+					),
 				),
 				'muted',
 				'container-md',
@@ -906,7 +948,21 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								),
 							),
 						),
-						array( '24%', '38%', '38%' )
+						array( '24%', '38%', '38%' ),
+						'',
+						'',
+						false,
+						array(),
+						'split',
+						'',
+						// The label column centres against the two checklists beside
+						// it; the checklists stay top-aligned so their first items
+						// line up with each other. Without this the label sits at the
+						// top of a much taller row and reads as a stray heading.
+						array(
+							'row' => 'top',
+							0     => 'center',
+						)
 					),
 				)
 			),
@@ -932,7 +988,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'secondary',
-				'container-narrow',
+				'container-md',
 				'wptpl-overlay-dark',
 				'base'
 			),
@@ -989,7 +1045,10 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					),
 				),
 				'secondary',
-				'container-narrow',
+				// container-md, like every other band on this page. Narrow held the
+				// pills to 760px, so a row of six wrapped to three lines while the
+				// same list ran flat everywhere else.
+				'container-md',
 				// Full section padding, not tight: the reference gives this band
 				// 100px top and bottom like any other.
 				'',
@@ -1048,12 +1107,19 @@ function wptpl_seed_page_contact(): string {
 			),
 			array( '40%', '60%' ),
 			'',
-			// Rows need separating from each other as well as from the heading,
-			// or the pairs run together into one block of text.
-			'1.5rem',
+			'',
 			false,
 			array(),
-			'rows'
+			'rows',
+			// Bottom, not top: the card's heading owns the gap above the first
+			// row, so a top margin here would double it. Each row then spaces
+			// itself from the next, and the last one from the card's floor.
+			'1.5rem',
+			array(
+				'row' => 'top',
+				0     => 'top',
+				1     => 'top',
+			)
 		);
 	};
 
@@ -1092,7 +1158,16 @@ function wptpl_seed_page_contact(): string {
 									'',
 									'wptpl-form'
 								),
-								wptpl_paragraph( wptpl_lorem_len( 87 ), '', '' ),
+								// A footnote under the form (privacy / response time), so
+								// it runs a step below body copy and sits close to the
+								// last field rather than reading as a new paragraph.
+								wptpl_paragraph(
+									wptpl_lorem_len( 87 ),
+									'',
+									'',
+									array( 'fontSize' => '14px' ),
+									'0.5rem'
+								),
 							),
 							array(
 								wptpl_group(
@@ -1114,7 +1189,18 @@ function wptpl_seed_page_contact(): string {
 						'',
 						false,
 						array(),
-						'split'
+						// The reference runs this one gap 6px wider than a plain
+						// image-beside-copy split; see WPTPL_ROW_GAPS.
+						'form',
+						'',
+						// Top, not center: the form is much taller than the info
+						// card, and centering floats the card halfway down the
+						// band with its heading level with the form's middle.
+						array(
+							'row' => 'top',
+							0     => 'top',
+							1     => 'top',
+						)
 					),
 				),
 				'surface',
@@ -1223,7 +1309,10 @@ function wptpl_seed_page_blog(): string {
 			// which read as three more posts that never updated.
 			wptpl_section(
 				array(
-					wptpl_block( 'post-grid', array_merge( array( 'count' => 9 ), wptpl_margin_top( '2rem' ) ) ),
+					// No top margin: nothing sits above the grid in this band, so a
+					// margin here only adds to the band's own 100px and pushes the
+					// first row of cards off the rhythm every other section keeps.
+					wptpl_block( 'post-grid', array( 'count' => 9 ) ),
 				),
 				'',
 				'container'

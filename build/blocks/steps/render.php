@@ -66,14 +66,17 @@ $wptpl_grid_class = isset( $wptpl_grid_cols[ $wptpl_count ] ) ? $wptpl_grid_cols
 // Equal-height cards on the stacked single-column layout (mobile + narrow
 // tablet): auto-rows-fr sizes every implicit row to the tallest, so the
 // bordered cards share one height instead of each hugging its own text. In the
-// md:grid-cols-* layout it's a no-op (a single row, already stretched). Scoped
-// to the photo variant because only its cards are bordered + h-full; the plain
-// variant has no visible box to equalize.
-$wptpl_grid_class .= $wptpl_has_image ? ' auto-rows-fr' : '';
+// md:grid-cols-* layout it's a no-op (a single row, already stretched).
+$wptpl_grid_class .= ' auto-rows-fr';
 
-$wptpl_wrapper_class = 'wptpl-steps text-center';
+// The band rhythm is the block's own, not the photo's: a steps band is a full
+// section wherever it appears, so the padding is unconditional. It used to hang
+// off `$wptpl_has_image`, which left every plain-variant band with no vertical
+// padding at all — the cards ran straight into whatever followed, usually the
+// footer.
+$wptpl_wrapper_class = 'wptpl-steps text-center py-[6.25rem]';
 if ( $wptpl_has_image ) {
-	$wptpl_wrapper_class .= ' relative overflow-hidden text-white py-[6.25rem]';
+	$wptpl_wrapper_class .= ' relative overflow-hidden text-white';
 }
 
 $wptpl_wrapper = get_block_wrapper_attributes(
@@ -86,25 +89,27 @@ $wptpl_btn_class = $wptpl_has_image
 
 $wptpl_body_class = $wptpl_has_image ? 'text-canvas/85 mt-2 font-medium' : 'text-muted mt-2 font-medium';
 
-// When the card has a border (image bg variant), the number circle is
-// pulled up so it overhangs the top border by 50%. The card gets a larger
-// `pt-16` to leave room below the circle before the title.
-$wptpl_card_class = $wptpl_has_image
-	? 'relative border border-canvas rounded-lg pt-16 px-6 pb-6 h-full'
-	: '';
-$wptpl_number_class = $wptpl_has_image
-	? 'w-20 h-20 rounded-full bg-accent text-canvas flex items-center justify-center absolute -top-10 left-1/2 -translate-x-1/2'
-	: 'w-20 h-20 rounded-full bg-accent text-white flex items-center justify-center mx-auto mb-4';
+// One card shape for both variants. The number circle is pulled up so it
+// overhangs the top border by 50%, and `pt-16` leaves room below it before the
+// title. Only the border color changes with the background: canvas reads on a
+// photo, and would vanish on the plain band, which takes a tinted rule instead.
+// This used to be conditional, so a steps band without a photo rendered as
+// three unboxed stacks of text — the same section, two different components.
+$wptpl_card_class = 'relative border rounded-lg pt-16 px-6 pb-6 h-full '
+	. ( $wptpl_has_image ? 'border-canvas' : 'border-primary-soft' );
+$wptpl_number_class = 'w-20 h-20 rounded-full bg-accent flex items-center justify-center absolute -top-10 left-1/2 -translate-x-1/2 '
+	. ( $wptpl_has_image ? 'text-canvas' : 'text-white' );
 
 // On the photo variant the heading, step titles and number use base
 // (#ffffff = canvas) rather than pure white to soften against the image.
 $wptpl_heading_class = $wptpl_has_image ? 'wptpl-steps__heading text-canvas' : 'wptpl-steps__heading';
 $wptpl_title_class   = $wptpl_has_image ? 'text-canvas' : '';
 
-// The number circle is pulled up (-top-10) so it overhangs the card top,
-// which eats most of the default mb-12 gap and crowds the intro. mb-20
-// restores breathing room above the circles on the photo variant.
-$wptpl_header_mb = $wptpl_has_image ? 'mb-20' : 'mb-12';
+// The number circle is pulled up (-top-10) so it overhangs the card top, which
+// eats most of a normal gap and crowds the intro. mb-20 restores breathing room
+// above the circles. Unconditional, because the circle now overhangs on both
+// variants.
+$wptpl_header_mb = 'mb-20';
 ?>
 <div <?php echo $wptpl_wrapper; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 	<?php if ( $wptpl_has_image ) : ?>

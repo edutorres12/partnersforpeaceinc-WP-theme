@@ -95,7 +95,14 @@ $wptpl_wrapper = get_block_wrapper_attributes(
 	array( 'class' => 'wptpl-hero text-' . $wptpl_alignment )
 );
 
-$wptpl_text_col_style = 'padding-left:max(2rem, calc((100vw - 1400px) / 2 + 2rem));padding-right:2rem;';
+// The split layout's text column has to line its left edge up with the 1400px
+// container while its right edge runs to the image, so it gets an asymmetric
+// padding computed off the viewport. The centered layout is a plain box in the
+// middle of the page: the same rule pushed its content hard to the right and
+// left the block looking like it had no section padding at all.
+$wptpl_text_col_style = 'split' === $wptpl_layout
+	? 'padding-left:max(2rem, calc((100vw - 1400px) / 2 + 2rem));padding-right:2rem;'
+	: 'padding-left:2rem;padding-right:2rem;';
 
 ob_start();
 ?>
