@@ -17,6 +17,7 @@ Pages currently wireframed:
 |---|---|
 | `homepage-wireframe.html` | Home |
 | `about-wireframe.html` | About |
+| `meet-the-team-wireframe.html` | Meet the Team (slug `meet-our-therapists`) |
 | `services-wireframe.html` | Services index |
 | `service-page-wireframe.html` | Single service |
 | `fees-wireframe.html` | Fees |
