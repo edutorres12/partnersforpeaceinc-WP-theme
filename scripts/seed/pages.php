@@ -103,26 +103,29 @@ function wptpl_seed_retired_menus(): array {
  * numbered steps, FAQ, closing CTA.
  */
 function wptpl_seed_page_home(): string {
-	// Service cards run in two banks. The first carries imagery and the
-	// wptpl-image-md size modifier; the second is text-only. Both banks use the
-	// same card otherwise, which is what makes the row read as one grid rather
-	// than two unrelated ones.
-	$service_card = static function ( array $service, bool $with_image, int $title, int $text ): string {
-		$attrs = array(
-			'title'    => wptpl_lorem_len( $title ),
-			'text'     => wptpl_lorem_len( $text ),
-			'ctaText'  => 'Learn more',
-			'ctaUrl'   => '/services/' . $service['slug'] . '/',
-			'ctaStyle' => 'arrow',
-			'centered' => true,
-			'bordered' => false,
+	// Service cards run in two banks, both dressed identically — same imagery,
+	// same wptpl-image-md size modifier — which is what makes the rows read as
+	// one grid rather than two unrelated ones.
+	//
+	// The second bank used to skip both. It still got a picture, because the
+	// block auto-fills a placeholder on any CTA card without one, but without
+	// the size modifier that picture rendered at full height and the bottom
+	// cards came out taller than the three above them.
+	$service_card = static function ( array $service, int $title, int $text ): string {
+		return wptpl_block(
+			'feature-card',
+			array(
+				'title'     => wptpl_lorem_len( $title ),
+				'text'      => wptpl_lorem_len( $text ),
+				'ctaText'   => 'Learn more',
+				'ctaUrl'    => '/services/' . $service['slug'] . '/',
+				'ctaStyle'  => 'arrow',
+				'centered'  => true,
+				'bordered'  => false,
+				'imageUrl'  => get_template_directory_uri() . '/assets/placeholders/service-card.jpg',
+				'className' => 'wptpl-image-md',
+			)
 		);
-		if ( $with_image ) {
-			$attrs['imageUrl']  = get_template_directory_uri() . '/assets/placeholders/service-card.jpg';
-			$attrs['className'] = 'wptpl-image-md';
-		}
-
-		return wptpl_block( 'feature-card', $attrs );
 	};
 
 	$services = wptpl_seed_services();
@@ -137,9 +140,9 @@ function wptpl_seed_page_home(): string {
 		array( 64, 196 ),
 	);
 
-	// First bank takes imagery, the rest do not. Split three and the remainder
-	// rather than the reference's four-and-four: this sitemap has five services,
-	// and a four-up first row would leave a single card stranded in the second.
+	// Split three and the remainder rather than the reference's four-and-four:
+	// this sitemap has five services, and a four-up first row would leave a
+	// single card stranded in the second.
 	$rows  = array();
 	$banks = array_chunk( $services, 3 );
 	foreach ( $banks as $bank_index => $bank ) {
@@ -147,7 +150,7 @@ function wptpl_seed_page_home(): string {
 		foreach ( $bank as $i => $service ) {
 			$n       = ( $bank_index * 3 ) + $i;
 			$len     = $lengths[ $n % count( $lengths ) ];
-			$cards[] = array( $service_card( $service, 0 === $bank_index, $len[0], $len[1] ) );
+			$cards[] = array( $service_card( $service, $len[0], $len[1] ) );
 		}
 		$rows[] = wptpl_columns(
 			$cards,

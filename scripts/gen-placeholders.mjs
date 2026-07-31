@@ -28,6 +28,10 @@ const FILES = [
 	{ name: 'cta-bg', w: 1920, h: 900, label: 'Background image' },
 	{ name: 'service-card', w: 800, h: 500, label: 'Image' },
 	{ name: 'guide-card', w: 800, h: 500, label: 'Image' },
+	// The blog's featured card runs the full content width with a short banner
+	// across the top. The 8:5 card box stretched to that width would render a
+	// 700px-tall image and push the whole card off the screen.
+	{ name: 'post', w: 1600, h: 420, label: 'Image' },
 	// Square and small: this one stands in for an icon beside a card title,
 	// not for photography. A 16:9 photo placeholder in that slot renders as a
 	// wide box overlapping the copy next to it.
