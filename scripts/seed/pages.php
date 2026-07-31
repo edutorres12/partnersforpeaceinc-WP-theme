@@ -518,7 +518,7 @@ function wptpl_seed_page_about(): string {
 										'textColor'    => 'base',
 									)
 								),
-								wptpl_heading( 'Role line, credentials', 2 ),
+								wptpl_heading( 'Role line, credentials', 2, '', '', 'h2' ),
 								// The reference runs the credential line a step up and
 								// bold, and closes on a bold line. Left plain, all three
 								// paragraphs render at one weight and the column reads
@@ -724,6 +724,11 @@ function wptpl_seed_page_about(): string {
 							'text'  => wptpl_lorem_len( 73 ),
 						),
 					),
+					// No heading above the cards, so the number circles overhang
+					// straight into the band's top padding and the row reads as
+					// though it starts too high. This is the same tall-top the
+					// contact band uses, and for the same reason.
+					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 
@@ -731,6 +736,10 @@ function wptpl_seed_page_about(): string {
 				'cta-banner',
 				array(
 					'headline' => wptpl_lorem_len( 61 ),
+					// Blank, not absent: an omitted `text` falls back to the
+					// block's own placeholder body. The reference runs this
+					// banner as a headline and a button, nothing else.
+					'text'     => WPTPL_BLANK,
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
@@ -1347,7 +1356,9 @@ function wptpl_seed_page_blog(): string {
 				'cta-banner',
 				array(
 					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem_len( 56 ),
+					// The reference runs the blog’s closing banner as a headline and a
+					// button, like About’s.
+					'text'     => WPTPL_BLANK,
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
