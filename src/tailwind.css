@@ -302,6 +302,23 @@
   padding: var(--wptpl-card-pad-tight);
   border-radius: var(--wptpl-card-radius-tight);
 }
+
+/* Body copy rhythm, site-wide. Tailwind's preflight zeroes `p { margin: 0 }`
+   and the theme then relies on WordPress's block gap — which does not reach
+   every context, so a run of paragraphs inside a card, a column or a Cover
+   collapsed into one unbroken slab. Own the rhythm instead of inheriting it:
+   consecutive paragraph BLOCKS get a gap wherever they appear.
+
+   `.wp-block-paragraph` is the key — it is on authored paragraphs only. The
+   custom blocks render their own `<p>` with their own classes (a feature-card
+   body, a steps body), so their internal spacing is untouched. Unlayered, and
+   placed above `.wptpl-bio-copy` / `.wptpl-card-inset` so those keep their own,
+   wider rhythm on the same specificity. */
+.wp-block-paragraph + .wp-block-paragraph,
+.wp-block-paragraph + :is(ul, ol, blockquote).wp-block-list,
+:is(ul, ol).wp-block-list + .wp-block-paragraph {
+  margin-top: 1.25rem;
+}
 /* A card whose body is a stack of label/value rows. Its heading needs a wider
    gap under it than the rows leave between themselves, or the first row reads
    as part of the title. Add `wptpl-card-rows` as the card's CSS class. */
