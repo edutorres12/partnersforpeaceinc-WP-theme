@@ -281,6 +281,21 @@
   padding: var(--wptpl-card-pad) var(--wptpl-card-pad-prose-x);
   border-radius: var(--wptpl-card-radius);
 }
+/* 100px a side is a desktop measure. On a phone it leaves ~118px of column for
+   the copy, so every line breaks after three words. The mobile overrides that
+   used to catch this matched the inline `padding-left:100px` the card carried
+   before its padding moved into this class — they no longer reach it, so the
+   card states its own ladder. */
+@media (max-width: 1023px) {
+  .wptpl-card-prose {
+    padding: var(--wptpl-card-pad) var(--wptpl-gutter);
+  }
+}
+@media (max-width: 767px) {
+  .wptpl-card-prose {
+    padding: var(--wptpl-gutter);
+  }
+}
 .wptpl-card-tight {
   padding: var(--wptpl-card-pad-tight);
   border-radius: var(--wptpl-card-radius-tight);
@@ -2493,6 +2508,36 @@ body.error404 .wptpl-main {
   .wptpl-cta-banner.px-6 {
     padding-left: var(--wptpl-gutter);
     padding-right: var(--wptpl-gutter);
+  }
+}
+
+/* WordPress core ships `:where(.wp-block-columns){margin-bottom:1.75em}` — about
+   28px under EVERY columns row on the site, at every breakpoint. The theme sets
+   its own vertical rhythm from section padding and explicit margins, so core's
+   stock margin is dead space on top of it: absorbed by the 100px band padding on
+   desktop, plainly visible against the 48px one on a phone. `:where()` carries
+   no specificity, so a plain class rule is enough to clear it. */
+.wp-block-columns {
+  margin-bottom: 0;
+}
+
+/* --- Mobile + tablet: one gutter per band, not two -------------- */
+/* `.wptpl-section` carries the gutter and so does every `.wptpl-container-*`,
+   so a band and the container inside it stack two of them — 46px a side on a
+   phone, against a 23px design. On desktop the container is capped far below
+   the viewport so the doubling never shows; below 1024 it is most of the
+   inset the copy has left.
+
+   This was being patched one case at a time (`:has(.wptpl-checklist)`,
+   `:has(.wptpl-form)`, the FAQ, the home card grids). Fix it at the root: a
+   container that is a direct child of a section takes its side padding from
+   the section. Unlayered, so it beats the container gutter in @layer
+   components without `!important`. */
+@media (max-width: 1023px) {
+  .wptpl-section > .wptpl-container,
+  .wptpl-section > .wptpl-container-md,
+  .wptpl-section > .wptpl-container-narrow {
+    padding-inline: 0;
   }
 }
 
