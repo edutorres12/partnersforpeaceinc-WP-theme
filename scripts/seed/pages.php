@@ -953,7 +953,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 									'answer'   => wptpl_lorem_len( 125 ),
 								),
 							),
-						)
+						) + wptpl_margin_top( '2rem' )
 					),
 				),
 				'',
@@ -982,7 +982,9 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 				),
 				'secondary',
 				'container-narrow',
-				'wptpl-section-tight',
+				// Full section padding, not tight: the reference gives this band
+				// 100px top and bottom like any other.
+				'',
 				'base'
 			),
 
@@ -1036,7 +1038,14 @@ function wptpl_seed_page_contact(): string {
 				array( wptpl_paragraph( '<strong>' . $label . '</strong>' ) ),
 				array( wptpl_paragraph( wptpl_lorem_len( $value ), 'has-small-font-size' ) ),
 			),
-			array( '40%', '60%' )
+			array( '40%', '60%' ),
+			'',
+			// Rows need separating from each other as well as from the heading,
+			// or the pairs run together into one block of text.
+			'1.5rem',
+			false,
+			array(),
+			'1.25rem'
 		);
 	};
 
@@ -1098,7 +1107,7 @@ function wptpl_seed_page_contact(): string {
 						'',
 						false,
 						array(),
-						'50px'
+						'56px'
 					),
 				),
 				'surface',
@@ -1196,7 +1205,7 @@ function wptpl_seed_page_blog(): string {
 			// which read as three more posts that never updated.
 			wptpl_section(
 				array(
-					wptpl_block( 'post-grid', array( 'count' => 9 ) ),
+					wptpl_block( 'post-grid', array_merge( array( 'count' => 9 ), wptpl_margin_top( '2rem' ) ) ),
 				),
 				'',
 				'container'
