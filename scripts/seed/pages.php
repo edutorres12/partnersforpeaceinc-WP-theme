@@ -663,26 +663,32 @@ function wptpl_seed_page_about(): string {
 			// block. The reference does it this way here, and the number circles
 			// overhang each column's top edge, which is what the
 			// `.wptpl-steps.has-global-padding` top-padding rule exists to clear.
-			wptpl_section(
+			// The wptpl/steps block, not a hand-built columns row. The reference
+			// builds this one by hand, but doing the same here left About with
+			// step cards a different size from every other steps band on the
+			// site — two implementations of one section drift apart the moment
+			// either is touched. One block, one shape, everywhere.
+			wptpl_block(
+				'steps',
 				array(
-					wptpl_columns(
+					'heading'        => 'How to get started',
+					'items'          => array(
 						array(
-							wptpl_step_column( 1, 26, 59 ),
-							wptpl_step_column( 2, 14, 49 ),
-							wptpl_step_column( 3, 28, 73 ),
+							'title' => wptpl_lorem_len( 26 ),
+							'text'  => wptpl_lorem_len( 59 ),
 						),
-						array(),
-						'',
-						'',
-						false,
-						array(),
-						'50px'
+						array(
+							'title' => wptpl_lorem_len( 14 ),
+							'text'  => wptpl_lorem_len( 49 ),
+						),
+						array(
+							'title' => wptpl_lorem_len( 28 ),
+							'text'  => wptpl_lorem_len( 73 ),
+						),
 					),
-				),
-				'muted',
-				'container-md',
-				'wptpl-steps',
-				'base'
+					'overlayOpacity' => 0.65,
+					'usePlaceholder' => true,
+				)
 			),
 
 			wptpl_block(
@@ -1144,6 +1150,11 @@ function wptpl_seed_page_contact(): string {
 					),
 					'overlayOpacity' => 0.7,
 					'overlayColor'   => 'primary',
+					// The background image is what makes the block render its
+					// bordered cards with the number circle overhanging the top
+					// edge — see $wptpl_card_class in the block's render.php.
+					// Without it the band is bare columns.
+					'usePlaceholder' => true,
 					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
@@ -1196,12 +1207,18 @@ function wptpl_seed_page_blog(): string {
 				'base'
 			),
 
+			// The featured post and the grid below it are the two halves of the
+			// hub, so they take different backgrounds. Left both untinted they
+			// run together as one long white page and the featured slot stops
+			// reading as featured.
 			wptpl_section(
 				array(
 					wptpl_block( 'featured-post' ),
 				),
+				'muted',
+				'container-md',
 				'',
-				'container-md'
+				'base'
 			),
 
 			// Post grid only. A static row of guide cards used to sit under it,
@@ -1417,6 +1434,12 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 							'text'  => wptpl_lorem_len( 56 ),
 						),
 					),
+					// Same as everywhere else the block appears: the background
+					// image is what gives the band its rhythm and its bordered
+					// cards. Without it the section renders flush against its
+					// neighbours with bare columns inside.
+					'overlayOpacity'  => 0.65,
+					'usePlaceholder'  => true,
 				)
 			),
 			wptpl_block(

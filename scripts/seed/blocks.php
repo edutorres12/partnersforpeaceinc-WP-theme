@@ -560,51 +560,6 @@ function wptpl_group( array $inner, string $bg = '', string $text = '', string $
 	);
 }
 
-/**
- * One column of a hand-built steps row: a numbered circle, a title and a body.
- *
- * The `wptpl/steps` block owns its whole band — heading, intro, background and
- * CTA. Some sections want only the three numbered columns inside a band they
- * already control, and that is what the reference builds here out of core
- * blocks. The circle is raw HTML because no block renders one, and it is pulled
- * up so it overhangs the column's top edge; the
- * `.wptpl-steps.has-global-padding` rule in tailwind.css adds the top padding
- * that keeps it from colliding with whatever sits above.
- *
- * @param int $number Step number.
- * @param int $title  Approximate title length.
- * @param int $text   Approximate body length.
- * @return array<int, string>
- */
-function wptpl_step_column( int $number, int $title, int $text ): array {
-	return array(
-		// The circle sits above the card and half outside it, so it is emitted
-		// as a sibling with a negative bottom margin rather than as the card's
-		// first child — inside the card its own top padding would push it back
-		// in, and the card's rounding would clip the half meant to escape.
-		wptpl_html(
-			sprintf(
-				'<div style="position:relative;z-index:1;margin:0 auto -2.5rem;width:5rem;height:5rem;'
-					. 'border-radius:50%%;display:flex;align-items:center;justify-content:center;'
-					. 'font-size:2rem;font-weight:700;background:var(--wp--preset--color--accent);'
-					. 'color:var(--wp--preset--color--on-dark)">%d</div>',
-				$number
-			)
-		),
-		wptpl_group(
-			array(
-				wptpl_heading( wptpl_lorem_len( $title ), 2, '', 'center' ),
-				wptpl_paragraph( wptpl_lorem_len( $text ), '', 'center' ),
-			),
-			'',
-			'',
-			'wptpl-step-card',
-			'',
-			'3.5rem 1.5rem 1.5rem',
-			'12px'
-		),
-	);
-}
 
 /**
  * A raw core/html block.
