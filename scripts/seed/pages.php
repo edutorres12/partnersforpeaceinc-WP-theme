@@ -552,7 +552,6 @@ function wptpl_seed_page_about(): string {
 							wptpl_paragraph( wptpl_lorem_len( 460 ) ),
 							wptpl_paragraph( wptpl_lorem_len( 520 ) ),
 							wptpl_paragraph( wptpl_lorem_len( 442 ) ),
-							wptpl_html( '<div style="margin-top:1.5rem"><a class="wptpl-btn-accent" href="/contact/">Primary CTA</a></div>' ),
 						),
 						'on-dark',
 						'',
@@ -784,12 +783,17 @@ function wptpl_seed_page_services(): string {
 }
 
 function wptpl_seed_page_service( array $service, array $siblings ): string {
-	$checklist = static function ( string $prefix ) {
-		return array(
-			array( 'text' => $prefix . ' one' ),
-			array( 'text' => $prefix . ' two' ),
-			array( 'text' => $prefix . ' three' ),
-		);
+	// Real sentence lengths, not "Symptom one". These rows are the page's
+	// densest content and they set the height of the band around them; three
+	// two-word labels leave it looking half-empty and give no sense of how the
+	// finished list will sit.
+	$checklist = static function ( int $seed ) {
+		$rows = array();
+		foreach ( array( 46, 62, 38, 54 ) as $i => $length ) {
+			$rows[] = array( 'text' => wptpl_lorem_len( $length + ( $seed * 3 ) + $i ) );
+		}
+
+		return $rows;
 	};
 
 	$related = array();
@@ -828,7 +832,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 									'checklist',
 									array(
 										'iconStyle' => 'plus',
-										'items'     => $checklist( 'Symptom' ),
+										'items'     => $checklist( 1 ),
 										'className' => 'wptpl-checklist-tight',
 									)
 								),
@@ -838,7 +842,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 									'checklist',
 									array(
 										'iconStyle' => 'plus',
-										'items'     => $checklist( 'Symptom' ),
+										'items'     => $checklist( 2 ),
 										'className' => 'wptpl-checklist-tight',
 									)
 								),
@@ -878,7 +882,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 									'checklist',
 									array(
 										'iconStyle' => 'plus',
-										'items'     => $checklist( 'Reason' ),
+										'items'     => $checklist( 3 ),
 										'className' => 'wptpl-checklist-tight',
 									)
 								),
@@ -888,7 +892,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 									'checklist',
 									array(
 										'iconStyle' => 'plus',
-										'items'     => $checklist( 'Reason' ),
+										'items'     => $checklist( 4 ),
 										'className' => 'wptpl-checklist-tight',
 									)
 								),
