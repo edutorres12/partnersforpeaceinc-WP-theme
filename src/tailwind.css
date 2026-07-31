@@ -918,6 +918,30 @@ body.error404 .wptpl-main {
 .wptpl-card-prose {
   max-width: 810px;
   margin-inline: auto;
+  /* Centred, and the paragraphs separated. Left-aligned with no gap the three
+     blocks run together into one wall of text. */
+  text-align: center;
+}
+.wptpl-card-prose p + p {
+  margin-top: 1.5rem;
+}
+
+/* A column whose only job is to label the rows beside it. Centring the heading
+   itself does nothing — the column is the flex item, so the column is what has
+   to centre its contents. */
+.wp-block-column:has(> .wptpl-heading-shrink) {
+  justify-content: center;
+}
+
+/* Step cards run to equal height. Each column is a flex column and the card
+   grows to fill it, so a short middle card no longer sits half the height of
+   its neighbours. */
+.wp-block-columns:has(.wptpl-step-card) > .wp-block-column {
+  display: flex;
+  flex-direction: column;
+}
+.wp-block-columns:has(.wptpl-step-card) > .wp-block-column > .wptpl-step-card {
+  flex: 1;
 }
 /* A label-and-value card (practice info, hours, location). Its heading is a
    title for the rows under it, not the first of them, so it needs real
