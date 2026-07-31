@@ -325,7 +325,7 @@ function wptpl_seed_page_home(): string {
 						'',
 						'',
 						true,
-						array(),
+						array( '', 'wptpl-bio-copy' ),
 						'split'
 					),
 				),
@@ -690,9 +690,16 @@ function wptpl_seed_page_about(): string {
 						'2.5rem'
 					),
 				),
-				'guide-card',
+				// A background placeholder, not a card one: `guide-card` is an
+				// 800x500 box with the word "Image" drawn into it at card scale.
+				// Stretched to cover a full-bleed band it scales that word to the
+				// height of the section — the giant letters showing through behind
+				// the cards. `cta-bg` is drawn for a band, and the wash keeps the
+				// placeholder from competing with the copy the way an undimmed one
+				// does.
+				'cta-bg',
 				'base',
-				0,
+				55,
 				'',
 				'var(--wptpl-container-md)'
 			),
