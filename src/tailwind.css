@@ -930,6 +930,23 @@ body.error404 .wptpl-main {
 .wp-block-columns:has(> .wp-block-column .wptpl-step-card) {
   padding-top: 2.5rem;
 }
+/* The wptpl/steps block draws the same three numbered columns, but renders its
+   own markup, so it cannot use the card group above. Give its items the
+   matching box here — otherwise the block variant (Contact, the service
+   subpages) shows bare text while the hand-built one (About) shows cards. */
+.wptpl-steps .grid > * {
+  border: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 12px;
+  padding: 3.5rem 1.5rem 1.5rem;
+}
+
+/* Label column facing a list — "Symptoms", "This is for you if…". It is a
+   heading for the rows beside it, so it reads as a label only when it is
+   centred against them; top-aligned it looks like a dropped first item. */
+.wptpl-heading-shrink {
+  align-self: center;
+}
 
 /* Horizontal dividers between stacked items inside a card. Thin (default 1px)
    solid bar. Width + centering come from the `.wptpl-card-inset > *` rule
@@ -1013,21 +1030,18 @@ body.error404 .wptpl-main {
    avoids `:has()`, which CSS optimizers (LiteSpeed "Remove Unused CSS" /
    combine) can strip. `!important` beats the inline `padding-top`. */
 .wp-block-group.alignfull.wptpl-steps.has-global-padding {
-  padding-top: 140px !important;
-  /* The bottom needs stating too. The band is usually the last thing before the
-     footer, and with only a top padding set the last line of copy sits flush
-     against it. These are the standard section values, not the inflated top. */
+  padding-top: 100px !important;
   padding-bottom: 100px !important;
 }
 @media (max-width: 1023px) {
   .wp-block-group.alignfull.wptpl-steps.has-global-padding {
-    padding-top: 112px !important;
+    padding-top: 72px !important;
     padding-bottom: 72px !important;
   }
 }
 @media (max-width: 767px) {
   .wp-block-group.alignfull.wptpl-steps.has-global-padding {
-    padding-top: 80px !important;
+    padding-top: 48px !important;
     padding-bottom: 48px !important;
   }
 }

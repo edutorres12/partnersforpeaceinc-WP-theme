@@ -130,6 +130,9 @@ function wptpl_seed_all_posts(): void {
 		array( 'sample-post-three', 'Sample post three', false ),
 		array( 'sample-post-four', 'Sample post four', false ),
 		array( 'sample-post-five', 'Sample post five', false ),
+		// Six, not five: the grid runs three-up, so an odd count leaves a gap in
+		// the last row that reads as a missing card rather than as the end.
+		array( 'sample-post-six', 'Sample post six', false ),
 	);
 
 	foreach ( $posts as $index => $post ) {
