@@ -140,29 +140,23 @@ function wptpl_seed_page_home(): string {
 		array( 64, 196 ),
 	);
 
-	// Split three and the remainder rather than the reference's four-and-four:
-	// this sitemap has five services, and a four-up first row would leave a
-	// single card stranded in the second.
-	$rows  = array();
-	$banks = array_chunk( $services, 3 );
-	foreach ( $banks as $bank_index => $bank ) {
-		$cards = array();
-		foreach ( $bank as $i => $service ) {
-			$n       = ( $bank_index * 3 ) + $i;
-			$len     = $lengths[ $n % count( $lengths ) ];
-			$cards[] = array( $service_card( $service, $len[0], $len[1] ) );
-		}
-		$rows[] = wptpl_columns(
-			$cards,
-			array(),
-			'wptpl-services-carousel',
-			0 === $bank_index ? '3rem' : '1.5rem',
-			false,
-			array(),
-			'cards'
-		);
+	// One columns row for the whole grid, not one per bank of three.
+	// `wptpl-card-grid` lays it three across and wraps the remainder onto a
+	// centred second row. Two separate rows could not do that: a columns row is
+	// a flex row, so the second bank's cards stretched to half the band and each
+	// row sized itself independently — the bottom cards came out both wider and
+	// taller than the three above them.
+	$cards = array();
+	foreach ( $services as $n => $service ) {
+		$len     = $lengths[ $n % count( $lengths ) ];
+		$cards[] = array( $service_card( $service, $len[0], $len[1] ) );
 	}
-	$service_grid = implode( "\n\n", $rows );
+	$service_grid = wptpl_columns(
+		$cards,
+		array(),
+		'wptpl-services-carousel wptpl-card-grid',
+		'3rem'
+	);
 
 	return implode(
 		"\n\n",
@@ -223,11 +217,8 @@ function wptpl_seed_page_home(): string {
 							array( wptpl_card_icon( 23, 176 ) ),
 						),
 						array(),
-						'',
-						'3rem',
-						false,
-						array(),
-						'cards'
+						'wptpl-card-grid',
+						'3rem'
 					),
 				),
 				'muted',
@@ -636,8 +627,10 @@ function wptpl_seed_page_about(): string {
 			// 5. What working together looks like — same shape as band 3.
 			$rule_band( 'primary', 36, array( 190, 108 ) ),
 
-			// 6. Who this is for: a 2-up card row plus a lone third card, matched
-			// to the pair's rendered width by wptpl-card-solo.
+			// 6. Who this is for: three cards, two across with the third centred
+			// under them. One grid, not a 2-up row plus a loose card — that shape
+			// gave the third card its own width and its own height, and nothing
+			// short of hand-matching kept the three in step.
 			wptpl_cover(
 				array(
 					wptpl_block(
@@ -677,33 +670,31 @@ function wptpl_seed_page_about(): string {
 									)
 								),
 							),
+							array(
+								wptpl_block(
+									'feature-card',
+									array(
+										'title'           => wptpl_lorem_len( 47 ),
+										'text'            => wptpl_lorem_len( 178 ),
+										'centered'        => true,
+										'bordered'        => false,
+										'className'       => 'wptpl-title-sm',
+										'backgroundColor' => 'accent',
+										'textColor'       => 'on-dark',
+									)
+								),
+							),
 						),
 						array(),
-						'',
-						'2.5rem',
-						false,
-						array(),
-						'cards'
-					),
-					wptpl_block(
-						'feature-card',
-						array_merge(
-							array(
-								'title'           => wptpl_lorem_len( 47 ),
-								'text'            => wptpl_lorem_len( 178 ),
-								'centered'        => true,
-								'bordered'        => false,
-								'className'       => 'wptpl-title-sm wptpl-card-solo',
-								'backgroundColor' => 'accent',
-								'textColor'       => 'on-dark',
-							),
-							wptpl_margin_top( '1.5rem' )
-						)
+						'wptpl-card-grid is-2-up',
+						'2.5rem'
 					),
 				),
 				'guide-card',
 				'base',
-				0
+				0,
+				'',
+				'var(--wptpl-container-md)'
 			),
 
 			// 7. How to get started. The reference builds this band by hand from
@@ -864,14 +855,17 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 			wptpl_block(
 				'hero',
 				array(
-					'title'              => $service['title'],
-					'subtitle'           => wptpl_lorem_len( 125 ),
-					'layout'             => 'centered',
-					'alignment'          => 'center',
-					'ctaText'            => 'Primary CTA',
-					'ctaUrl'             => '/contact/',
-					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
-					'className'          => 'wptpl-hero-dark is-intro-wide',
+					'title'     => $service['title'],
+					'subtitle'  => wptpl_lorem_len( 125 ),
+					'ctaText'   => 'Primary CTA',
+					'ctaUrl'    => '/contact/',
+					// `imageUrl`, not `backgroundImageUrl`: the reference runs this
+					// hero as the split variant — a dark panel carrying the title,
+					// lead and CTA with the photo beside it. A background image
+					// switches the block to its overlay variant instead, which lays
+					// the copy on top of the picture and centres it.
+					'imageUrl'  => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+					'className' => 'wptpl-hero-dark is-intro-wide',
 				)
 			),
 
@@ -1168,7 +1162,11 @@ function wptpl_seed_page_contact(): string {
 						)
 					),
 				),
-				'hero'
+				'hero',
+				'secondary',
+				55,
+				'',
+				'var(--wptpl-container-md)'
 			),
 
 			// 2. Form beside the practice-info card.
@@ -1398,34 +1396,21 @@ function wptpl_seed_page_therapists(): string {
 			),
 			wptpl_section(
 				array(
-					// Two banks of cards in one band, same shape as the home service
-					// grid — so the same class, which is what the mobile row-gap
-					// rule keys off, and the same gap between the banks.
+					// Six cards in one grid, not two rows of three. Same shape as the
+					// home service grid, and for the same reason: two columns rows
+					// size themselves independently, so the second bank's cards came
+					// out taller than the first's.
 					wptpl_columns(
 						array(
 							array( $card( 1 ) ),
 							array( $card( 2 ) ),
 							array( $card( 3 ) ),
-						),
-						array(),
-						'wptpl-services-carousel',
-						'',
-						false,
-						array(),
-						'cards'
-					),
-					wptpl_columns(
-						array(
 							array( $card( 4 ) ),
 							array( $card( 5 ) ),
 							array( $card( 6 ) ),
 						),
 						array(),
-						'wptpl-services-carousel',
-						'1.5rem',
-						false,
-						array(),
-						'cards'
+						'wptpl-services-carousel wptpl-card-grid'
 					),
 				)
 			),
