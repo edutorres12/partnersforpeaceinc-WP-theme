@@ -1384,20 +1384,72 @@ function wptpl_seed_page_blog(): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Meet Our Therapists: intro, a grid of practitioner cards, closing CTA.
+ * Meet the Team: hero, the clinician roster, a director bio, the support team,
+ * how a match is made, a careers band and the closing CTA.
  *
  * The cards are slots, not people. Service pages are grouped by theme precisely
  * so the site does not need restructuring when the roster changes.
+ *
+ * The page answers the three questions a visitor actually arrives with, in the
+ * order they ask them: who would I see, is this practice run by people I trust,
+ * and how do I get to one of them. So the roster sits directly under the hero —
+ * it is the reason the page exists, and anything placed above it delays the
+ * payoff — and the "how matching works" band comes after the faces, not before.
+ *
+ * The two rosters are deliberately not the same object. Clinicians carry a
+ * portrait, a credential line, specialty pills and their own action, because
+ * choosing one is the decision the page is asking for. Leadership and support
+ * carry a role and a line of copy and nothing else: the same treatment for both
+ * would give an office manager the same visual weight as the therapist someone
+ * is about to trust with their marriage.
  */
 function wptpl_seed_page_therapists(): string {
-	$card = static function ( int $n ) {
+	$portrait = get_template_directory_uri() . '/assets/placeholders/portrait.jpg';
+
+	// A clinician card. Left-aligned, not centred: the bio runs several lines,
+	// and centred multi-line copy is what turns a roster into a wall of text
+	// instead of six scannable people. The card grid equalises the heights, so
+	// the bios do not have to be the same length to sit in step.
+	$clinician = static function ( int $n ) use ( $portrait ): string {
 		return wptpl_block(
 			'feature-card',
 			array(
+				// The credential line goes above the name, not below it: it is the
+				// eyebrow that qualifies the person, and running it underneath
+				// pushes it into the bio where it reads as the first sentence.
+				'eyebrow'  => 'Credentials, license',
 				'title'    => 'Therapist ' . $n,
-				'text'     => wptpl_lorem_len( 56 ),
-				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
-				'centered' => true,
+				'text'     => wptpl_lorem_len( 130 + ( $n % 3 ) * 30 ),
+				'imageUrl' => $portrait,
+				// Specialties as pills, so the roster can be scanned by need
+				// ("who treats this?") rather than only by name. The trailing
+				// period goes: wptpl_lorem_len() always closes a sentence, and a
+				// pill is a label, not one.
+				'tags'     => array(
+					rtrim( wptpl_lorem_len( 12 ), '.' ),
+					rtrim( wptpl_lorem_len( 16 ), '.' ),
+				),
+				// One action per card, pinned to the bottom by the block. A roster
+				// whose cards only describe people leaves the visitor to work out
+				// what to do with the one they picked.
+				'ctaText'  => 'Book with this therapist',
+				'ctaUrl'   => '/contact/',
+				'ctaStyle' => 'arrow',
+			)
+		);
+	};
+
+	// Leadership / support card: no portrait, white on the surface band. The
+	// lighter treatment is the hierarchy — see the note on the function.
+	$support = static function ( int $n ): string {
+		return wptpl_block(
+			'feature-card',
+			array(
+				'eyebrow'         => 'Role',
+				'title'           => 'Team member ' . $n,
+				'text'            => wptpl_lorem_len( 105 ),
+				'showImage'       => false,
+				'backgroundColor' => 'base',
 			)
 		);
 	};
@@ -1405,60 +1457,178 @@ function wptpl_seed_page_therapists(): string {
 	return implode(
 		"\n\n",
 		array(
+			// 1. Hero. A photo band with a dark wash, like the services hero.
 			wptpl_block(
 				'hero',
 				array(
-					'title'     => 'Meet our therapists',
-					'subtitle'           => wptpl_lorem_len( 125 ),
-					// A photo band with a dark wash, like the services hero. These
-					// were the only heroes on the site carrying no imagery, which
-					// left four pages opening on a bare strip of text.
+					'eyebrow'            => 'Our team',
+					'title'              => 'Meet the team',
+					'subtitle'           => wptpl_lorem_len( 155 ),
 					'alignment'          => 'center',
 					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
 					'overlayOpacity'     => 0.6,
 					'className'          => 'wptpl-hero-dark',
-					'ctaText'   => 'Primary CTA',
-					'ctaUrl'    => '/contact/',
+					'ctaText'            => 'Primary CTA',
+					'ctaUrl'             => '/contact/',
 				)
 			),
-			wptpl_section(
-				array(
-					// Six cards in one grid, not two rows of three. Same shape as the
-					// home service grid, and for the same reason: two columns rows
-					// size themselves independently, so the second bank's cards came
-					// out taller than the first's.
-					wptpl_columns(
-						array(
-							array( $card( 1 ) ),
-							array( $card( 2 ) ),
-							array( $card( 3 ) ),
-							array( $card( 4 ) ),
-							array( $card( 5 ) ),
-							array( $card( 6 ) ),
-						),
-						array(),
-						'wptpl-services-carousel wptpl-card-grid'
-					),
-				)
-			),
+
+			// 2. The roster. Six cards in one grid, not two rows of three. Same
+			// shape as the home service grid, and for the same reason: two column
+			// rows size themselves independently, so the second bank's cards came
+			// out taller than the first's.
 			wptpl_section(
 				array(
 					wptpl_block(
 						'section-header',
 						array(
-							'headline' => 'How we work together',
-							'intro'    => wptpl_lorem_len( 125 ),
+							'eyebrow'  => 'Counseling team',
+							'headline' => wptpl_lorem_len( 40 ),
+							'intro'    => wptpl_lorem_len( 150 ),
 						)
 					),
-				),
-				'surface',
-				'container-narrow'
+					wptpl_columns(
+						array(
+							array( $clinician( 1 ) ),
+							array( $clinician( 2 ) ),
+							array( $clinician( 3 ) ),
+							array( $clinician( 4 ) ),
+							array( $clinician( 5 ) ),
+							array( $clinician( 6 ) ),
+						),
+						array(),
+						'wptpl-services-carousel wptpl-card-grid',
+						// A section-header's own bottom margin is sized for a
+						// paragraph, not for a grid of cards.
+						'3rem'
+					),
+				)
 			),
+
+			// 3. Clinical director — a portrait beside the copy, on a dark band.
+			// Two card grids stacked read as one long list; an editorial row
+			// between them breaks the rhythm and puts a face on the practice
+			// itself, which is the second question a visitor asks.
+			wptpl_section(
+				array(
+					wptpl_columns(
+						array(
+							array( wptpl_image( 'portrait', 'is-style-rounded-square wptpl-portrait-fill', '380px' ) ),
+							array(
+								wptpl_block(
+									'section-header',
+									array(
+										'eyebrow'   => 'Clinical director',
+										'headline'  => 'Director name',
+										'alignment' => 'left',
+										'textColor' => 'base',
+									)
+								),
+								wptpl_heading( 'Role line, credentials', 3, '', '', 'h3' ),
+								wptpl_paragraph( wptpl_lorem_len( 235 ) ),
+								wptpl_paragraph( wptpl_lorem_len( 180 ) ),
+								wptpl_html( '<div style="margin-top:1.5rem"><a class="wptpl-btn-accent" href="/about-us/">Read the full story</a></div>' ),
+							),
+						),
+						array( '380px', '' ),
+						'',
+						'',
+						true,
+						array( '', 'wptpl-bio-copy' ),
+						'split'
+					),
+				),
+				'primary',
+				'container-md',
+				'',
+				'base'
+			),
+
+			// 4. Leadership and support, on a tinted band so the cards — which are
+			// white here rather than the default surface — still read as cards.
+			wptpl_section(
+				array(
+					wptpl_block(
+						'section-header',
+						array(
+							'eyebrow'  => 'Leadership &amp; support',
+							'headline' => wptpl_lorem_len( 36 ),
+							'intro'    => wptpl_lorem_len( 130 ),
+						)
+					),
+					wptpl_columns(
+						array(
+							array( $support( 1 ) ),
+							array( $support( 2 ) ),
+							array( $support( 3 ) ),
+						),
+						array(),
+						'wptpl-card-grid',
+						'3rem'
+					),
+				),
+				'surface'
+			),
+
+			// 5. How a match is made. Six faces is a choice, and a choice with no
+			// stated process is where a visitor stalls — this band is the answer
+			// to "I do not know which one to pick".
+			wptpl_block(
+				'steps',
+				array(
+					'heading'   => wptpl_lorem_len( 32 ),
+					'intro'     => wptpl_lorem_len( 118 ),
+					'items'     => array(
+						array(
+							'title' => wptpl_lorem_len( 22 ),
+							'text'  => wptpl_lorem_len( 62 ),
+						),
+						array(
+							'title' => wptpl_lorem_len( 18 ),
+							'text'  => wptpl_lorem_len( 55 ),
+						),
+						array(
+							'title' => wptpl_lorem_len( 25 ),
+							'text'  => wptpl_lorem_len( 68 ),
+						),
+					),
+					'showCta'   => true,
+					'ctaText'   => 'Primary CTA',
+					'ctaUrl'    => '/contact/',
+					'microcopy' => wptpl_lorem_len( 48 ),
+				)
+			),
+
+			// 6. Careers. A team page is read by clinicians looking for work as
+			// well as by clients looking for care, and the closing CTA below
+			// speaks only to the second. Its own band on photography, so the two
+			// invitations are not two banners in a row.
+			wptpl_cover(
+				array(
+					wptpl_block(
+						'section-header',
+						array(
+							'eyebrow'   => 'Join our team',
+							'headline'  => wptpl_lorem_len( 38 ),
+							'intro'     => wptpl_lorem_len( 125 ),
+							'textColor' => 'base',
+						)
+					),
+					wptpl_html( '<div style="margin-top:2rem;text-align:center"><a class="wptpl-btn-photo" href="/contact/">Primary CTA</a></div>' ),
+				),
+				'cta-bg',
+				'secondary',
+				55,
+				'base',
+				'var(--wptpl-container-narrow)'
+			),
+
+			// 7. Closing CTA.
 			wptpl_block(
 				'cta-banner',
 				array(
-					'headline' => 'Closing headline',
-					'text'     => wptpl_lorem_len( 56 ),
+					'headline' => wptpl_lorem_len( 52 ),
+					'text'     => wptpl_lorem_len( 96 ),
 					'ctaText'  => 'Primary CTA',
 					'ctaUrl'   => '/contact/',
 					'theme'    => 'dark',
@@ -1688,10 +1858,13 @@ function wptpl_seed_all_pages(): array {
 			'order'   => 1,
 		)
 	);
+	// The slug stays `meet-our-therapists` on purpose. Retitling a page is a
+	// content edit; changing its slug would orphan the live URL and retire the
+	// old page, which is a migration, not a redesign.
 	$ids['therapists'] = wptpl_seed_page(
 		array(
 			'slug'    => 'meet-our-therapists',
-			'title'   => 'Meet Our Therapists',
+			'title'   => 'Meet the Team',
 			'content' => wptpl_seed_page_therapists(),
 			'order'   => 2,
 		)
@@ -1865,7 +2038,7 @@ function wptpl_seed_all_menus( array $ids ): void {
 			'page_id' => $ids['about'],
 		),
 		array(
-			'title'   => 'Our Therapists',
+			'title'   => 'Meet the Team',
 			'page_id' => $ids['therapists'],
 		),
 		array(
