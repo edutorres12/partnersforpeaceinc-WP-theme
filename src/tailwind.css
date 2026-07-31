@@ -903,73 +903,11 @@ body.error404 .wptpl-main {
   }
 }
 
-/* Hand-built step cards. Each is a hairline box with the numbered circle
-   overhanging its top edge. The border is drawn from the current text color at
-   low alpha rather than a palette slug, so it reads on whatever the band under
-   it happens to be — these cards sit on tinted, photo and plain bands across
-   the site, and a fixed border color is wrong on at least one of them. */
-.wptpl-step-card {
-  border: 1px solid currentColor;
-  border-color: color-mix(in srgb, currentColor 35%, transparent);
-}
-/* A long-form card on a photo band. Left at the container width the measure
-   runs past 140 characters, which is unreadable and reads as a slab rather
-   than as a card sitting on the image. Add `wptpl-card-prose` to the group. */
-.wptpl-card-prose {
-  max-width: 810px;
-  margin-inline: auto;
-  /* Centred, and the paragraphs separated. Left-aligned with no gap the three
-     blocks run together into one wall of text. */
-  text-align: center;
-}
-.wptpl-card-prose p + p {
-  margin-top: 1.5rem;
-}
-
 /* A column whose only job is to label the rows beside it. Centring the heading
    itself does nothing — the column is the flex item, so the column is what has
    to centre its contents. */
 .wp-block-column:has(> .wptpl-heading-shrink) {
   justify-content: center;
-}
-
-/* Step cards run to equal height. Each column is a flex column and the card
-   grows to fill it, so a short middle card no longer sits half the height of
-   its neighbours. */
-.wp-block-columns:has(.wptpl-step-card) > .wp-block-column {
-  display: flex;
-  flex-direction: column;
-}
-.wp-block-columns:has(.wptpl-step-card) > .wp-block-column > .wptpl-step-card {
-  flex: 1;
-}
-/* A label-and-value card (practice info, hours, location). Its heading is a
-   title for the rows under it, not the first of them, so it needs real
-   separation — the block's own heading margin is sized for body copy. */
-.wptpl-card-rows > :is(h2, h3, h4) {
-  margin-bottom: 1.75rem;
-}
-/* The row itself needs clearance for the circles, which start 2.5rem above the
-   first card. Without it the top row collides with whatever precedes it. */
-.wp-block-columns:has(> .wp-block-column .wptpl-step-card) {
-  padding-top: 2.5rem;
-}
-/* The wptpl/steps block draws the same three numbered columns, but renders its
-   own markup, so it cannot use the card group above. Give its items the
-   matching box here — otherwise the block variant (Contact, the service
-   subpages) shows bare text while the hand-built one (About) shows cards. */
-.wptpl-steps .grid > * {
-  border: 1px solid currentColor;
-  border-color: color-mix(in srgb, currentColor 35%, transparent);
-  border-radius: 12px;
-  padding: 3.5rem 1.5rem 1.5rem;
-}
-
-/* Label column facing a list — "Symptoms", "This is for you if…". It is a
-   heading for the rows beside it, so it reads as a label only when it is
-   centred against them; top-aligned it looks like a dropped first item. */
-.wptpl-heading-shrink {
-  align-self: center;
 }
 
 /* Horizontal dividers between stacked items inside a card. Thin (default 1px)
