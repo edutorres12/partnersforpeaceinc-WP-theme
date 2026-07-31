@@ -556,7 +556,7 @@ function wptpl_seed_page_about(): string {
 						),
 						'on-dark',
 						'',
-						'',
+						'wptpl-card-prose',
 						'2.5rem',
 						'50px',
 						'22px'
@@ -973,7 +973,7 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 						array(
 							'items'     => $related,
 							'className' => 'wptpl-tags-light wptpl-tags-lg',
-						)
+						) + wptpl_margin_top( '2.5rem' )
 					),
 				),
 				'secondary',
@@ -1082,7 +1082,7 @@ function wptpl_seed_page_contact(): string {
 									),
 									'secondary',
 									'on-dark',
-									'',
+									'wptpl-card-rows',
 									'',
 									'40px',
 									'22px'

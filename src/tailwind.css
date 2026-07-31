@@ -903,6 +903,34 @@ body.error404 .wptpl-main {
   }
 }
 
+/* Hand-built step cards. Each is a hairline box with the numbered circle
+   overhanging its top edge. The border is drawn from the current text color at
+   low alpha rather than a palette slug, so it reads on whatever the band under
+   it happens to be — these cards sit on tinted, photo and plain bands across
+   the site, and a fixed border color is wrong on at least one of them. */
+.wptpl-step-card {
+  border: 1px solid currentColor;
+  border-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+/* A long-form card on a photo band. Left at the container width the measure
+   runs past 140 characters, which is unreadable and reads as a slab rather
+   than as a card sitting on the image. Add `wptpl-card-prose` to the group. */
+.wptpl-card-prose {
+  max-width: 810px;
+  margin-inline: auto;
+}
+/* A label-and-value card (practice info, hours, location). Its heading is a
+   title for the rows under it, not the first of them, so it needs real
+   separation — the block's own heading margin is sized for body copy. */
+.wptpl-card-rows > :is(h2, h3, h4) {
+  margin-bottom: 1.75rem;
+}
+/* The row itself needs clearance for the circles, which start 2.5rem above the
+   first card. Without it the top row collides with whatever precedes it. */
+.wp-block-columns:has(> .wp-block-column .wptpl-step-card) {
+  padding-top: 2.5rem;
+}
+
 /* Horizontal dividers between stacked items inside a card. Thin (default 1px)
    solid bar. Width + centering come from the `.wptpl-card-inset > *` rule
    (shared 500px content column); here we only add the 25px vertical breathing
