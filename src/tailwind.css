@@ -1389,6 +1389,16 @@ body.error404 .wptpl-main {
    typography plugin isn't installed). `margin-top` only, so it collapses with
    WordPress's block gap instead of stacking. Element selectors so nested
    blocks are covered whether or not the content sits in a wrapper group. */
+/* Air between the featured image and the body, and between the body and the
+   footer. The reference gets this by wrapping each post's content in a Group
+   with 3rem of block padding — which means every future post depends on its
+   author remembering to do the same. Owning it here gives every post the gap
+   whether it was written by the seeder, in the editor, or imported.
+   `> :first-child { margin-top: 0 }` below keeps it from stacking on the first
+   block's own margin. */
+.wptpl-post-content {
+  padding-block: 3rem;
+}
 .wptpl-post-content > :first-child {
   margin-top: 0;
 }

@@ -56,7 +56,18 @@ function wptpl_seed_post_body(): string {
 	return implode(
 		"\n\n",
 		array(
-			wptpl_paragraph( wptpl_lorem_len( 233 ) ),
+			// A lead paragraph, a step above body size — the reference opens
+			// every post this way, and it gives the article a way in before the
+			// first section heading.
+			wptpl_paragraph(
+				wptpl_lorem_len( 233 ),
+				'',
+				'',
+				array(
+					'fontSize'   => '20px',
+					'lineHeight' => '1.6',
+				)
+			),
 			wptpl_heading( 'A section heading', 2 ),
 			wptpl_paragraph( wptpl_lorem_len( 233 ) ),
 			"<!-- wp:list -->\n<ul class=\"wp-block-list\"><li>List item one</li><li>List item two</li><li>List item three</li></ul>\n<!-- /wp:list -->",
