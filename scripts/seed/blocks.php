@@ -473,8 +473,10 @@ function wptpl_separator( string $classname = '' ): string {
  *                                    section class to take a container tier from, so
  *                                    without this it falls back to theme.json's 1400px
  *                                    and its headings run the full width of the page.
+ * @param string             $classname Extra CSS classes for the band, e.g. the hook the
+ *                                    blog filter uses to hide the featured section.
  */
-function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '', string $width = '' ): string {
+function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '', string $width = '', string $classname = '' ): string {
 	$url    = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
 	$layout = array( 'type' => 'constrained' );
 	if ( '' !== $width ) {
@@ -504,6 +506,10 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 	);
 
 	$classes = 'wp-block-cover alignfull';
+	if ( '' !== $classname ) {
+		$attrs['className'] = $classname;
+		$classes           .= ' ' . $classname;
+	}
 	if ( '' !== $text ) {
 		$attrs['textColor'] = $text;
 		$classes           .= ' has-' . $text . '-color has-text-color';
