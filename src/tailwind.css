@@ -180,6 +180,29 @@
    still wins. They also have to live OUTSIDE @layer because they only ever
    appear in the seeder's markup, which Tailwind does not scan — inside a layer
    the purge would strip them. */
+/* A short last bank in a card grid. The service grid runs three-up, and when the
+   list does not divide by three the remainder lands in a row of its own — two
+   columns that each stretch to half the band, so the last bank's cards render
+   half again as wide as the ones above them and the grid stops reading as one
+   grid. Pin every card in a two-card bank to a third of the row, the same track
+   the three-up bank uses, and center what is left over.
+
+   Desktop only: below 1024px the three-up rows are re-laid as a two-column grid
+   (see RESPONSIVE OVERRIDES), so a two-card bank already matches them there. */
+@media (min-width: 1024px) {
+  .wptpl-row-cards:has(> .wp-block-column:nth-child(2)):not(
+      :has(> .wp-block-column:nth-child(3))
+    ) {
+    justify-content: center;
+  }
+  .wptpl-row-cards:has(> .wp-block-column:nth-child(2)):not(
+      :has(> .wp-block-column:nth-child(3))
+    )
+    > .wp-block-column {
+    flex: 0 0 calc((100% - 2 * var(--wptpl-gap-cards)) / 3);
+  }
+}
+
 .wptpl-row-cards { gap: var(--wptpl-gap-cards); }
 .wptpl-row-split { gap: var(--wptpl-gap-split); }
 .wptpl-row-form  { gap: var(--wptpl-gap-form); }
