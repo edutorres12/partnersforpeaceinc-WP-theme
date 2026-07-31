@@ -87,7 +87,10 @@ $wptpl_btn_class = $wptpl_has_image
 	? 'wptpl-btn-accent'
 	: 'wptpl-btn-primary';
 
-$wptpl_body_class = $wptpl_has_image ? 'text-canvas/85 mt-2 font-medium' : 'text-muted mt-2 font-medium';
+// mt-4, not mt-2: the title runs at h3 and often wraps to two lines, and 8px
+// under it left the body reading as a third line of the title rather than as
+// its own paragraph.
+$wptpl_body_class = $wptpl_has_image ? 'text-canvas/85 mt-4 font-medium' : 'text-muted mt-4 font-medium';
 
 // One card shape for both variants. The number circle is pulled up so it
 // overhangs the top border by 50%, and `pt-16` leaves room below it before the

@@ -1371,6 +1371,13 @@ body.error404 .wptpl-main {
   font-size: 1.25rem;
   line-height: 1.3;
 }
+/* Vertical rhythm inside the card. The reference sets a 1rem block gap on the
+   group; without it the entries fall back to the preflight's `h3 { margin: 0 }`
+   and each title sits flush on its own body copy. The `wptpl-sep-wide` rule
+   further down is more specific, so the dividers keep their own 25px. */
+.wptpl-card-inset.wptpl-card-inset > * + * {
+  margin-top: 1rem;
+}
 
 /* Larger role/subtitle line under a hero's name or title. Bumps the
    section-header intro above its default text-xl. Add `wptpl-hero-header` as
