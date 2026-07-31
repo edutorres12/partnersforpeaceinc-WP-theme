@@ -251,11 +251,6 @@
   .wptpl-card-grid,
   .wptpl-card-grid.is-2-up {
     grid-template-columns: 1fr;
-    /* `1fr` rows exist to keep cards level with the ones BESIDE them. Stacked
-       one per row there is nothing to level against, and every card inherits
-       the tallest one's height — which is where the bank of dead space under
-       each short card came from. */
-    grid-auto-rows: auto;
   }
   .wptpl-card-grid > .wp-block-column,
   .wptpl-card-grid:not(.is-2-up) > .wp-block-column:last-child:nth-child(3n + 1),
@@ -2514,6 +2509,16 @@ body.error404 .wptpl-main {
     padding-left: var(--wptpl-gutter);
     padding-right: var(--wptpl-gutter);
   }
+}
+
+/* WordPress core ships `:where(.wp-block-columns){margin-bottom:1.75em}` — about
+   28px under EVERY columns row on the site, at every breakpoint. The theme sets
+   its own vertical rhythm from section padding and explicit margins, so core's
+   stock margin is dead space on top of it: absorbed by the 100px band padding on
+   desktop, plainly visible against the 48px one on a phone. `:where()` carries
+   no specificity, so a plain class rule is enough to clear it. */
+.wp-block-columns {
+  margin-bottom: 0;
 }
 
 /* --- Mobile + tablet: one gutter per band, not two -------------- */
