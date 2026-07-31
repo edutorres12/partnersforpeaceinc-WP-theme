@@ -28,6 +28,16 @@ $wptpl_excerpt = get_the_excerpt( $wptpl_id );
 $wptpl_thumb   = get_the_post_thumbnail_url( $wptpl_id, 'large' );
 $wptpl_alt     = trim( (string) get_post_meta( get_post_thumbnail_id( $wptpl_id ), '_wp_attachment_image_alt', true ) );
 
+// The image is structural here, not decorative: the card's proportions are
+// built around it, and its deep bottom padding is measured against it. A post
+// with no featured image left a tall empty rectangle with a title floating at
+// the top. Fall back to the same wireframe box every other block uses, so the
+// slot reads correctly until a real post takes it.
+if ( ! $wptpl_thumb ) {
+	$wptpl_thumb = WPTPL_THEME_URI . '/assets/placeholders/post.jpg';
+	$wptpl_alt   = '';
+}
+
 // The card is the block's root element. Match the static design: accent bg,
 // 22px radius, canvas text, generous bottom padding.
 $wptpl_wrapper = get_block_wrapper_attributes(
