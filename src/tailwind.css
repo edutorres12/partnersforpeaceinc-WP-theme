@@ -180,26 +180,75 @@
    still wins. They also have to live OUTSIDE @layer because they only ever
    appear in the seeder's markup, which Tailwind does not scan — inside a layer
    the purge would strip them. */
-/* A short last bank in a card grid. The service grid runs three-up, and when the
-   list does not divide by three the remainder lands in a row of its own — two
-   columns that each stretch to half the band, so the last bank's cards render
-   half again as wide as the ones above them and the grid stops reading as one
-   grid. Pin every card in a two-card bank to a third of the row, the same track
-   the three-up bank uses, and center what is left over.
+/* A card grid whose cards stay one size however many rows they wrap onto.
 
-   Desktop only: below 1024px the three-up rows are re-laid as a two-column grid
-   (see RESPONSIVE OVERRIDES), so a two-card bank already matches them there. */
-@media (min-width: 1024px) {
-  .wptpl-row-cards:has(> .wp-block-column:nth-child(2)):not(
-      :has(> .wp-block-column:nth-child(3))
-    ) {
-    justify-content: center;
+   A `wp:columns` row is a flex row: cards match each other inside one row and
+   know nothing about the row above. Split a grid across two column blocks — five
+   services as three plus two — and the second block's cards stretch to half the
+   band while the first block's sit at a third, and each row finds its own
+   height. Putting every card in ONE grid fixes both at once: the tracks are
+   fixed, and `grid-auto-rows: 1fr` sizes every row to the tallest card in the
+   whole grid, not just its own row.
+
+   Six tracks, each card spanning two, so a trailing partial row can be centred
+   on the half-track between the columns above it. The arithmetic works out
+   exactly: three spanning cards cover 6 tracks + 3 internal gaps + 2 gaps
+   between cards = the full 6-track, 5-gap row.
+
+   Add `wptpl-card-grid` to the columns row (plus `is-2-up` for a grid that runs
+   two across, like About's). */
+.wptpl-card-grid {
+  display: grid;
+  gap: var(--wptpl-gap-cards);
+  grid-auto-rows: 1fr;
+  grid-template-columns: repeat(6, 1fr);
+}
+.wptpl-card-grid.is-2-up {
+  grid-template-columns: repeat(4, 1fr);
+}
+.wptpl-card-grid > .wp-block-column {
+  grid-column: span 2;
+}
+/* A last row holding one card of a three-up grid centres on the middle track. */
+.wptpl-card-grid > .wp-block-column:last-child:nth-child(3n + 1) {
+  grid-column: 3 / span 2;
+}
+/* Two cards left over: shift the first half a card right and the pair centres. */
+.wptpl-card-grid > .wp-block-column:nth-last-child(2):nth-child(3n + 1) {
+  grid-column: 2 / span 2;
+}
+/* The two-up grid only ever has one card left over. */
+.wptpl-card-grid.is-2-up > .wp-block-column:last-child:nth-child(odd) {
+  grid-column: 2 / span 2;
+}
+
+/* Tablet: every card grid drops to two across, odd card centred. */
+@media (max-width: 1023px) {
+  .wptpl-card-grid,
+  .wptpl-card-grid.is-2-up {
+    grid-template-columns: repeat(4, 1fr);
   }
-  .wptpl-row-cards:has(> .wp-block-column:nth-child(2)):not(
-      :has(> .wp-block-column:nth-child(3))
-    )
-    > .wp-block-column {
-    flex: 0 0 calc((100% - 2 * var(--wptpl-gap-cards)) / 3);
+  .wptpl-card-grid > .wp-block-column,
+  .wptpl-card-grid > .wp-block-column:last-child:nth-child(3n + 1),
+  .wptpl-card-grid > .wp-block-column:nth-last-child(2):nth-child(3n + 1) {
+    grid-column: span 2;
+  }
+  .wptpl-card-grid > .wp-block-column:last-child:nth-child(odd) {
+    grid-column: 2 / span 2;
+  }
+}
+
+/* Phone: one card per row, full width. */
+@media (max-width: 767px) {
+  .wptpl-card-grid,
+  .wptpl-card-grid.is-2-up {
+    grid-template-columns: 1fr;
+  }
+  .wptpl-card-grid > .wp-block-column,
+  .wptpl-card-grid > .wp-block-column:last-child:nth-child(3n + 1),
+  .wptpl-card-grid > .wp-block-column:nth-last-child(2):nth-child(3n + 1),
+  .wptpl-card-grid > .wp-block-column:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
 
@@ -2611,7 +2660,7 @@ body.error404 .wptpl-main {
    basis math) makes the gap self-contained and independent of WP's own column
    gap. Desktop (≥1024) keeps the approved 4-across layout. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .wp-block-columns:has(> .wp-block-column:nth-child(4)):not(
+  .wp-block-columns:not(.wptpl-card-grid):has(> .wp-block-column:nth-child(4)):not(
       :has(> .wp-block-column:nth-child(5))
     ) {
     display: grid;
@@ -2629,7 +2678,7 @@ body.error404 .wptpl-main {
    rows with exactly three columns, so 2-column rows (the bio) and the 4-up
    service grids are left to their own rules. Desktop (≥1024) keeps 3-across. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
+  .wp-block-columns:not(.wptpl-card-grid):has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     ) {
     display: grid;
