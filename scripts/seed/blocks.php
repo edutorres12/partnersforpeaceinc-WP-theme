@@ -356,7 +356,7 @@ function wptpl_columns( array $columns, array $widths = array(), string $classna
  * @param string $classname Extra CSS classes.
  * @param string $align     Text alignment.
  */
-function wptpl_heading( string $text, int $level = 2, string $classname = '', string $align = '' ): string {
+function wptpl_heading( string $text, int $level = 2, string $classname = '', string $align = '', string $font_size = '' ): string {
 	$attrs = array();
 	if ( 2 !== $level ) {
 		$attrs['level'] = $level;
@@ -367,8 +367,19 @@ function wptpl_heading( string $text, int $level = 2, string $classname = '', st
 	if ( '' !== $align ) {
 		$attrs['textAlign'] = $align;
 	}
+	// A theme.json font-size preset, e.g. "h2". A bare heading takes whatever
+	// the base stylesheet gives its tag; naming the preset pins it to the type
+	// scale, which is what the reference does wherever a heading has to hold a
+	// specific step regardless of its level.
+	if ( '' !== $font_size ) {
+		$attrs['fontSize'] = $font_size;
+	}
 
-	$classes = trim( ( '' !== $align ? 'has-text-align-' . $align . ' ' : '' ) . $classname );
+	$classes = trim(
+		( '' !== $align ? 'has-text-align-' . $align . ' ' : '' )
+		. ( '' !== $font_size ? 'has-' . $font_size . '-font-size ' : '' )
+		. $classname
+	);
 	$attr    = '' !== $classes ? sprintf( ' class="%s"', $classes ) : '';
 
 	return sprintf(

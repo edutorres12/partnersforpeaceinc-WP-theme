@@ -169,7 +169,10 @@
      block `contentSize` values; holding them here keeps the two cards from
      drifting apart when one gets retuned. */
   --wptpl-card-prose-w: 815px;
-  --wptpl-card-inset-w: 760px;
+  /* 600px, measured off the reference's own stylesheet — not the 760px of the
+     band it sits in. The card is narrower than its Cover on purpose; matching
+     the band made it read as a panel rather than as a card. */
+  --wptpl-card-inset-w: 600px;
   --wptpl-card-inset-content-w: 500px;
 }
 
