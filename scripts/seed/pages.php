@@ -553,8 +553,11 @@ function wptpl_seed_page_about(): string {
 							wptpl_paragraph( wptpl_lorem_len( 520 ) ),
 							wptpl_paragraph( wptpl_lorem_len( 442 ) ),
 						),
+						// The card is light and sits inside a band whose text color
+						// is light, so without its own dark text it renders white
+						// on near-white.
 						'on-dark',
-						'',
+						'contrast',
 						'wptpl-card-prose',
 						'2.5rem',
 						'50px',
