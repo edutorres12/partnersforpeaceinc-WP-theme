@@ -256,6 +256,12 @@
   .wptpl-card-grid:not(.is-2-up) > .wp-block-column:last-child:nth-child(3n + 1),
   .wptpl-card-grid:not(.is-2-up)
     > .wp-block-column:nth-last-child(2):nth-child(3n + 1),
+  /* Must name `.is-2-up` explicitly. The desktop rule that centres the odd
+     last card is (0,5,0); a media query adds no specificity, so the (0,4,0)
+     form below it never won and that card kept `grid-column: 2 / span 2` on a
+     grid with ONE track — placed in implicit columns off the right edge of the
+     page, invisible and dragging the document width with it. */
+  .wptpl-card-grid.is-2-up > .wp-block-column:last-child:nth-child(odd),
   .wptpl-card-grid > .wp-block-column:last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
@@ -291,11 +297,7 @@
     padding: var(--wptpl-card-pad) var(--wptpl-gutter);
   }
 }
-@media (max-width: 767px) {
-  .wptpl-card-prose {
-    padding: var(--wptpl-gutter);
-  }
-}
+
 .wptpl-card-tight {
   padding: var(--wptpl-card-pad-tight);
   border-radius: var(--wptpl-card-radius-tight);
@@ -3148,8 +3150,19 @@ body.error404 .wptpl-main {
    variant so the plain keyword pill rows are untouched. */
 @media (max-width: 767px) {
   .wptpl-tags-lg .flex {
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+  }
+  /* Two per row. Stacking one per row left a column of lone pills down the
+     middle of a band with room for two, and made a six-topic list six rows
+     tall. A half-track basis fixes the count regardless of label length, and
+     the pill fills its half so long and short labels line up. */
+  .wptpl-tags-lg .flex > li:not(.basis-full) {
+    flex: 0 0 calc(50% - 0.25rem);
+    display: flex;
+    justify-content: center;
+  }
+  .wptpl-tags-lg .flex > li:not(.basis-full) > :is(a, span) {
+    width: 100%;
   }
 }
 /* Center the label so a pill that wraps to two lines (a long service name)
