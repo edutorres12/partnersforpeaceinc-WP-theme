@@ -144,6 +144,39 @@
   /* Card elevation tokens — kept in secondary (secondary) to stay in palette. */
   --wptpl-shadow-rest:  0 1px 3px  rgba(34, 34, 34, 0.06);
   --wptpl-shadow-hover: 0 8px 24px rgba(34, 34, 34, 0.10);
+
+  /* Row gaps and the card box. These used to be typed into every block's
+     markup by the seeder, one literal per instance, so retuning the gap
+     between cards meant editing a dozen call sites AND re-seeding every page
+     with `apply-force`. Now the seeder writes a class (`wptpl-row-cards`,
+     `wptpl-card`, …) and the measurement lives here — one edit, no re-seed.
+     See WPTPL_ROW_GAPS / WPTPL_CARD_BOXES in scripts/seed/blocks.php. */
+  --wptpl-gap-cards: 1.5rem;  /* between cards in a card row              */
+  --wptpl-gap-split: 50px;    /* image-beside-copy, form-beside-card rows */
+  --wptpl-gap-rows: 1.25rem;  /* label/value pairs stacked in a card      */
+  --wptpl-card-pad: 50px;
+  --wptpl-card-pad-tight: 40px;
+  --wptpl-card-radius: 22px;
+}
+
+/* The classes those tokens drive. Deliberately single-class selectors placed
+   before everything else: unlayered, so they beat WordPress's own
+   `:where(.is-layout-flex)` column gap and anything in @layer components, but
+   weak and early enough that every responsive override further down this file
+   still wins. They also have to live OUTSIDE @layer because they only ever
+   appear in the seeder's markup, which Tailwind does not scan — inside a layer
+   the purge would strip them. */
+.wptpl-row-cards { gap: var(--wptpl-gap-cards); }
+.wptpl-row-split { gap: var(--wptpl-gap-split); }
+.wptpl-row-rows  { gap: var(--wptpl-gap-rows); }
+
+.wptpl-card {
+  padding: var(--wptpl-card-pad);
+  border-radius: var(--wptpl-card-radius);
+}
+.wptpl-card-tight {
+  padding: var(--wptpl-card-pad-tight);
+  border-radius: var(--wptpl-card-radius);
 }
 
 /* ---------------------------------------------------------------
@@ -942,7 +975,7 @@ body.error404 .wptpl-main {
 }
 @media (min-width: 782px) {
   .wptpl-card-solo {
-    max-width: calc(50% - 0.75rem);
+    max-width: calc(50% - var(--wptpl-gap-cards) / 2);
   }
   .wptpl-card-solo .p-6 {
     min-height: 230px;
@@ -2503,7 +2536,7 @@ body.error404 .wptpl-main {
     ) {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: var(--wptpl-gap-cards);
   }
 }
 
@@ -2525,14 +2558,14 @@ body.error404 .wptpl-main {
        above it (with `h-full` on the card, it stretches to fill its row) —
        the three read as one uniform trio instead of a shorter card below. */
     grid-auto-rows: 1fr;
-    gap: 1.5rem;
+    gap: var(--wptpl-gap-cards);
   }
   .wp-block-columns:has(> .wp-block-column:nth-child(3)):not(
       :has(> .wp-block-column:nth-child(4))
     )
     > .wp-block-column:nth-child(3):last-child {
     grid-column: 1 / -1;
-    max-width: calc(50% - 0.75rem);
+    max-width: calc(50% - var(--wptpl-gap-cards) / 2);
     margin-inline: auto;
   }
   /* In that 2+1 grid, a row of image-pop cards (the guides) needs a wider row
@@ -2608,11 +2641,11 @@ body.error404 .wptpl-main {
    and the service-page listings) fall back to WordPress's default column
    stacking on a phone — one full-width card per row, every service visible in
    a single vertical scroll. Without a row-gap the stacked cards sit flush
-   against each other; give them the same 1.5rem the desktop rows use between
+   against each other; give them the same card gap the desktop rows use between
    their two banks. Tablet/desktop keep their multi-up layout. */
 @media (max-width: 767px) {
   .wptpl-services-carousel.wp-block-columns {
-    row-gap: 1.5rem;
+    row-gap: var(--wptpl-gap-cards);
   }
 }
 
