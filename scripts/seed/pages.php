@@ -779,23 +779,20 @@ function wptpl_seed_page_services(): string {
 		);
 	}
 
-	$rows = array();
-	foreach ( array_chunk( $cards, 2 ) as $index => $row ) {
-		$rows[] = wptpl_columns(
-			array_map(
-				static function ( $card ) {
-					return array( $card );
-				},
-				$row
-			),
-			array(),
-			'',
-			0 === $index ? '' : '1.5rem',
-			false,
-			array(),
-			'cards'
-		);
-	}
+	// One grid for the whole list, two across. Chunking into a columns row per
+	// pair let each row size itself, so an odd service ended up alone in a row
+	// of one and stretched to the full band. `wptpl-card-grid is-2-up` keeps
+	// every card on the same track and centres the odd one under the pair above.
+	$grid = wptpl_columns(
+		array_map(
+			static function ( $card ) {
+				return array( $card );
+			},
+			$cards
+		),
+		array(),
+		'wptpl-card-grid is-2-up'
+	);
 
 	return implode(
 		"\n\n",
@@ -815,7 +812,7 @@ function wptpl_seed_page_services(): string {
 			),
 
 			// One band holds the whole list.
-			wptpl_section( $rows, '', 'container-md', 'is-style-overlay-primary' ),
+			wptpl_section( array( $grid ), '', 'container-md', 'is-style-overlay-primary' ),
 
 			// Closing CTA. An earlier pass dropped this on the reasoning that the
 			// cards already link onward — but the reference has one, and it is the
@@ -1296,7 +1293,11 @@ function wptpl_seed_page_blog(): string {
 	return implode(
 		"\n\n",
 		array(
-			wptpl_section(
+			// Masthead over a photo, like every other page's. It was a flat
+			// tinted band, which left the hub as the one page in the site whose
+			// opening carries no imagery — and read as an unstyled strip rather
+			// than as a hero.
+			wptpl_cover(
 				array(
 					wptpl_block(
 						'section-header',
@@ -1304,38 +1305,47 @@ function wptpl_seed_page_blog(): string {
 							'headline'     => 'Blog headline',
 							'intro'        => wptpl_lorem_len( 125 ),
 							'headingLevel' => 1,
-							'className'    => 'wptpl-header-xwide',
+							'className'    => 'wptpl-header-wide',
 							'textColor'    => 'base',
 						)
 					),
 				),
-				'primary',
-				'container',
-				'wptpl-flush-x',
-				'base'
+				'hero',
+				'secondary',
+				55,
+				'base',
+				'var(--wptpl-container-wide)'
 			),
 
+			// The filter sits on the page background, not on a band of its own:
+			// it belongs to the list below it, and tinting it made it read as
+			// part of the masthead above.
 			wptpl_section(
 				array(
 					wptpl_block( 'category-filter' ),
 				),
-				'primary',
+				'',
 				'container',
-				'wptpl-section-sm',
-				'base'
+				'wptpl-section-sm'
 			),
 
 			// The featured post and the grid below it are the two halves of the
 			// hub, so they take different backgrounds. Left both untinted they
 			// run together as one long white page and the featured slot stops
 			// reading as featured.
+			//
+			// `wptpl-featured-section` is not decoration: assets/js/blog-filter.js
+			// looks the band up by that class to hide it whenever a category is
+			// selected. Without it the query returns null, the band never hides,
+			// and the featured post shows on every filter alongside its own grid
+			// card.
 			wptpl_section(
 				array(
 					wptpl_block( 'featured-post' ),
 				),
 				'muted',
 				'container-md',
-				'',
+				'wptpl-featured-section',
 				'base'
 			),
 
