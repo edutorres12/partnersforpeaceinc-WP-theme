@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #d8d8d8; color: #333; }
+
+  .wrap { max-width: 1760px; margin: 20px auto; display: flex; gap: 0; align-items: flex-start; }
+  .page { width: 1400px; background: #fff; border: 2px solid #888; flex-shrink: 0; }
+  .sidebar { width: 320px; position: relative; }
+
+  .row { border-top: 1px solid #ddd; padding: 40px; }
+  .row:first-child { border-top: none; }
+  .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
+  .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  .btn-o { display: inline-block; border: 1.5px solid #333; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  h1 { font-size: 44px; font-weight: 700; line-height: 1.2; }
+  h2 { font-size: 32px; font-weight: 700; }
+  h3 { font-size: 20px; font-weight: 700; }
+  .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
+  .txt { font-size: 16px; color: #999; line-height: 1.5; }
+
+  /* Give block — the donation widget. The page's one interactive surface. */
+  .give { background: #fff; border: 1.5px solid #ccc; border-radius: 14px; padding: 26px; }
+  .toggle { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid #ccc; border-radius: 999px; padding: 3px; margin-top: 14px; }
+  .toggle span { text-align: center; padding: 8px 0; font-size: 15px; font-weight: 700; border-radius: 999px; color: #999; }
+  .toggle span.on { background: #333; color: #fff; }
+  .amts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .amt { border: 1.5px solid #ccc; border-radius: 10px; padding: 14px 0; text-align: center; font-size: 20px; font-weight: 700; color: #333; position: relative; }
+  .amt.on { background: #333; border-color: #333; color: #fff; }
+  .amt small { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #999; border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #666; white-space: nowrap; }
+  .field { border: 1.5px solid #ccc; border-radius: 10px; padding: 13px 14px; margin-top: 10px; font-size: 15px; color: #999; }
+  /* The impact line. Bound to the selected amount — this is where the
+     per-amount framing lives, instead of a second ladder of amount cards. */
+  .impact { margin-top: 16px; border-left: 3px solid #333; padding: 2px 0 2px 12px; font-size: 14px; color: #666; line-height: 1.5; }
+
+  /* Compact "other ways" row — no card chrome. These are low-traffic,
+     high-value routes; they need to be findable, not prominent. */
+  .ways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+
+  /* FAQ rows. */
+  .q { border-top: 1px solid #ddd; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+  .q:last-child { border-bottom: 1px solid #ddd; }
+
+  .n {
+    position: absolute;
+    left: 20px;
+    width: 290px;
+    background: #fef9e7;
+    border: 1px solid #f0e6a0;
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #8a7a2e;
+    line-height: 1.5;
+  }
+  .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+  .n.cut { background: #f2f2f2; border-color: #ccc; color: #777; }
+  .n.cut b { color: #555; }
+  /* Block mapping — the note that binds each band to an existing block. */
+  .n.map { background: #eaf4f7; border-color: #a8ccd8; color: #2c6d80; }
+  .n.map b { color: #1f4d5a; }
+  .n code { font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="page">
+
+  <!-- 1. HEADER -->
+  <div class="row" id="s1" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+    <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 44px; height: 44px; border: 1.5px solid #999;"></div><strong style="font-size: 18px;">Logo</strong></div>
+    <div style="display: flex; gap: 16px; align-items: center; font-size: 16px; color: #999;"><span>About</span><span>Meet the Team</span><span>Services &#9662;</span><span>Blog</span><span>Contact</span><span class="btn" style="font-size: 15px; padding: 10px 22px;">Church Partnerships</span></div>
+  </div>
+
+  <!-- 2. HERO + GIVE BLOCK -->
+  <div class="x" id="s2" style="border-left: none; border-right: none; padding: 64px 40px; align-items: stretch;">
+    <svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg>
+    <div style="z-index: 1; display: grid; grid-template-columns: 1fr 440px; gap: 56px; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%;">
+
+      <!-- Copy -->
+      <div style="text-align: left;">
+        <div class="sub">Give</div>
+        <h1 style="margin-top: 8px; color: #333;">Donation headline</h1>
+        <p class="txt" style="margin-top: 14px; color: #777;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud.</p>
+        <div style="margin-top: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; color: #666;">
+          <div>&#10003; Trust line one &mdash; lorem ipsum dolor sit amet</div>
+          <div>&#10003; Trust line two &mdash; consectetur adipiscing elit</div>
+          <div>&#10003; Trust line three &mdash; sed do eiusmod tempor</div>
+        </div>
+      </div>
+
+      <!-- Give block -->
+      <div class="give">
+        <h3>Make a gift</h3>
+        <div class="toggle"><span>One-time</span><span class="on">Monthly</span></div>
+        <div class="amts">
+          <div class="amt">$50</div>
+          <div class="amt on">$100<small>Most common</small></div>
+          <div class="amt">$250</div>
+          <div class="amt">$1,000</div>
+        </div>
+        <div class="field">$&nbsp;&nbsp;Other amount</div>
+        <div class="impact"><strong style="color: #333;">$100 monthly</strong><br>Lorem ipsum impact line for the selected amount, dolor sit amet consectetur.</div>
+        <div class="btn" style="display: block; text-align: center; margin-top: 16px; padding: 14px 0; font-size: 16px;">Donate now</div>
+        <p class="txt" style="margin-top: 10px; font-size: 13px; text-align: center;">Secure payment &middot; 501(c)(3) &middot; Tax-deductible</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. WHERE YOUR GIFT GOES -->
+  <div class="row" id="s3" style="background: #f7f7f7; padding: 64px 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; max-width: 1200px; margin: 0 auto;">
+      <div class="x" style="height: 380px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Image</span></div>
+      <div>
+        <div class="sub">Where it goes</div>
+        <h2 style="margin-top: 6px;">Funding priorities</h2>
+        <p class="txt" style="margin-top: 12px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 18px;">
+          <div><h3>Priority one</h3><p class="txt" style="margin-top: 4px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore.</p></div>
+          <div><h3>Priority two</h3><p class="txt" style="margin-top: 4px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p></div>
+          <div><h3>Priority three</h3><p class="txt" style="margin-top: 4px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. GIVING QUESTIONS -->
+  <div class="row" id="s4" style="padding: 64px 40px;">
+    <div style="max-width: 760px; margin: 0 auto;">
+      <h2 style="text-align: center;">Giving questions</h2>
+      <div style="margin-top: 28px;">
+        <div class="q"><h3 style="font-size: 18px;">Is my gift tax-deductible?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Where does my donation go?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Can I change or cancel a monthly gift?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Is my payment information secure?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. OTHER WAYS TO GIVE + FINE PRINT -->
+  <div class="row" id="s5" style="background: #f7f7f7; padding: 56px 40px;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+      <div class="sub" style="text-align: center;">Other ways to give</div>
+      <div class="ways" style="margin-top: 28px;">
+        <div>
+          <h3 style="font-size: 18px;">By mail</h3>
+          <p class="txt" style="margin-top: 6px; font-size: 15px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod.</p>
+        </div>
+        <div>
+          <h3 style="font-size: 18px;">Employer matching</h3>
+          <p class="txt" style="margin-top: 6px; font-size: 15px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris.</p>
+        </div>
+        <div>
+          <h3 style="font-size: 18px;">Stock &amp; legacy gifts</h3>
+          <p class="txt" style="margin-top: 6px; font-size: 15px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+        </div>
+      </div>
+      <p class="txt" style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 14px; text-align: center;"><strong style="color: #666;">Organisation name is a 501(c)(3) organisation. EIN 00-0000000.</strong><br>Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+  </div>
+
+  <!-- 6. CLOSING — SCRIPTURE + CTA -->
+  <div id="s6" style="background: #333; color: #fff; text-align: center; padding: 64px 40px;">
+    <div style="max-width: 760px; margin: 0 auto;">
+      <h2 style="color: #fff; font-size: 28px; font-weight: 400; line-height: 1.4;">&ldquo;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&rdquo;</h2>
+      <p class="sub" style="margin-top: 14px; color: #bbb;">&mdash; Attribution line</p>
+      <p class="txt" style="color: rgba(255,255,255,0.5); margin: 24px auto 20px; max-width: 600px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+      <span class="btn" style="background: #fff; color: #333;">Donate now</span>
+    </div>
+  </div>
+
+  <!-- 7. FOOTER -->
+  <div id="s7" style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality &middot; Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">&#9888; Crisis disclaimer + hotline</div></div>
+
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Links</div><div style="line-height: 2;">Donate<br>Church Partnerships<br>Contact<br>Payment<br>AI Info</div></div>
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Legal</div><div style="line-height: 2;">Privacy Policy<br>Terms of Use<br>Accessibility</div></div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">&copy; 2026 Practice name</div>
+  </div>
+
+</div>
+
+<!-- SIDEBAR NOTES -->
+<div class="sidebar">
+  <div class="n" id="n1" style="top: 0;"><b>1. Header</b>Same as all pages. Donate stays out of the primary nav: it is reached from the footer and from every closing CTA, and the header already carries one action.</div>
+
+  <div class="n" id="n2" style="top: 136px;"><b>2. Hero + give block</b>The ask IS the hero. The reference page opens on three screens of prose and puts its first amount button below the fold; here the widget sits beside the headline, so a donor who arrived ready to give never scrolls to find the form.<br><br>Four decisions, all of them anchors: monthly preselected, $100 tagged &ldquo;most common&rdquo;, custom amount as a field rather than a fifth tier, trust microcopy under the button where the hesitation actually happens.<br><br><b style="display:inline; color:#665a00;">The impact line is the whole point.</b> It is bound to the selection &mdash; pick $250 and it says what $250 does. That is where per-amount framing belongs. A separate grid of amount cards further down says the same thing twice and splits the action across two places.<br><br><b style="display:inline; color:#665a00;">Not the hero block.</b> <code>wptpl/hero</code> with a background image renders full-bleed with a single column of text and cannot hold a card beside it. This band is the Contact page&rsquo;s form-beside-card pattern instead &mdash; see the block mapping at the bottom of this column. The three trust lines are <code>wptpl/checklist</code>, not hand-written rows.</div>
+
+  <div class="n" id="n3" style="top: 759px;"><b>3. Where your gift goes</b>The one persuasion section that survives. Answers &ldquo;what is actually funded&rdquo;, which is the objection that follows &ldquo;how much&rdquo;. Three priorities, not four: the fourth was a variation on the third, and a list that runs past three stops being read.<br><br>Image beside the copy, so the page has one photographic beat between the widget and the fine print.</div>
+
+  <div class="n" id="n4" style="top: 1243px;"><b>4. Giving questions</b>Four, using the site&rsquo;s existing FAQ accordion. Tax-deductibility, destination, cancelling a recurring gift, payment security &mdash; the four that stop a donation. A fifth about receipts was cut: the answer is on the confirmation screen anyway.</div>
+
+  <div class="n" id="n5" style="top: 1674px;"><b>5. Other ways to give + fine print</b>Mail, employer matching, stock and legacy. Deliberately compact &mdash; no cards, no icons. These routes carry the largest gifts but the smallest traffic: they need to be findable, not prominent, and three big cards gave them the same weight as the ask itself.<br><br>The 501(c)(3) and EIN notice closes the band. Required, and this is where a donor goes looking for it.</div>
+
+  <div class="n" id="n6" style="top: 1998px;"><b>6. Closing &mdash; scripture + CTA</b>One band, not two. The scripture and the closing banner were both quiet centred bands doing the same job back to back; merging them keeps the motive and the action in one beat. Comes after the transactional sections, never before &mdash; ahead of the widget it only delays the ask.</div>
+
+  <div class="n" id="n7" style="top: 2374px;"><b>7. Footer</b>Same as all pages.</div>
+
+  <div class="n map" id="n9" style="top: 2461px;"><b>Block mapping</b>Every band below is built from blocks that already exist. Nothing here needs a new one except the widget internals.<br><br>
+    <b style="display:inline; color:#1f4d5a;">1.</b> <code>header.php</code><br>
+    <b style="display:inline; color:#1f4d5a;">2.</b> <code>wptpl_cover</code> + <code>wptpl_columns</code> holding [copy | a <code>wptpl-form</code> group], the same shape Contact uses for its form beside the practice-info card. Trust lines: <code>wptpl/checklist</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">3.</b> <code>wptpl_columns</code> + <code>wptpl_image</code> + <code>wptpl/section-header</code> &mdash; the image-beside-copy split from About.<br>
+    <b style="display:inline; color:#1f4d5a;">4.</b> <code>wptpl/faq</code>, exact fit, one <code>items</code> array.<br>
+    <b style="display:inline; color:#1f4d5a;">5.</b> <code>wptpl/feature-card</code> set <code>transparent</code> and unbordered, in a <code>wptpl-card-grid</code>; fine print is a <code>wptpl_paragraph</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">6.</b> <code>wptpl/cta-banner</code>, <code>theme: dark</code> &mdash; quote in <code>headline</code>, attribution in <code>eyebrow</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">7.</b> <code>footer.php</code><br><br>
+    <b style="display:inline; color:#1f4d5a;">The one new surface</b> is the widget itself: frequency toggle, amount tiles, impact line. Nothing in the theme draws those. Follow the Contact convention &mdash; the donation platform&rsquo;s embed goes inside a <code>wptpl-form</code> wrapper the theme already styles &mdash; and only build a <code>wptpl/donate-form</code> block if the amounts have to be editor-managed.<br><br>
+    <b style="display:inline; color:#1f4d5a;">Porting note:</b> this wireframe draws cards at 14px radius and 20px gaps, the house style of the other wireframes. The shipped values come from the CSS tokens: <code>--wptpl-card-radius</code> (20px), <code>--wptpl-gap-cards</code> (1.5rem). Do not type the wireframe&rsquo;s numbers into the seeder.</div>
+
+  <div class="n cut" id="n8" style="top: 3309px;"><b>Cut from the first draft</b>Four bands were removed. Recording why, so they do not get re-added:<br><br><b style="display:inline; color:#555;">Impact stat strip.</b> Four metrics a practice this size has not measured. Invented numbers on a donation page are a trust risk, not proof.<br><br><b style="display:inline; color:#555;">&ldquo;What your gift does&rdquo; tier grid.</b> The same four amounts as the widget, with buttons to the same destination. Folded into the widget&rsquo;s impact line.<br><br><b style="display:inline; color:#555;">Monthly giving band.</b> A second ask for what the widget&rsquo;s toggle already offers. Monthly is preselected instead &mdash; a default converts better than a band.<br><br><b style="display:inline; color:#555;">Standalone scripture band.</b> Merged into the closing CTA.<br><br>Net: 11 bands to 7, one donation action instead of nine, and roughly 40% less scroll (4,235px to 2,637px at 1400px wide).</div>
+</div>
+
+</div>
+</body>
+</html>

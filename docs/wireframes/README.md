@@ -22,6 +22,7 @@ Pages currently wireframed:
 | `service-page-wireframe.html` | Single service |
 | `fees-wireframe.html` | Fees |
 | `contact-wireframe.html` | Contact |
+| `donate-wireframe.html` | Donate (slug `donate`) |
 | `crisis-resources-wireframe.html` | Crisis Resources |
 | `blog-wireframe.html` | Blog index |
 | `blog-post-wireframe.html` | Single blog post |
