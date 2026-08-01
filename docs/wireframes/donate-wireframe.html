@@ -26,9 +26,6 @@
 
   /* Give block — the donation widget. The page's one interactive surface. */
   .give { background: #fff; border: 1.5px solid #ccc; border-radius: 14px; padding: 26px; }
-  .toggle { display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid #ccc; border-radius: 999px; padding: 3px; margin-top: 14px; }
-  .toggle span { text-align: center; padding: 8px 0; font-size: 15px; font-weight: 700; border-radius: 999px; color: #999; }
-  .toggle span.on { background: #333; color: #fff; }
   .amts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
   .amt { border: 1.5px solid #ccc; border-radius: 10px; padding: 14px 0; text-align: center; font-size: 20px; font-weight: 700; color: #333; position: relative; }
   .amt.on { background: #333; border-color: #333; color: #fff; }
@@ -98,7 +95,6 @@
       <!-- Give block -->
       <div class="give">
         <h3>Make a gift</h3>
-        <div class="toggle"><span>One-time</span><span class="on">Monthly</span></div>
         <div class="amts">
           <div class="amt">$50</div>
           <div class="amt on">$100<small>Most common</small></div>
@@ -106,7 +102,7 @@
           <div class="amt">$1,000</div>
         </div>
         <div class="field">$&nbsp;&nbsp;Other amount</div>
-        <div class="impact"><strong style="color: #333;">$100 monthly</strong><br>Lorem ipsum impact line for the selected amount, dolor sit amet consectetur.</div>
+        <div class="impact"><strong style="color: #333;">$100</strong><br>Lorem ipsum impact line for the selected amount, dolor sit amet consectetur.</div>
         <div class="btn" style="display: block; text-align: center; margin-top: 16px; padding: 14px 0; font-size: 16px;">Donate now</div>
         <p class="txt" style="margin-top: 10px; font-size: 13px; text-align: center;">Secure payment &middot; 501(c)(3) &middot; Tax-deductible</p>
       </div>
@@ -138,7 +134,7 @@
       <div style="margin-top: 28px;">
         <div class="q"><h3 style="font-size: 18px;">Is my gift tax-deductible?</h3><span style="font-size: 22px; color: #999;">+</span></div>
         <div class="q"><h3 style="font-size: 18px;">Where does my donation go?</h3><span style="font-size: 22px; color: #999;">+</span></div>
-        <div class="q"><h3 style="font-size: 18px;">Can I change or cancel a monthly gift?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Will I receive a receipt for my taxes?</h3><span style="font-size: 22px; color: #999;">+</span></div>
         <div class="q"><h3 style="font-size: 18px;">Is my payment information secure?</h3><span style="font-size: 22px; color: #999;">+</span></div>
       </div>
     </div>
@@ -193,19 +189,19 @@
 <div class="sidebar">
   <div class="n" id="n1" style="top: 0;"><b>1. Header</b>Same as all pages. Donate stays out of the primary nav: it is reached from the footer and from every closing CTA, and the header already carries one action.</div>
 
-  <div class="n" id="n2" style="top: 136px;"><b>2. Hero + give block</b>The ask IS the hero. The reference page opens on three screens of prose and puts its first amount button below the fold; here the widget sits beside the headline, so a donor who arrived ready to give never scrolls to find the form.<br><br>Four decisions, all of them anchors: monthly preselected, $100 tagged &ldquo;most common&rdquo;, custom amount as a field rather than a fifth tier, trust microcopy under the button where the hesitation actually happens.<br><br><b style="display:inline; color:#665a00;">The impact line is the whole point.</b> It is bound to the selection &mdash; pick $250 and it says what $250 does. That is where per-amount framing belongs. A separate grid of amount cards further down says the same thing twice and splits the action across two places.<br><br><b style="display:inline; color:#665a00;">Not the hero block.</b> <code>wptpl/hero</code> with a background image renders full-bleed with a single column of text and cannot hold a card beside it. This band is the Contact page&rsquo;s form-beside-card pattern instead &mdash; see the block mapping at the bottom of this column. The three trust lines are <code>wptpl/checklist</code>, not hand-written rows.</div>
+  <div class="n" id="n2" style="top: 136px;"><b>2. Hero + give block</b>The ask IS the hero. The reference page opens on three screens of prose and puts its first amount button below the fold; here the widget sits beside the headline, so a donor who arrived ready to give never scrolls to find the form.<br><br>Three decisions, all of them anchors: $100 tagged &ldquo;most common&rdquo;, custom amount as a field rather than a fifth tier, trust microcopy under the button where the hesitation actually happens.<br><br><b style="display:inline; color:#665a00;">No frequency toggle.</b> An earlier draft preselected Monthly, which is normally the highest-leverage control on a donation page. It came out because giving runs on PayPal hosted buttons and the organisation has no recurring buttons: frequency is decided on PayPal&rsquo;s checkout, not here, so a toggle would be advertising a state this page cannot set. Add it the day subscription buttons exist &mdash; not before.<br><br><b style="display:inline; color:#665a00;">The impact line is the whole point.</b> It is bound to the selection &mdash; pick $250 and it says what $250 does. That is where per-amount framing belongs. A separate grid of amount cards further down says the same thing twice and splits the action across two places.<br><br><b style="display:inline; color:#665a00;">Not the hero block.</b> <code>wptpl/hero</code> with a background image renders full-bleed with a single column of text and cannot hold a card beside it. This band is the Contact page&rsquo;s form-beside-card pattern instead &mdash; see the block mapping at the bottom of this column. The three trust lines are <code>wptpl/checklist</code>, not hand-written rows.</div>
 
-  <div class="n" id="n3" style="top: 759px;"><b>3. Where your gift goes</b>The one persuasion section that survives. Answers &ldquo;what is actually funded&rdquo;, which is the objection that follows &ldquo;how much&rdquo;. Three priorities, not four: the fourth was a variation on the third, and a list that runs past three stops being read.<br><br>Image beside the copy, so the page has one photographic beat between the widget and the fine print.</div>
+  <div class="n" id="n3" style="top: 974px;"><b>3. Where your gift goes</b>The one persuasion section that survives. Answers &ldquo;what is actually funded&rdquo;, which is the objection that follows &ldquo;how much&rdquo;. Three priorities, not four: the fourth was a variation on the third, and a list that runs past three stops being read.<br><br>Image beside the copy, so the page has one photographic beat between the widget and the fine print.</div>
 
-  <div class="n" id="n4" style="top: 1243px;"><b>4. Giving questions</b>Four, using the site&rsquo;s existing FAQ accordion. Tax-deductibility, destination, cancelling a recurring gift, payment security &mdash; the four that stop a donation. A fifth about receipts was cut: the answer is on the confirmation screen anyway.</div>
+  <div class="n" id="n4" style="top: 1227px;"><b>4. Giving questions</b>Four, using the site&rsquo;s existing FAQ accordion. Tax-deductibility, destination, receipts, payment security &mdash; the four that stop a donation. Receipts earn a slot specifically because PayPal sends its own confirmation, which is not the acknowledgement a donor needs at tax time; saying so here prevents the email that otherwise follows every gift.</div>
 
-  <div class="n" id="n5" style="top: 1674px;"><b>5. Other ways to give + fine print</b>Mail, employer matching, stock and legacy. Deliberately compact &mdash; no cards, no icons. These routes carry the largest gifts but the smallest traffic: they need to be findable, not prominent, and three big cards gave them the same weight as the ask itself.<br><br>The 501(c)(3) and EIN notice closes the band. Required, and this is where a donor goes looking for it.</div>
+  <div class="n" id="n5" style="top: 1619px;"><b>5. Other ways to give + fine print</b>Mail, employer matching, stock and legacy. Deliberately compact &mdash; no cards, no icons. These routes carry the largest gifts but the smallest traffic: they need to be findable, not prominent, and three big cards gave them the same weight as the ask itself.<br><br>The 501(c)(3) and EIN notice closes the band. Required, and this is where a donor goes looking for it.</div>
 
-  <div class="n" id="n6" style="top: 1998px;"><b>6. Closing &mdash; scripture + CTA</b>One band, not two. The scripture and the closing banner were both quiet centred bands doing the same job back to back; merging them keeps the motive and the action in one beat. Comes after the transactional sections, never before &mdash; ahead of the widget it only delays the ask.</div>
+  <div class="n" id="n6" style="top: 1943px;"><b>6. Closing &mdash; scripture + CTA</b>One band, not two. The scripture and the closing banner were both quiet centred bands doing the same job back to back; merging them keeps the motive and the action in one beat. Comes after the transactional sections, never before &mdash; ahead of the widget it only delays the ask.</div>
 
-  <div class="n" id="n7" style="top: 2374px;"><b>7. Footer</b>Same as all pages.</div>
+  <div class="n" id="n7" style="top: 2319px;"><b>7. Footer</b>Same as all pages.</div>
 
-  <div class="n map" id="n9" style="top: 2461px;"><b>Block mapping</b>Every band below is built from blocks that already exist. Nothing here needs a new one except the widget internals.<br><br>
+  <div class="n map" id="n9" style="top: 2396px;"><b>Block mapping</b>Every band below is built from blocks that already exist. Nothing here needs a new one except the widget internals.<br><br>
     <b style="display:inline; color:#1f4d5a;">1.</b> <code>header.php</code><br>
     <b style="display:inline; color:#1f4d5a;">2.</b> <code>wptpl_cover</code> + <code>wptpl_columns</code> holding [copy | a <code>wptpl-form</code> group], the same shape Contact uses for its form beside the practice-info card. Trust lines: <code>wptpl/checklist</code>.<br>
     <b style="display:inline; color:#1f4d5a;">3.</b> <code>wptpl_columns</code> + <code>wptpl_image</code> + <code>wptpl/section-header</code> &mdash; the image-beside-copy split from About.<br>
@@ -213,10 +209,14 @@
     <b style="display:inline; color:#1f4d5a;">5.</b> <code>wptpl/feature-card</code> set <code>transparent</code> and unbordered, in a <code>wptpl-card-grid</code>; fine print is a <code>wptpl_paragraph</code>.<br>
     <b style="display:inline; color:#1f4d5a;">6.</b> <code>wptpl/cta-banner</code>, <code>theme: dark</code> &mdash; quote in <code>headline</code>, attribution in <code>eyebrow</code>.<br>
     <b style="display:inline; color:#1f4d5a;">7.</b> <code>footer.php</code><br><br>
-    <b style="display:inline; color:#1f4d5a;">The one new surface</b> is the widget itself: frequency toggle, amount tiles, impact line. Nothing in the theme draws those. Follow the Contact convention &mdash; the donation platform&rsquo;s embed goes inside a <code>wptpl-form</code> wrapper the theme already styles &mdash; and only build a <code>wptpl/donate-form</code> block if the amounts have to be editor-managed.<br><br>
+    <b style="display:inline; color:#1f4d5a;">The one new surface</b> is the widget: amount tiles, custom-amount field, impact line. Nothing in the theme draws those, and like Contact&rsquo;s form it is not the seeder&rsquo;s job &mdash; the seeder writes a marked placeholder inside the <code>wptpl-form</code> wrapper the theme already styles, and the real markup replaces it.<br><br>
+    <b style="display:inline; color:#1f4d5a;">Giving runs on PayPal hosted buttons</b>, one per amount, which the site already has:<br>
+    $50 <code>TX6YSG75SJ9AU</code><br>$100 <code>VB38VVEP8Y45L</code><br>$250 <code>6C5GWRDEBSDVE</code><br>$1,000 <code>HBST4V94ALAZL</code><br>open <code>AD9WQTE66WQKL</code><br><br>
+    Four tiles plus the custom-amount field map onto those five ids. The tiles do not need a payment SDK: a <code>form</code> posting to <code>paypal.com/donate</code> with the chosen id in a hidden input keeps the widget looking exactly like this, because the visible control is your own submit button rather than PayPal&rsquo;s. Verify the ids and their current settings in the PayPal account before wiring &mdash; they were read off the existing page, not from the account.<br><br>
+    The impact line is site-side text, swapped on selection before the handoff, so it works regardless.<br><br>
     <b style="display:inline; color:#1f4d5a;">Porting note:</b> this wireframe draws cards at 14px radius and 20px gaps, the house style of the other wireframes. The shipped values come from the CSS tokens: <code>--wptpl-card-radius</code> (20px), <code>--wptpl-gap-cards</code> (1.5rem). Do not type the wireframe&rsquo;s numbers into the seeder.</div>
 
-  <div class="n cut" id="n8" style="top: 3309px;"><b>Cut from the first draft</b>Four bands were removed. Recording why, so they do not get re-added:<br><br><b style="display:inline; color:#555;">Impact stat strip.</b> Four metrics a practice this size has not measured. Invented numbers on a donation page are a trust risk, not proof.<br><br><b style="display:inline; color:#555;">&ldquo;What your gift does&rdquo; tier grid.</b> The same four amounts as the widget, with buttons to the same destination. Folded into the widget&rsquo;s impact line.<br><br><b style="display:inline; color:#555;">Monthly giving band.</b> A second ask for what the widget&rsquo;s toggle already offers. Monthly is preselected instead &mdash; a default converts better than a band.<br><br><b style="display:inline; color:#555;">Standalone scripture band.</b> Merged into the closing CTA.<br><br>Net: 11 bands to 7, one donation action instead of nine, and roughly 40% less scroll (4,235px to 2,637px at 1400px wide).</div>
+  <div class="n cut" id="n8" style="top: 3682px;"><b>Cut from the first draft</b>Four bands were removed. Recording why, so they do not get re-added:<br><br><b style="display:inline; color:#555;">Impact stat strip.</b> Four metrics a practice this size has not measured. Invented numbers on a donation page are a trust risk, not proof.<br><br><b style="display:inline; color:#555;">&ldquo;What your gift does&rdquo; tier grid.</b> The same four amounts as the widget, with buttons to the same destination. Folded into the widget&rsquo;s impact line.<br><br><b style="display:inline; color:#555;">Monthly giving band.</b> A second ask for what the widget&rsquo;s toggle offered. The toggle itself then went too, once giving turned out to run on one-time PayPal buttons &mdash; see band 2. Recurring giving is the biggest single lift available to this page, and it is currently unavailable at any position in the layout. That is a PayPal account question, not a design one.<br><br><b style="display:inline; color:#555;">Standalone scripture band.</b> Merged into the closing CTA.<br><br>Net: 11 bands to 7, one donation action instead of nine, and roughly 40% less scroll (4,235px to 2,637px at 1400px wide).</div>
 </div>
 
 </div>

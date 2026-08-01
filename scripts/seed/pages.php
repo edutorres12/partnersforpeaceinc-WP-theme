@@ -1624,7 +1624,9 @@ function wptpl_seed_page_therapists(): string {
 
 /**
  * A conversion page: hero, body section, three supporting cards, steps, CTA.
- * Payment, Donate and Church Partnerships share this shape.
+ * Payment and Church Partnerships share this shape. Donate had it too until it
+ * grew a page of its own — see wptpl_seed_page_donate(); this shape presents an
+ * offer, and a page whose only job is to take money needs the ask first.
  *
  * @param string $title     Page title.
  * @param string $body_head Heading for the body section.
@@ -1727,6 +1729,234 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 					'text'     => wptpl_lorem_len( 56 ),
 					'ctaText'  => $cta,
 					'ctaUrl'   => '/contact/',
+					'theme'    => 'dark',
+				)
+			),
+		)
+	);
+}
+
+/**
+ * Donate: give block in the hero, funding priorities, questions, other ways, close.
+ *
+ * Donate used to render from wptpl_seed_page_conversion() along with Payment and
+ * Church Partnerships. That shape sells a service — hero, body, three cards,
+ * steps — and a page whose only job is to take money needs the ask first and the
+ * argument after. docs/wireframes/donate-wireframe.html is the spec.
+ *
+ * The give block itself is NOT seeded, for the same reason the contact form is
+ * not: it is a payment integration, and the amounts and their PayPal button ids
+ * belong to the organisation rather than to the template. The seeder writes a
+ * marked placeholder inside the `wptpl-form` wrapper the theme styles, and the
+ * real markup replaces it in the editor.
+ */
+function wptpl_seed_page_donate(): string {
+	$way = static function ( string $title ) {
+		return wptpl_block(
+			'feature-card',
+			array(
+				// Transparent and unbordered: these routes carry the largest gifts
+				// but the least traffic, and card chrome gave them the same weight
+				// as the ask itself.
+				'title'       => $title,
+				'text'        => wptpl_lorem_len( 78 ),
+				'bordered'    => false,
+				'transparent' => true,
+				'headingLevel' => 3,
+			)
+		);
+	};
+
+	$priority = static function ( int $n ) {
+		return array(
+			wptpl_heading( 'Priority ' . $n, 3 ),
+			wptpl_paragraph( wptpl_lorem_len( 104 ) ),
+		);
+	};
+
+	return implode(
+		"\n\n",
+		array(
+			// 1. The ask IS the hero. A Cover rather than the hero block: hero with
+			// a background image renders full-bleed with one column of text and has
+			// no slot for a card beside it. This is Contact's form-beside-card row
+			// on a photo band — same helpers, same gap.
+			wptpl_cover(
+				array(
+					wptpl_columns(
+						array(
+							array(
+								wptpl_block(
+									'section-header',
+									array(
+										'eyebrow'      => 'Give',
+										'headline'     => 'Donation headline',
+										'intro'        => wptpl_lorem_len( 152 ),
+										'alignment'    => 'left',
+										'headingLevel' => 1,
+									)
+								),
+								wptpl_block(
+									'checklist',
+									array(
+										'items' => array(
+											array( 'text' => wptpl_lorem_len( 44 ) ),
+											array( 'text' => wptpl_lorem_len( 41 ) ),
+											array( 'text' => wptpl_lorem_len( 38 ) ),
+										),
+										'theme' => 'dark',
+									)
+								),
+							),
+							array(
+								wptpl_group(
+									array(
+										wptpl_heading( 'Make a gift', 2, 'wptpl-h2-as-h3' ),
+										wptpl_paragraph( 'Replace this block with the giving widget. Amount tiles post to the organisation’s PayPal hosted buttons — one id per amount, plus the open-amount button for the custom field. The theme styles any form inside a <code>wptpl-form</code> wrapper.' ),
+									),
+									'',
+									'',
+									'wptpl-form'
+								),
+								// Under the button, not in the fine print at the bottom
+								// of the page: this is where the hesitation happens.
+								wptpl_paragraph(
+									'Secure payment · 501(c)(3) · Tax-deductible',
+									'',
+									'center',
+									array( 'fontSize' => '14px' ),
+									'0.5rem'
+								),
+							),
+						),
+						array( '58%', '42%' ),
+						'',
+						'',
+						true,
+						array(),
+						'form'
+					),
+				),
+				'hero',
+				'secondary',
+				60,
+				'base',
+				'var(--wptpl-container-md)',
+				'',
+				// What the closing CTA sends the reader back to.
+				'give'
+			),
+
+			// 2. The one persuasion band. Answers "what is actually funded", which
+			// is the objection that follows "how much".
+			wptpl_section(
+				array(
+					wptpl_columns(
+						array(
+							array( wptpl_image( 'hero' ) ),
+							array_merge(
+								array(
+									wptpl_block(
+										'section-header',
+										array(
+											'eyebrow'   => 'Where it goes',
+											'headline'  => 'Funding priorities',
+											'intro'     => wptpl_lorem_len( 138 ),
+											'alignment' => 'left',
+										)
+									),
+								),
+								$priority( 1 ),
+								$priority( 2 ),
+								$priority( 3 )
+							),
+						),
+						array(),
+						'',
+						'',
+						true,
+						array(),
+						'split'
+					),
+				),
+				'surface'
+			),
+
+			// 3. The last objections, in the order they get raised.
+			wptpl_section(
+				array(
+					wptpl_block(
+						'section-header',
+						array( 'headline' => 'Giving questions' )
+					),
+					wptpl_block(
+						'faq',
+						array(
+							'items' => array(
+								array(
+									'question' => 'Is my gift tax-deductible?',
+									'answer'   => wptpl_lorem_len( 168 ),
+								),
+								array(
+									'question' => 'Where does my donation go?',
+									'answer'   => wptpl_lorem_len( 152 ),
+								),
+								// Earns its slot because PayPal sends its own
+								// confirmation, which is not the acknowledgement a
+								// donor needs at tax time.
+								array(
+									'question' => 'Will I receive a receipt for my taxes?',
+									'answer'   => wptpl_lorem_len( 145 ),
+								),
+								array(
+									'question' => 'Is my payment information secure?',
+									'answer'   => wptpl_lorem_len( 137 ),
+								),
+							),
+						)
+					),
+				),
+				'',
+				'container-narrow'
+			),
+
+			// 4. Other ways to give, then the notice a donor goes looking for.
+			wptpl_section(
+				array(
+					wptpl_block(
+						'section-header',
+						array( 'headline' => 'Other ways to give' )
+					),
+					wptpl_columns(
+						array(
+							array( $way( 'By mail' ) ),
+							array( $way( 'Employer matching' ) ),
+							array( $way( 'Stock &amp; legacy gifts' ) ),
+						),
+						array(),
+						'wptpl-card-grid'
+					),
+					wptpl_paragraph(
+						'<strong>Organisation name is a 501(c)(3) organisation. EIN 00-0000000.</strong> Replace this notice with the registered name and EIN before publishing — it is the one paragraph on this page that has to be literally true.',
+						'',
+						'center',
+						array( 'fontSize' => '14px' ),
+						'2rem'
+					),
+				),
+				'surface'
+			),
+
+			// 5. Scripture and the closing action in one band. Two quiet centred
+			// bands back to back were doing one job.
+			wptpl_block(
+				'cta-banner',
+				array(
+					'headline' => '“Replace with the closing quotation.”',
+					'eyebrow'  => 'Attribution line',
+					'text'     => wptpl_lorem_len( 76 ),
+					'ctaText'  => 'Donate now',
+					'ctaUrl'   => '#give',
 					'theme'    => 'dark',
 				)
 			),
@@ -1918,7 +2148,7 @@ function wptpl_seed_all_pages(): array {
 		array(
 			'slug'    => 'donate',
 			'title'   => 'Donate',
-			'content' => wptpl_seed_page_conversion( 'Donate', 'Where your gift goes', 'Fund', 'Give today' ),
+			'content' => wptpl_seed_page_donate(),
 			'order'   => 8,
 		)
 	);

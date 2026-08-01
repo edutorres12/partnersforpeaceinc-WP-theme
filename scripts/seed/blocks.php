@@ -487,8 +487,13 @@ function wptpl_separator( string $classname = '' ): string {
  *                                    and its headings run the full width of the page.
  * @param string             $classname Extra CSS classes for the band, e.g. the hook the
  *                                    blog filter uses to hide the featured section.
+ * @param string             $anchor  Optional id for the band, same contract as
+ *                                    `wptpl_section()`. A photo band is often the thing
+ *                                    a closing CTA has to send the reader back to — the
+ *                                    give block on Donate is the case — and without an
+ *                                    id that link can only ever point at the page top.
  */
-function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '', string $width = '', string $classname = '' ): string {
+function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = 'secondary', int $dim = 55, string $text = '', string $width = '', string $classname = '', string $anchor = '' ): string {
 	$url    = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
 	$layout = array( 'type' => 'constrained' );
 	if ( '' !== $width ) {
@@ -517,6 +522,10 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 		),
 	);
 
+	if ( '' !== $anchor ) {
+		$attrs['anchor'] = $anchor;
+	}
+
 	$classes = 'wp-block-cover alignfull';
 	if ( '' !== $classname ) {
 		$attrs['className'] = $classname;
@@ -528,10 +537,11 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
 	}
 
 	$open = sprintf(
-		'<div class="%s"><span aria-hidden="true" class="wp-block-cover__background has-%s-background-color has-background-dim-%d has-background-dim"></span>'
+		'<div class="%s"%s><span aria-hidden="true" class="wp-block-cover__background has-%s-background-color has-background-dim-%d has-background-dim"></span>'
 			. '<img class="wp-block-cover__image-background" alt="" src="%s" data-object-fit="cover"/>'
 			. '<div class="wp-block-cover__inner-container">',
 		esc_attr( $classes ),
+		'' !== $anchor ? sprintf( ' id="%s"', esc_attr( $anchor ) ) : '',
 		esc_attr( $overlay ),
 		$dim,
 		esc_url( $url )
