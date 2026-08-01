@@ -169,6 +169,7 @@
      block `contentSize` values; holding them here keeps the two cards from
      drifting apart when one gets retuned. */
   --wptpl-card-prose-w: 815px;
+  --wptpl-card-prose-content-w: 615px;
   /* 600px, measured off the reference's own stylesheet — not the 760px of the
      band it sits in. The card is narrower than its Cover on purpose; matching
      the band made it read as a panel rather than as a card. */
@@ -286,6 +287,17 @@
   margin-inline: auto;
   padding: var(--wptpl-card-pad) var(--wptpl-card-pad-prose-x);
   border-radius: var(--wptpl-card-radius);
+}
+/* The 615px measure is a cap on the CHILDREN, not a by-product of the card's
+   padding. On desktop the two agree (815 − 100 − 100 = 615), so the padding
+   alone looked sufficient — but once the sides come in to the gutter on a
+   tablet the lines run as wide as the card and the measure is gone. The
+   reference sets this as the group's `contentSize`, which is exactly a cap on
+   its children; holding it here keeps the reading width at 615px whatever the
+   card's own padding is doing. */
+.wptpl-card-prose > * {
+  max-width: var(--wptpl-card-prose-content-w);
+  margin-inline: auto;
 }
 /* 100px a side is a desktop measure. On a phone it leaves ~118px of column for
    the copy, so every line breaks after three words. The mobile overrides that
@@ -3058,12 +3070,18 @@ body.wptpl-modal-open {
    takes the rest. The fixed column gets cramped on a tablet, because the row
    doesn't stack until 782px. Stack it below desktop with the fixed column on
    top (source order already puts the portrait/copy first), matched by the fixed
-   width so other 2-col rows are untouched. The three widths listed are the ones
-   the templates use — add to both lists if a layout introduces another. */
+   width so other 2-col rows are untouched. The widths listed are the ones the
+   templates use — add to both lists if a layout introduces another.
+
+   380px is deliberately NOT listed. That is the home page's bio row, and the
+   reference has no stacking rule for it at all: the portrait stays beside the
+   copy on a tablet. Stacking it there put a centred portrait above a
+   full-width column of text, which is a different section from the one that
+   was approved. The 440/400px rows do stack — those are approved as they
+   are. */
 @media (max-width: 1023px) {
   .wp-block-columns:has(> .wp-block-column[style*="440px"]),
-  .wp-block-columns:has(> .wp-block-column[style*="400px"]),
-  .wp-block-columns:has(> .wp-block-column[style*="380px"]) {
+  .wp-block-columns:has(> .wp-block-column[style*="400px"]) {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -3071,9 +3089,7 @@ body.wptpl-modal-open {
   .wp-block-columns:has(> .wp-block-column[style*="440px"])
     > .wp-block-column[style*="440px"],
   .wp-block-columns:has(> .wp-block-column[style*="400px"])
-    > .wp-block-column[style*="400px"],
-  .wp-block-columns:has(> .wp-block-column[style*="380px"])
-    > .wp-block-column[style*="380px"] {
+    > .wp-block-column[style*="400px"] {
     max-width: 440px;
     margin-inline: auto;
   }
@@ -3371,7 +3387,11 @@ body.wptpl-modal-open {
    pills wrap). Canvas on the primary-green band via color-mix so it stays on the
    palette. */
 .wptpl-cat-scrollbar {
-  padding: 0.55rem var(--wptpl-gutter) 0.1rem;
+  /* The reference runs 0.1rem under the bar, which leaves it flush against the
+     band's bottom edge — and on a phone that edge is often right above the
+     browser's own navigation bar, so the two read as one stripe. A little air
+     separates them. */
+  padding: 0.55rem var(--wptpl-gutter) 0.75rem;
 }
 .wptpl-cat-scrollbar__track {
   position: relative;
