@@ -159,14 +159,22 @@ function wptpl_wrap( string $name, array $attrs, string $open, string $close, ar
  * @param string             $container One of container, container-md, container-narrow, or '' for none.
  * @param string             $extra     Extra CSS classes for the band.
  * @param string             $text      Palette slug for the text color, or '' to inherit.
+ * @param string             $anchor    HTML id for the band, or '' for none. A band that
+ *                                      something else needs to link to — one person in a
+ *                                      roster, one clause in a policy — has to be
+ *                                      addressable, and a page whose sections have no ids
+ *                                      can only ever be linked to from the top.
  */
-function wptpl_section( array $inner, string $bg = '', string $container = 'container-md', string $extra = '', string $text = '' ): string {
+function wptpl_section( array $inner, string $bg = '', string $container = 'container-md', string $extra = '', string $text = '', string $anchor = '' ): string {
 	$band_classes = trim( 'wptpl-section ' . $extra );
 
 	$band_attrs = array(
 		'align'     => 'full',
 		'className' => $band_classes,
 	);
+	if ( '' !== $anchor ) {
+		$band_attrs['anchor'] = $anchor;
+	}
 	$band_html_classes = 'wp-block-group alignfull ' . $band_classes;
 
 	if ( '' !== $text ) {
@@ -197,7 +205,11 @@ function wptpl_section( array $inner, string $bg = '', string $container = 'cont
 	return wptpl_wrap(
 		'group',
 		$band_attrs,
-		sprintf( '<div class="%s">', $band_html_classes ),
+		sprintf(
+			'<div class="%s"%s>',
+			$band_html_classes,
+			'' !== $anchor ? sprintf( ' id="%s"', esc_attr( $anchor ) ) : ''
+		),
 		'</div>',
 		$band_inner
 	);
@@ -541,8 +553,14 @@ function wptpl_cover( array $inner, string $file = 'cta-bg', string $overlay = '
  * @param string $width Rendered width (e.g. "440px"), or '' to leave it to the layout.
  * @param string $align Block alignment, e.g. "center". An icon above a heading needs it:
  *                      the column's `text-align` does not move a figure.
+ * @param string $alt   Alternative text. Defaults to '' — correct for the decorative
+ *                      wireframe boxes, which carry no information a screen reader
+ *                      needs. Pass a real value for an image that IS content: a
+ *                      portrait on a page about the people in it is the case, and
+ *                      leaving it empty hides six of them from assistive tech and
+ *                      from image search alike.
  */
-function wptpl_image( string $file, string $classname = '', string $width = '', string $align = '' ): string {
+function wptpl_image( string $file, string $classname = '', string $width = '', string $align = '', string $alt = '' ): string {
 	$url   = get_template_directory_uri() . '/assets/placeholders/' . $file . '.jpg';
 	$attrs = array();
 	if ( '' !== $width ) {
@@ -560,10 +578,11 @@ function wptpl_image( string $file, string $classname = '', string $width = '', 
 	$style   = ( '' !== $width ) ? sprintf( ' style="width:%s;height:auto"', esc_attr( $width ) ) : '';
 
 	return sprintf(
-		"<!-- wp:image%s -->\n<figure class=\"%s\"><img src=\"%s\" alt=\"\"%s/></figure>\n<!-- /wp:image -->",
+		"<!-- wp:image%s -->\n<figure class=\"%s\"><img src=\"%s\" alt=\"%s\"%s/></figure>\n<!-- /wp:image -->",
 		wptpl_attrs( $attrs ),
 		$classes,
 		esc_url( $url ),
+		esc_attr( $alt ),
 		$style
 	);
 }
