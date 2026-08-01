@@ -23,6 +23,7 @@ Pages currently wireframed:
 | `fees-wireframe.html` | Fees |
 | `contact-wireframe.html` | Contact |
 | `donate-wireframe.html` | Donate (slug `donate`) |
+| `church-partnerships-wireframe.html` | Church Partnerships (slug `church-partnerships`) |
 | `crisis-resources-wireframe.html` | Crisis Resources |
 | `blog-wireframe.html` | Blog index |
 | `blog-post-wireframe.html` | Single blog post |

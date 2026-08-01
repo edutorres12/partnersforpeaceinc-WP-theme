@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Church Partnerships Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background: #d8d8d8; color: #333; }
+
+  .wrap { max-width: 1760px; margin: 20px auto; display: flex; gap: 0; align-items: flex-start; }
+  .page { width: 1400px; background: #fff; border: 2px solid #888; flex-shrink: 0; }
+  .sidebar { width: 320px; position: relative; }
+
+  .row { border-top: 1px solid #ddd; padding: 40px; }
+  .row:first-child { border-top: none; }
+  .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
+  .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  .btn-o { display: inline-block; border: 1.5px solid #333; padding: 8px 20px; font-size: 15px; font-weight: 600; }
+  h1 { font-size: 44px; font-weight: 700; line-height: 1.2; }
+  h2 { font-size: 32px; font-weight: 700; }
+  h3 { font-size: 20px; font-weight: 700; }
+  .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
+  .txt { font-size: 16px; color: #999; line-height: 1.5; }
+
+  /* Plan row — four slim tiers. They differ only in volume, so the card
+     carries the numbers and nothing else; the shared inclusions live once,
+     below the row, instead of four times inside it. */
+  .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: end; }
+  .plan { background: #fff; border: 1.5px solid #ccc; border-radius: 14px; padding: 26px 22px; position: relative; }
+  .plan.on { border-color: #333; border-width: 2px; padding: 32px 22px 26px; }
+  .plan .tag { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; border-radius: 999px; padding: 3px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+  .plan .price { font-size: 34px; font-weight: 700; line-height: 1.1; margin-top: 6px; }
+  .plan .per { font-size: 14px; color: #999; }
+  /* The comparable unit. Every tier is the same rate; showing it is what
+     turns four prices into one honest scale. */
+  .plan .rate { margin-top: 14px; padding-top: 12px; border-top: 1px solid #eee; font-size: 14px; color: #666; line-height: 1.5; }
+  .plan .btn, .plan .btn-o { display: block; text-align: center; margin-top: 18px; }
+
+  /* Inclusions — said once for the whole row. */
+  .incl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 32px; margin-top: 28px; padding-top: 24px; border-top: 1px solid #ddd; }
+  .incl div { font-size: 15px; color: #666; }
+
+  /* Custom-plan row. Deliberately not a fifth card: it is a conversation,
+     not a price. */
+  .custom { margin-top: 24px; border: 1.5px dashed #bbb; border-radius: 14px; padding: 22px 26px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+
+  /* FAQ rows. */
+  .q { border-top: 1px solid #ddd; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+  .q:last-child { border-bottom: 1px solid #ddd; }
+
+  .n {
+    position: absolute;
+    left: 20px;
+    width: 290px;
+    background: #fef9e7;
+    border: 1px solid #f0e6a0;
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #8a7a2e;
+    line-height: 1.5;
+  }
+  .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+  .n.cut { background: #f2f2f2; border-color: #ccc; color: #777; }
+  .n.cut b { color: #555; }
+  /* Block mapping — the note that binds each band to an existing block. */
+  .n.map { background: #eaf4f7; border-color: #a8ccd8; color: #2c6d80; }
+  .n.map b { color: #1f4d5a; }
+  .n code { font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="page">
+
+  <!-- 1. HEADER -->
+  <div class="row" id="s1" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;">
+    <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 44px; height: 44px; border: 1.5px solid #999;"></div><strong style="font-size: 18px;">Logo</strong></div>
+    <div style="display: flex; gap: 16px; align-items: center; font-size: 16px; color: #999;"><span>About</span><span>Meet the Team</span><span>Services &#9662;</span><span>Blog</span><span>Contact</span><span class="btn" style="font-size: 15px; padding: 10px 22px;">Church Partnerships</span></div>
+  </div>
+
+  <!-- 2. HERO -->
+  <div class="x" id="s2" style="border-left: none; border-right: none; padding: 76px 40px; text-align: center;">
+    <svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg>
+    <div style="z-index: 1; max-width: 820px; margin: 0 auto;">
+      <div class="sub">Church partnerships</div>
+      <h1 style="margin-top: 8px; color: #333;">What a partnership gives your congregation</h1>
+      <p class="txt" style="margin-top: 14px; color: #777;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, ut enim ad minim veniam quis nostrud exercitation.</p>
+      <div style="margin-top: 26px; display: flex; gap: 12px; justify-content: center;">
+        <span class="btn" style="padding: 13px 28px; font-size: 16px;">Book a call</span>
+        <span class="btn-o" style="padding: 13px 28px; font-size: 16px;">See partnership plans</span>
+      </div>
+      <p class="txt" style="margin-top: 14px; font-size: 14px;">No commitment &middot; Plans start at 12 sessions a month &middot; Cancel anytime</p>
+    </div>
+  </div>
+
+  <!-- 3. WHAT YOUR CONGREGATION GETS -->
+  <div class="row" id="s3" style="background: #f7f7f7; padding: 64px 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; max-width: 1200px; margin: 0 auto;">
+      <div>
+        <div class="sub">Why partner</div>
+        <h2 style="margin-top: 6px;">The need this meets</h2>
+        <p class="txt" style="margin-top: 12px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 18px;">
+          <div><h3>Benefit one</h3><p class="txt" style="margin-top: 4px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore.</p></div>
+          <div><h3>Benefit two</h3><p class="txt" style="margin-top: 4px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p></div>
+          <div><h3>Benefit three</h3><p class="txt" style="margin-top: 4px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla.</p></div>
+        </div>
+      </div>
+      <div class="x" style="height: 400px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Image</span></div>
+    </div>
+  </div>
+
+  <!-- 4. HOW IT WORKS -->
+  <div class="x" id="s4" style="border-left: none; border-right: none; padding: 64px 40px;">
+    <svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg>
+    <div style="z-index: 1; max-width: 1200px; margin: 0 auto; width: 100%;">
+      <h2 style="text-align: center; color: #333;">How it works</h2>
+      <p class="txt" style="text-align: center; margin: 10px auto 0; max-width: 640px; color: #777;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor.</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px;">
+        <div style="background: #fff; border: 1.5px solid #ccc; border-radius: 14px; padding: 28px;">
+          <div style="width: 38px; height: 38px; border-radius: 999px; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700;">1</div>
+          <h3 style="margin-top: 14px;">Covenant agreement</h3>
+          <p class="txt" style="margin-top: 6px; font-size: 15px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.</p>
+        </div>
+        <div style="background: #fff; border: 1.5px solid #ccc; border-radius: 14px; padding: 28px;">
+          <div style="width: 38px; height: 38px; border-radius: 999px; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+          <h3 style="margin-top: 14px;">Choose a plan</h3>
+          <p class="txt" style="margin-top: 6px; font-size: 15px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+        </div>
+        <div style="background: #fff; border: 1.5px solid #ccc; border-radius: 14px; padding: 28px;">
+          <div style="width: 38px; height: 38px; border-radius: 999px; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+          <h3 style="margin-top: 14px;">Tell your congregation</h3>
+          <p class="txt" style="margin-top: 6px; font-size: 15px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. PLANS -->
+  <div class="row" id="s5" style="background: #f7f7f7; padding: 64px 40px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="text-align: center;">
+        <div class="sub">Plans</div>
+        <h2 style="margin-top: 6px;">Partnership plans</h2>
+        <p class="txt" style="margin: 10px auto 0; max-width: 640px;">Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+      </div>
+
+      <div class="plans" style="margin-top: 40px;">
+
+        <div class="plan">
+          <h3 style="font-size: 18px;">Tier 1</h3>
+          <div class="price">$1,320</div>
+          <div class="per">per month</div>
+          <div class="rate"><strong style="color: #333;">12 sessions a month</strong><br>$110 per session</div>
+          <span class="btn-o">Subscribe</span>
+        </div>
+
+        <div class="plan on">
+          <span class="tag">Most churches start here</span>
+          <h3 style="font-size: 18px;">Tier 2</h3>
+          <div class="price">$2,640</div>
+          <div class="per">per month</div>
+          <div class="rate"><strong style="color: #333;">24 sessions a month</strong><br>$110 per session</div>
+          <span class="btn">Subscribe</span>
+        </div>
+
+        <div class="plan">
+          <h3 style="font-size: 18px;">Tier 3</h3>
+          <div class="price">$4,400</div>
+          <div class="per">per month</div>
+          <div class="rate"><strong style="color: #333;">40 sessions a month</strong><br>$110 per session</div>
+          <span class="btn-o">Subscribe</span>
+        </div>
+
+        <div class="plan">
+          <h3 style="font-size: 18px;">Tier 4</h3>
+          <div class="price">$6,600</div>
+          <div class="per">per month</div>
+          <div class="rate"><strong style="color: #333;">60 sessions a month</strong><br>$110 per session</div>
+          <span class="btn-o">Subscribe</span>
+        </div>
+
+      </div>
+
+      <!-- Included in every plan — said once, not four times -->
+      <div class="incl">
+        <div style="grid-column: 1 / -1;"><strong style="color: #333; font-size: 15px;">Included in every partnership</strong></div>
+        <div>&#10003; Inclusion one &mdash; lorem ipsum</div>
+        <div>&#10003; Inclusion two &mdash; dolor sit amet</div>
+        <div>&#10003; Inclusion three &mdash; consectetur elit</div>
+        <div>&#10003; Inclusion four &mdash; sed do eiusmod</div>
+      </div>
+
+      <!-- Custom plan -->
+      <div class="custom">
+        <div>
+          <h3 style="font-size: 18px;">Need a different size?</h3>
+          <p class="txt" style="margin-top: 4px; font-size: 15px;">Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        </div>
+        <span class="btn-o" style="flex-shrink: 0;">Request a quote</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. PARTNERSHIP QUESTIONS -->
+  <div class="row" id="s6" style="padding: 64px 40px;">
+    <div style="max-width: 760px; margin: 0 auto;">
+      <h2 style="text-align: center;">Partnership questions</h2>
+      <div style="margin-top: 28px;">
+        <div class="q"><h3 style="font-size: 18px;">Who is eligible to use the sessions?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">What happens to sessions we do not use?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Does leadership see who attends?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Who provides the counselling?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+        <div class="q"><h3 style="font-size: 18px;">Can we change or cancel our plan?</h3><span style="font-size: 22px; color: #999;">+</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. CLOSING — SCRIPTURE + CTA -->
+  <div id="s7" style="background: #333; color: #fff; text-align: center; padding: 64px 40px;">
+    <div style="max-width: 760px; margin: 0 auto;">
+      <h2 style="color: #fff; font-size: 28px; font-weight: 400; line-height: 1.4;">&ldquo;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&rdquo;</h2>
+      <p class="sub" style="margin-top: 14px; color: #bbb;">&mdash; Attribution line</p>
+      <p class="txt" style="color: rgba(255,255,255,0.5); margin: 24px auto 20px; max-width: 600px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
+      <span class="btn" style="background: #fff; color: #333;">Book a call</span>
+    </div>
+  </div>
+
+  <!-- 8. FOOTER -->
+  <div id="s8" style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality &middot; Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">&#9888; Crisis disclaimer + hotline</div></div>
+
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Links</div><div style="line-height: 2;">Donate<br>Church Partnerships<br>Contact<br>Payment<br>AI Info</div></div>
+      <div><div style="font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px;">Legal</div><div style="line-height: 2;">Privacy Policy<br>Terms of Use<br>Accessibility</div></div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">&copy; 2026 Practice name</div>
+  </div>
+
+</div>
+
+<!-- SIDEBAR NOTES -->
+<div class="sidebar">
+  <div class="n" id="n1" style="top: 0;"><b>1. Header</b>Same as all pages. Church Partnerships is the header CTA, so this page is the one the button lands on &mdash; it has to answer &ldquo;what is this&rdquo; before it asks for anything.</div>
+
+  <div class="n" id="n2" style="top: 138px;"><b>2. Hero</b>The reference page has no hero at all: it opens on &ldquo;How It Works&rdquo;, so a pastor arriving from the nav reads three steps for a programme nobody has named yet, then four prices. Everything the page is selling lives in the visitor&rsquo;s head or nowhere.<br><br>This band states what a partnership is, for whom, and what it costs to start &mdash; then splits the two audiences: <b style="display:inline; color:#665a00;">book a call</b> for the leader who needs a conversation, <b style="display:inline; color:#665a00;">see plans</b> for the one who already knows and wants the number. The microcopy under the buttons kills the two objections that stop a first click: commitment and minimum size.</div>
+
+  <div class="n" id="n3" style="top: 539px;"><b>3. What your congregation gets</b>The persuasion band the reference is missing entirely. A subscription that bills monthly needs a reason before it needs a price, and &ldquo;support mental health in your community&rdquo; buried in step one is not it.<br><br>Three benefits, not four or six: written for the person who signs, not the person who attends. Image beside the copy, the About page split, so the page has one photographic beat before the pricing.</div>
+
+  <div class="n" id="n4" style="top: 1072px;"><b>4. How it works</b>Straight from the reference &mdash; covenant, plan, promote &mdash; and the one part of it that already works. Kept in place, numbered, and moved <i>after</i> the value band so it reads as &ldquo;here is how you start&rdquo; rather than as the page&rsquo;s opening statement.<br><br>Step three is retitled. &ldquo;Promote Partners for Peace&rdquo; asks the church to market for us; &ldquo;tell your congregation&rdquo; describes the same action as a benefit to them.</div>
+
+  <div class="n" id="n5" style="top: 1489px;"><b>5. Plans</b>The reference renders this three times: a heading table hidden on every breakpoint, a card row hidden on every breakpoint, and one live row &mdash; with prices that disagree ($1,300/$2,600/$6,500 hidden, $1,320/$2,640/$4,400/$6,600 live). The dead markup goes; the live numbers stay.<br><br><b style="display:inline; color:#665a00;">Ascending order, left to right.</b> The reference&rsquo;s live row runs Tier 4 first. A price ladder read backwards makes the entry point the hardest thing to find.<br><br><b style="display:inline; color:#665a00;">One anchor.</b> Tier 2 is lifted and tagged, the same job the &ldquo;most common&rdquo; badge does on the Donate widget. Four undifferentiated cards make the visitor do the ranking themselves.<br><br><b style="display:inline; color:#665a00;">Per-session rate on every card.</b> Every tier is $110 a session; showing it turns four intimidating monthly figures into one honest scale, and it is the strongest fairness signal the pricing has. Confirm the numbers against the live PayPal buttons before porting &mdash; the hidden table disagrees with them.<br><br><b style="display:inline; color:#665a00;">Inclusions once, not four times.</b> The tiers differ only in volume, so a feature list repeated in each card is the same sentence printed four times. It sits under the row instead, which also keeps the cards short enough to compare at a glance.<br><br>The custom-plan line is the reference&rsquo;s asterisked footnote, promoted to a row with an action. It is deliberately not a fifth card: a quote is a conversation, not a price.</div>
+
+  <div class="n" id="n6" style="top: 2307px;"><b>6. Partnership questions</b>Five, using the site&rsquo;s existing FAQ accordion. Eligibility, unused sessions, confidentiality, who provides the care, and cancelling &mdash; the five a church board asks before it approves a recurring line item, and none of which the reference answers anywhere.<br><br>Confidentiality earns its place: a congregant will not use this if leadership sees the attendance list, and the church cannot promise what it has not been told.</div>
+
+  <div class="n" id="n7" style="top: 2748px;"><b>7. Closing &mdash; scripture + CTA</b>Same shape as the Donate page&rsquo;s close, for the same reason: motive and action in one beat, after the transactional bands rather than before them. The CTA repeats the hero&rsquo;s primary action, not a third new one.</div>
+
+  <div class="n" id="n8" style="top: 3125px;"><b>8. Footer</b>Same as all pages.</div>
+
+  <div class="n map" id="n9" style="top: 3212px;"><b>Block mapping</b>Every band is built from blocks that already exist. Nothing here needs a new one.<br><br>
+    <b style="display:inline; color:#1f4d5a;">1.</b> <code>header.php</code><br>
+    <b style="display:inline; color:#1f4d5a;">2.</b> <code>wptpl/hero</code> with <code>backgroundImageUrl</code>, <code>overlayOpacity: 0.6</code>, <code>className: wptpl-hero-dark</code> and <code>alignment: center</code> &mdash; the conversion-page hero the seeder already builds. Second button is <code>secondaryCtaText</code>; the trust line is <code>microcopy</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">3.</b> <code>wptpl_columns</code> + <code>wptpl/section-header</code> + <code>wptpl_image</code> &mdash; the image-beside-copy split from About.<br>
+    <b style="display:inline; color:#1f4d5a;">4.</b> <code>wptpl/steps</code>, exact fit: <code>heading</code>, <code>intro</code>, three <code>items</code>, <code>usePlaceholder: true</code> with <code>overlayOpacity: 0.65</code>. The block draws its own numbers.<br>
+    <b style="display:inline; color:#1f4d5a;">5.</b> Four <code>wptpl/feature-card</code> in a <code>wptpl-card-grid</code>, <code>centered</code>, each with <code>ctaText</code>/<code>ctaUrl</code> to its PayPal link. The anchored tier is the same block with <code>eyebrow</code> carrying the badge. Inclusions: one <code>wptpl/checklist</code>, <code>columns: 4</code>. Custom row: <code>wptpl/cta-banner</code>, <code>theme</code> light.<br>
+    <b style="display:inline; color:#1f4d5a;">6.</b> <code>wptpl/faq</code>, one <code>items</code> array.<br>
+    <b style="display:inline; color:#1f4d5a;">7.</b> <code>wptpl/cta-banner</code>, <code>theme: dark</code> &mdash; quote in <code>headline</code>, attribution in <code>eyebrow</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">8.</b> <code>footer.php</code><br><br>
+    <b style="display:inline; color:#1f4d5a;">Seeder note:</b> the page currently renders from <code>wptpl_seed_page_conversion()</code>, the generic hero/body/three-cards/steps shape it shares with Payment and Donate. That shape has no pricing row, so porting this means giving Church Partnerships its own builder in <code>scripts/seed/pages.php</code> &mdash; the same move the Donate page needs.<br><br>
+    <b style="display:inline; color:#1f4d5a;">Porting note:</b> this wireframe draws cards at 14px radius and 20px gaps, the house style of the other wireframes. The shipped values come from the CSS tokens: <code>--wptpl-card-radius</code> (20px), <code>--wptpl-gap-cards</code> (1.5rem). Do not type the wireframe&rsquo;s numbers into the seeder.</div>
+
+  <div class="n cut" id="n10" style="top: 4235px;"><b>Cut from the reference</b>Recording what was dropped, so it does not get re-added:<br><br><b style="display:inline; color:#555;">The hidden tier table.</b> Three rows of headings (&ldquo;Tiers / Monthly cost / Number of clients&rdquo;) marked hidden on desktop, tablet and mobile &mdash; markup that ships to every visitor and renders for none. Its numbers also contradict the live cards.<br><br><b style="display:inline; color:#555;">The duplicate card row.</b> A second set of Tier 1&ndash;3 cards, also hidden everywhere, with <code>href="#"</code> buttons. Two rows of pricing in the DOM is how the two price lists got out of sync.<br><br><b style="display:inline; color:#555;">&ldquo;Number of clients&rdquo; as the unit.</b> Replaced with sessions. The live cards already say sessions; the hidden table says clients. They are not the same thing, and a church buying twelve of one and receiving twelve of the other is a support ticket at best.<br><br><b style="display:inline; color:#555;">Per-card feature lists.</b> Never present in the reference, and deliberately not added: with tiers this uniform they would be four copies of one list. Folded into the shared inclusions band.</div>
+</div>
+
+</div>
+</body>
+</html>
