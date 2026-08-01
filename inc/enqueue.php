@@ -79,6 +79,34 @@ add_action(
 	1
 );
 
+/**
+ * Modal bootstrap. Same shape as the motion one above and for the same reason:
+ * it runs inline in <head> so `wptpl-modal-ready` lands on <html> before first
+ * paint, and the CSS that hides the team bios is gated on it. Without this the
+ * page would paint its full height — six bios — and then collapse when
+ * assets/js/bio-modal.js promotes them into dialogs.
+ *
+ * Gated on native <dialog> support, so a browser without it simply keeps the
+ * bios inline and the roster links stay anchor jumps. bio-modal.js removes the
+ * class again if it cannot wire itself up, so content is never left hidden.
+ */
+add_action(
+	'wp_head',
+	function () {
+		?>
+<script>
+( function () {
+	if ( ! window.HTMLDialogElement || ! document.createElement( 'dialog' ).showModal ) {
+		return;
+	}
+	document.documentElement.classList.add( 'wptpl-modal-ready' );
+} )();
+</script>
+		<?php
+	},
+	1
+);
+
 add_action(
 	'wp_enqueue_scripts',
 	function () {
@@ -100,6 +128,13 @@ add_action(
 			wptpl_asset_uri( 'assets/js/blog-filter.js' ),
 			array(),
 			wptpl_asset_version( 'assets/js/blog-filter.js' ),
+			true
+		);
+		wp_enqueue_script(
+			'wptpl-bio-modal',
+			wptpl_asset_uri( 'assets/js/bio-modal.js' ),
+			array(),
+			wptpl_asset_version( 'assets/js/bio-modal.js' ),
 			true
 		);
 	}

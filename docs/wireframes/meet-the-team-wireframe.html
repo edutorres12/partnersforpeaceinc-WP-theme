@@ -17,13 +17,11 @@
   .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
   .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
-  .btn-o { display: inline-block; border: 1.5px solid #333; padding: 8px 20px; font-size: 15px; font-weight: 600; }
   h1 { font-size: 44px; font-weight: 700; line-height: 1.2; }
   h2 { font-size: 32px; font-weight: 700; }
   h3 { font-size: 20px; font-weight: 700; }
   .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
   .txt { font-size: 16px; color: #999; line-height: 1.5; }
-  .circle { width: 40px; height: 40px; border: 1.5px solid #999; border-radius: 50%; }
 
   /* Roster grid — three across, one grid so every card shares a height. */
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -32,6 +30,15 @@
   .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
   .pill { font-size: 12px; border: 1px solid #bbb; border-radius: 999px; padding: 4px 12px; color: #999; }
   .arrow { margin-top: auto; padding-top: 14px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #333; }
+
+  /* The dialog state, drawn as its own band so the spec shows both views. */
+  .state-label { background: #333; color: #fff; padding: 14px 40px; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  .backdrop { background: #6f6f6f; padding: 60px 40px; }
+  .dialog { max-width: 1024px; margin: 0 auto; background: #fff; border-radius: 14px; padding: 48px; position: relative; }
+  .dialog .close { position: absolute; top: 16px; right: 16px; font-size: 26px; line-height: 1; color: #333; }
+  .dialog-inner { display: grid; grid-template-columns: 1fr 440px; gap: 48px; align-items: start; }
+  .dialog .credential { font-size: 18px; font-weight: 700; margin-top: 8px; }
+  .dialog p.txt + p.txt { margin-top: 24px; }
 
   .n {
     position: absolute;
@@ -46,6 +53,7 @@
     line-height: 1.5;
   }
   .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+  .n code { font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -63,14 +71,14 @@
   <div class="x" style="height: 340px; border-left: none; border-right: none; flex-direction: column; padding: 64px 40px;">
     <svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg>
     <div style="z-index: 1; text-align: center; max-width: 760px;">
-      <div class="sub">Our team</div>
+      <div class="sub">Team</div>
       <h1 style="margin-top: 8px; color: #333;">Meet the team</h1>
       <p class="txt" style="margin-top: 12px; color: #777;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam.</p>
       <span class="btn" style="margin-top: 20px;">Primary CTA</span>
     </div>
   </div>
 
-  <!-- 3. COUNSELING TEAM -->
+  <!-- 3. ROSTER GRID -->
   <div class="row" style="padding: 64px 40px;">
     <div style="text-align: center; max-width: 700px; margin: 0 auto;">
       <div class="sub">Counseling team</div>
@@ -79,166 +87,77 @@
     </div>
 
     <div class="grid" style="margin-top: 48px;">
-      <!-- Card 1 -->
       <div class="card">
         <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
         <div class="body">
-          <div class="sub" style="font-size: 12px;">Credentials, license</div>
+          <div class="sub" style="font-size: 12px;">Credentials | Founder &amp; CEO</div>
           <h3 style="margin-top: 6px;">Therapist 1</h3>
           <p class="txt" style="margin-top: 8px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
           <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
-          <div class="arrow">Book with this therapist &rarr;</div>
+          <div class="arrow">Read full bio &rarr;</div>
         </div>
       </div>
-      <!-- Card 2 -->
       <div class="card">
         <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
         <div class="body">
-          <div class="sub" style="font-size: 12px;">Credentials, license</div>
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
           <h3 style="margin-top: 6px;">Therapist 2</h3>
-          <p class="txt" style="margin-top: 8px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.</p>
+          <p class="txt" style="margin-top: 8px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
           <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
-          <div class="arrow">Book with this therapist &rarr;</div>
+          <div class="arrow">Read full bio &rarr;</div>
         </div>
       </div>
-      <!-- Card 3 -->
       <div class="card">
         <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
         <div class="body">
-          <div class="sub" style="font-size: 12px;">Credentials, license</div>
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
           <h3 style="margin-top: 6px;">Therapist 3</h3>
           <p class="txt" style="margin-top: 8px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
           <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
-          <div class="arrow">Book with this therapist &rarr;</div>
+          <div class="arrow">Read full bio &rarr;</div>
         </div>
       </div>
-      <!-- Card 4 -->
       <div class="card">
         <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
         <div class="body">
-          <div class="sub" style="font-size: 12px;">Credentials, license</div>
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
           <h3 style="margin-top: 6px;">Therapist 4</h3>
-          <p class="txt" style="margin-top: 8px;">Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum curabitur pretium.</p>
+          <p class="txt" style="margin-top: 8px;">Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
           <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
-          <div class="arrow">Book with this therapist &rarr;</div>
+          <div class="arrow">Read full bio &rarr;</div>
         </div>
       </div>
-      <!-- Card 5 -->
       <div class="card">
         <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
         <div class="body">
-          <div class="sub" style="font-size: 12px;">Credentials, license</div>
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
           <h3 style="margin-top: 6px;">Therapist 5</h3>
-          <p class="txt" style="margin-top: 8px;">Tincidunt lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare.</p>
+          <p class="txt" style="margin-top: 8px;">Nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna.</p>
           <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
-          <div class="arrow">Book with this therapist &rarr;</div>
+          <div class="arrow">Read full bio &rarr;</div>
         </div>
       </div>
-      <!-- Card 6 -->
       <div class="card">
         <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
         <div class="body">
-          <div class="sub" style="font-size: 12px;">Credentials, license</div>
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist intern</div>
           <h3 style="margin-top: 6px;">Therapist 6</h3>
-          <p class="txt" style="margin-top: 8px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore.</p>
+          <p class="txt" style="margin-top: 8px;">Suscipit magna in dui magna vel ornare enim lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
           <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
-          <div class="arrow">Book with this therapist &rarr;</div>
+          <div class="arrow">Read full bio &rarr;</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 4. CLINICAL DIRECTOR -->
-  <div style="background: #333; color: #e6e6e6; padding: 64px 40px;">
-    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 48px; align-items: center; max-width: 1200px; margin: 0 auto;">
-      <div class="x" style="height: 420px; border-radius: 14px; background: #4a4a4a; border-color: #666; color: #bbb;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#777" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#777" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-      <div>
-        <div class="sub" style="color: #bbb;">Clinical director</div>
-        <h2 style="margin-top: 8px; color: #fff;">Director name</h2>
-        <h3 style="margin-top: 12px; color: #fff;">Role line, credentials</h3>
-        <p class="txt" style="margin-top: 20px; color: rgba(255,255,255,0.55);">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
-        <p class="txt" style="margin-top: 12px; color: rgba(255,255,255,0.55);">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat.</p>
-        <span class="btn" style="margin-top: 24px; background: #666;">Read the full story</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. LEADERSHIP & SUPPORT -->
-  <div class="row" style="background: #f7f7f7; padding: 64px 40px;">
-    <div style="text-align: center; max-width: 700px; margin: 0 auto;">
-      <div class="sub">Leadership &amp; support</div>
-      <h2 style="margin-top: 6px;">Support headline</h2>
-      <p class="txt" style="margin-top: 12px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.</p>
-    </div>
-    <div class="grid" style="margin-top: 48px;">
-      <div class="card" style="background: #fff;">
-        <div class="body">
-          <div class="sub" style="font-size: 12px;">Role</div>
-          <h3 style="margin-top: 6px;">Team member 1</h3>
-          <p class="txt" style="margin-top: 8px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor.</p>
-        </div>
-      </div>
-      <div class="card" style="background: #fff;">
-        <div class="body">
-          <div class="sub" style="font-size: 12px;">Role</div>
-          <h3 style="margin-top: 6px;">Team member 2</h3>
-          <p class="txt" style="margin-top: 8px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi.</p>
-        </div>
-      </div>
-      <div class="card" style="background: #fff;">
-        <div class="body">
-          <div class="sub" style="font-size: 12px;">Role</div>
-          <h3 style="margin-top: 6px;">Team member 3</h3>
-          <p class="txt" style="margin-top: 8px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. HOW A MATCH IS MADE -->
-  <div class="row" style="text-align: center; padding: 64px 40px;">
-    <h2>How a match is made</h2>
-    <p class="txt" style="margin: 12px auto 0; max-width: 620px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore.</p>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; max-width: 1100px; margin-left: auto; margin-right: auto;">
-      <div style="border: 1.5px solid #ccc; border-radius: 14px; padding: 32px 22px;">
-        <div style="width: 44px; height: 44px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; margin: 0 auto;">1</div>
-        <h3 style="margin-top: 14px;">Step 1</h3>
-        <p class="txt" style="margin-top: 6px;">Lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
-      </div>
-      <div style="border: 1.5px solid #ccc; border-radius: 14px; padding: 32px 22px;">
-        <div style="width: 44px; height: 44px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; margin: 0 auto;">2</div>
-        <h3 style="margin-top: 14px;">Step 2</h3>
-        <p class="txt" style="margin-top: 6px;">Sed do eiusmod tempor incididunt ut labore et dolore.</p>
-      </div>
-      <div style="border: 1.5px solid #ccc; border-radius: 14px; padding: 32px 22px;">
-        <div style="width: 44px; height: 44px; border-radius: 50%; background: #333; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; margin: 0 auto;">3</div>
-        <h3 style="margin-top: 14px;">Step 3</h3>
-        <p class="txt" style="margin-top: 6px;">Ut enim ad minim veniam quis nostrud exercitation ullamco.</p>
-      </div>
-    </div>
-    <div style="margin-top: 32px;"><span class="btn">Primary CTA</span></div>
-    <p class="txt" style="margin-top: 10px; font-size: 14px;">Microcopy line under the button.</p>
-  </div>
-
-  <!-- 7. JOIN OUR TEAM -->
-  <div class="x" style="height: 320px; border-left: none; border-right: none; padding: 64px 40px;">
-    <svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg>
-    <div style="z-index: 1; text-align: center; max-width: 760px;">
-      <div class="sub">Join our team</div>
-      <h2 style="margin-top: 6px; color: #333;">Careers headline</h2>
-      <p class="txt" style="margin-top: 12px; color: #777;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
-      <span class="btn" style="margin-top: 24px; background: #ccc; color: #222;">Primary CTA</span>
-    </div>
-  </div>
-
-  <!-- 8. CLOSING CTA -->
+  <!-- 4. CLOSING CTA -->
   <div style="background: #333; color: #fff; text-align: center; padding: 64px 40px;">
     <h2 style="color: #fff; font-size: 36px;">Closing headline</h2>
     <p class="txt" style="color: rgba(255,255,255,0.5); margin: 10px auto 20px; max-width: 600px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
     <span class="btn" style="background: #fff; color: #333;">Primary CTA</span>
   </div>
 
-  <!-- 9. FOOTER -->
+  <!-- 5. FOOTER -->
   <div style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
     <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
       <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality &middot; Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">&#9888; Crisis disclaimer + hotline</div></div>
@@ -249,19 +168,38 @@
     <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">&copy; 2026 Practice name</div>
   </div>
 
+  <!-- 6. STATE LABEL -->
+  <div class="state-label">Dialog state &mdash; what opens when a card&rsquo;s &ldquo;Read full bio&rdquo; is clicked</div>
+
+  <!-- 7. THE DIALOG -->
+  <div class="backdrop">
+    <div class="dialog">
+      <div class="close">&times;</div>
+      <div class="dialog-inner">
+        <div>
+          <h2>Therapist 2</h2>
+          <div class="credential">Credentials | Therapist</div>
+          <p class="txt" style="margin-top: 24px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident.</p>
+          <p class="txt">Sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim.</p>
+          <p class="txt">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis.</p>
+          <p class="txt">Nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.</p>
+          <div style="margin-top: 32px;"><span class="btn">Book with this therapist</span></div>
+        </div>
+        <div class="x" style="height: 440px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- SIDEBAR NOTES -->
 <div class="sidebar">
   <div class="n" style="top: 0;"><b>1. Header</b>Same as all pages. The nav item for this page is the current one.</div>
-  <div class="n" style="top: 86px;"><b>2. Hero</b>Photo band with a dark wash, like the Services hero. Eyebrow, H1, one sentence on how the practice picks its clinicians, one CTA. Nothing sits between this and the roster: the faces are why the page exists, and anything above them delays the payoff.</div>
-  <div class="n" style="top: 426px;"><b>3. Counseling team</b>The page's core. Six cards in ONE grid (not two rows of three) so every card shares a height — same shape as the Services grid, for the same reason.<br><br>Each card: portrait, credential line as the eyebrow ABOVE the name, a bio short enough to scan, specialties as pills, and its own action. The pills let a visitor scan by need ("who treats this?") rather than only by name. Left-aligned, not centered: centered multi-line copy turns a roster into a wall.</div>
-  <div class="n" style="top: 1512px;"><b>4. Clinical director</b>Portrait beside the copy, on the dark band. Two card grids stacked read as one long list — an editorial row between them breaks the rhythm and answers the second question a visitor has: who runs this practice. Links out to About rather than repeating it.</div>
-  <div class="n" style="top: 2060px;"><b>5. Leadership &amp; support</b>Deliberately lighter than the roster above: role, name, one line, no portrait, no CTA. Giving an office manager the same visual weight as a therapist someone is about to trust with their marriage flattens the hierarchy the page is built on. White cards on the tinted band so they still read as cards.</div>
-  <div class="n" style="top: 2477px;"><b>6. How a match is made</b>Six faces is a choice, and a choice with no stated process is where a visitor stalls. Three steps + CTA + microcopy — the answer to "I don't know which one to pick". Placed after the faces, not before: it only becomes a question once the roster has been seen.</div>
-  <div class="n" style="top: 3040px;"><b>7. Join our team</b>A team page is read by clinicians looking for work as well as by clients looking for care, and the closing CTA below speaks only to the second. Its own photo band so the two invitations are not two banners in a row.</div>
-  <div class="n" style="top: 3360px;"><b>8. Closing CTA</b>Same closing banner as the rest of the site.</div>
-  <div class="n" style="top: 3617px;"><b>9. Footer</b>Same as all pages.</div>
+  <div class="n" style="top: 94px;"><b>2. Hero</b>Photo band with a dark wash, like the Services hero. Carries the page's ONE H1 — the bio names are H2 and the card titles H3, so the outline reads as one page about a team.</div>
+  <div class="n" style="top: 430px;"><b>3. Roster grid</b>The page's index, and the reason the bios are behind a dialog. Choosing a therapist means comparing them, and six full bios stacked down a page can only be compared from memory. Here they sit side by side.<br><br>Six cards in ONE grid, not two rows of three — two column rows size themselves independently, so the second bank came out taller than the first. Each card: portrait, credential line as the eyebrow above the name, an excerpt, specialties as pills, and its own link.</div>
+  <div class="n" style="top: 1520px;"><b>4. Closing CTA</b>Same closing banner as the rest of the site. It is no longer the only place to act — every dialog carries its own CTA.</div>
+  <div class="n" style="top: 1790px;"><b>5. Footer</b>Same as all pages.</div>
+  <div class="n" style="top: 2035px;"><b>6. &amp; 7. The dialog</b>Not a separate page — this is the same band that would otherwise sit in the page, promoted into a native <code>&lt;dialog&gt;</code> by <code>assets/js/bio-modal.js</code>.<br><br><b>What that buys.</b> The browser supplies the focus trap, Escape and the backdrop. Added on top: a close button, focus returning to the card that opened it, a background scroll lock, and the dialog named by the person's heading.<br><br><b>What it does not cost.</b> The bio is written into the page as real markup, so it is in the HTML for crawlers and it is the whole layout with JavaScript off — the card link is then just a jump down to the bio. Each bio keeps its <code>#therapist-N</code> anchor: landing on one opens it, opening one pushes the hash, so a bio stays linkable and Back closes it.<br><br>The portrait alternates side and every other band is tinted. Invisible here — a dialog shows one person — but it marks the seam between people in the no-JS layout, so the tint is dropped inside the dialog.</div>
 </div>
 
 </div>

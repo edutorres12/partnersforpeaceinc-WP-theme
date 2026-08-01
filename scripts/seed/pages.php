@@ -1391,43 +1391,62 @@ function wptpl_seed_page_blog(): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Meet the Team: hero, the clinician roster, a director bio, the support team,
- * how a match is made, a careers band and the closing CTA.
+ * Meet the Team: a hero, the roster grid, one bio per person, the closing CTA.
  *
- * The cards are slots, not people. Service pages are grouped by theme precisely
- * so the site does not need restructuring when the roster changes.
+ * The slots are slots, not people. Six of them, because that is the roster this
+ * page was built against; adding or removing one is a line in the list below.
  *
- * The page answers the three questions a visitor actually arrives with, in the
- * order they ask them: who would I see, is this practice run by people I trust,
- * and how do I get to one of them. So the roster sits directly under the hero —
- * it is the reason the page exists, and anything placed above it delays the
- * payoff — and the "how matching works" band comes after the faces, not before.
+ * The page is built twice over, deliberately. What the markup says is: a grid of
+ * cards, then six full bio sections stacked underneath, each anchored, and the
+ * cards link down to them. That is the entire page with JavaScript off, and it
+ * is what a crawler reads — nothing is fetched and nothing is hidden from the
+ * document. assets/js/bio-modal.js then promotes each bio section into a native
+ * <dialog>, so what a visitor gets is the grid, with a bio opening on demand.
  *
- * The two rosters are deliberately not the same object. Clinicians carry a
- * portrait, a credential line, specialty pills and their own action, because
- * choosing one is the decision the page is asking for. Leadership and support
- * carry a role and a line of copy and nothing else: the same treatment for both
- * would give an office manager the same visual weight as the therapist someone
- * is about to trust with their marriage.
+ * Both halves earn their place. Choosing a therapist means comparing them, and
+ * six full bios stacked down a page can only be compared from memory — that is
+ * what the grid fixes. But a bio here runs four or five paragraphs, which is not
+ * something a card body can hold and not something worth cutting: it is the
+ * material the choice is actually made on. Grid to compare, dialog to read.
+ *
+ * The bios keep their alternating portrait side and tint. Invisible inside a
+ * dialog, which shows one person at a time, but the no-JS layout stacks them and
+ * there the alternation is what marks the seam between one person and the next.
+ *
+ * Heading order matters here and is easy to get wrong: the page carries exactly
+ * one H1 (the hero), the bio names are H2 and the card titles H3. The credential
+ * line under a name is a styled paragraph, NOT a subheading — it qualifies the
+ * name, it does not open a new section, and marking it up as a heading corrupts
+ * the document outline that screen readers and search engines both read.
+ *
+ * Every bio is anchored (`#therapist-N`). With the dialogs live that anchor is
+ * still the address: bio-modal.js opens the matching dialog on load and pushes
+ * the hash when one is opened, so a bio stays linkable and Back still closes it.
  */
 function wptpl_seed_page_therapists(): string {
-	$portrait = get_template_directory_uri() . '/assets/placeholders/portrait.jpg';
+	// The roster. Order is the hierarchy the page presents: whoever runs the
+	// practice opens it, trainees close it. Each entry is one band.
+	$roster = array(
+		'Credentials | Founder &amp; CEO',
+		'Credentials | Therapist',
+		'Credentials | Therapist',
+		'Credentials | Therapist',
+		'Credentials | Therapist',
+		'Credentials | Therapist intern',
+	);
 
-	// A clinician card. Left-aligned, not centred: the bio runs several lines,
-	// and centred multi-line copy is what turns a roster into a wall of text
-	// instead of six scannable people. The card grid equalises the heights, so
-	// the bios do not have to be the same length to sit in step.
-	$clinician = static function ( int $n ) use ( $portrait ): string {
+	// A roster card. This is the index: the thing a visitor scans and compares
+	// before committing to reading anybody. It carries an excerpt, not the bio —
+	// the bio is behind the link, in the dialog.
+	$card = static function ( int $n, string $role ): string {
 		return wptpl_block(
 			'feature-card',
 			array(
-				// The credential line goes above the name, not below it: it is the
-				// eyebrow that qualifies the person, and running it underneath
-				// pushes it into the bio where it reads as the first sentence.
-				'eyebrow'  => 'Credentials, license',
+				'eyebrow'  => $role,
 				'title'    => 'Therapist ' . $n,
-				'text'     => wptpl_lorem_len( 130 + ( $n % 3 ) * 30 ),
-				'imageUrl' => $portrait,
+				'text'     => wptpl_lorem_len( 150 ),
+				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
+				'imageAlt' => 'Therapist ' . $n,
 				// Specialties as pills, so the roster can be scanned by need
 				// ("who treats this?") rather than only by name. The trailing
 				// period goes: wptpl_lorem_len() always closes a sentence, and a
@@ -1436,213 +1455,167 @@ function wptpl_seed_page_therapists(): string {
 					rtrim( wptpl_lorem_len( 12 ), '.' ),
 					rtrim( wptpl_lorem_len( 16 ), '.' ),
 				),
-				// One action per card, pinned to the bottom by the block. A roster
-				// whose cards only describe people leaves the visitor to work out
-				// what to do with the one they picked.
-				'ctaText'  => 'Book with this therapist',
-				'ctaUrl'   => '/contact/',
+				// An in-page anchor, not a URL to nowhere. bio-modal.js turns it
+				// into the dialog opener; with JS off it stays what it looks
+				// like — a jump to that person's bio further down the page.
+				'ctaText'  => 'Read full bio',
+				'ctaUrl'   => '#therapist-' . $n,
 				'ctaStyle' => 'arrow',
 			)
 		);
 	};
 
-	// Leadership / support card: no portrait, white on the surface band. The
-	// lighter treatment is the hierarchy — see the note on the function.
-	$support = static function ( int $n ): string {
-		return wptpl_block(
-			'feature-card',
+	// One person: a portrait beside the name, the credential line and the bio.
+	//
+	// The portrait does NOT carry `wptpl-portrait-fill` the way the home page's
+	// single bio does. That class stretches the image to its column's height,
+	// which works when the copy beside it is a few paragraphs; against a bio this
+	// long it would render a five-foot-tall portrait. Fixed width, top-aligned,
+	// natural aspect ratio.
+	$bio = static function ( int $n, string $role, bool $image_left ): string {
+		$name = 'Therapist ' . $n;
+
+		// Real alt text, not the empty string the decorative placeholders use.
+		// These portraits ARE the content of the page.
+		$portrait = wptpl_image( 'portrait', 'is-style-rounded-square', '440px', '', $name );
+
+		$copy = array(
+			wptpl_heading( $name, 2 ),
+			// A paragraph, not a heading — see the note on the function. The
+			// inline top margin keeps it tucked under the name; `wptpl-bio-copy`
+			// would otherwise push it 1.75rem down and break the pairing.
+			wptpl_paragraph(
+				$role,
+				'',
+				'',
+				array(
+					'fontSize'   => '1.125rem',
+					'fontWeight' => '700',
+				),
+				'8px'
+			),
+			wptpl_paragraph( wptpl_lorem_len( 380 ) ),
+			wptpl_paragraph( wptpl_lorem_len( 430 ) ),
+			wptpl_paragraph( wptpl_lorem_len( 350 ) ),
+			wptpl_paragraph( wptpl_lorem_len( 300 ) ),
+			// The action belongs with the person, not only at the foot of the
+			// page. Someone who has just finished reading one bio has decided;
+			// making them scroll back out to act is where that decision is lost.
+			wptpl_html( '<div style="margin-top:2rem"><a class="wptpl-btn-primary" href="/contact/">Book with this therapist</a></div>' ),
+		);
+
+		$columns     = $image_left ? array( array( $portrait ), $copy ) : array( $copy, array( $portrait ) );
+		$widths      = $image_left ? array( '440px', '' ) : array( '', '440px' );
+		$col_classes = $image_left ? array( '', 'wptpl-bio-copy' ) : array( 'wptpl-bio-copy', '' );
+
+		return wptpl_section(
 			array(
-				'eyebrow'         => 'Role',
-				'title'           => 'Team member ' . $n,
-				'text'            => wptpl_lorem_len( 105 ),
-				'showImage'       => false,
-				'backgroundColor' => 'base',
-			)
+				wptpl_columns(
+					$columns,
+					$widths,
+					'',
+					'',
+					false,
+					$col_classes,
+					'split',
+					'',
+					// Top, not centre. The copy column is several times the
+					// portrait's height, and centring floats the face into the
+					// middle of the bio, away from the name it belongs to.
+					array(
+						'row' => 'top',
+						0     => 'top',
+						1     => 'top',
+					)
+				),
+			),
+			// Every other band tinted — the seam between one person and the next
+			// when these are stacked in the page, which is the no-JS layout. The
+			// dialog stylesheet drops the tint, since inside a modal there is
+			// nothing to separate the band from.
+			0 === $n % 2 ? 'surface' : '',
+			'container-md',
+			// The hook bio-modal.js looks for. Everything else about the band is
+			// unchanged — it is a real section that happens to get promoted.
+			'wptpl-bio-modal',
+			'',
+			'therapist-' . $n
 		);
 	};
 
-	return implode(
-		"\n\n",
+	$bands = array(
+		// 1. Hero. A photo band with a dark wash, like the services hero, and the
+		// page's only H1.
+		wptpl_block(
+			'hero',
+			array(
+				'eyebrow'            => 'Team',
+				'title'              => 'Meet the team',
+				'subtitle'           => wptpl_lorem_len( 155 ),
+				'alignment'          => 'center',
+				'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
+				'overlayOpacity'     => 0.6,
+				'className'          => 'wptpl-hero-dark',
+				'ctaText'            => 'Primary CTA',
+				'ctaUrl'            => '/contact/',
+			)
+		),
+
+		// 2. The roster grid. Six cards in one grid, not two rows of three — two
+		// column rows size themselves independently, so the second bank's cards
+		// came out taller than the first's.
+		//
+		// This is the page's index and the reason the bios moved into dialogs:
+		// choosing a therapist means comparing them, and six full bios stacked
+		// down a page can only be compared from memory. Here they sit side by
+		// side, and the bio opens on demand.
+		wptpl_section(
+			array(
+				wptpl_block(
+					'section-header',
+					array(
+						'eyebrow'  => 'Counseling team',
+						'headline' => wptpl_lorem_len( 40 ),
+						'intro'    => wptpl_lorem_len( 150 ),
+					)
+				),
+				wptpl_columns(
+					array(
+						array( $card( 1, $roster[0] ) ),
+						array( $card( 2, $roster[1] ) ),
+						array( $card( 3, $roster[2] ) ),
+						array( $card( 4, $roster[3] ) ),
+						array( $card( 5, $roster[4] ) ),
+						array( $card( 6, $roster[5] ) ),
+					),
+					array(),
+					'wptpl-services-carousel wptpl-card-grid',
+					// A section-header's own bottom margin is sized for a
+					// paragraph, not for a grid of cards.
+					'3rem'
+				),
+			)
+		),
+	);
+
+	// 3-8. One band per person, portrait side alternating.
+	foreach ( $roster as $index => $role ) {
+		$bands[] = $bio( $index + 1, $role, 0 === $index % 2 );
+	}
+
+	// 9. Closing CTA.
+	$bands[] = wptpl_block(
+		'cta-banner',
 		array(
-			// 1. Hero. A photo band with a dark wash, like the services hero.
-			wptpl_block(
-				'hero',
-				array(
-					'eyebrow'            => 'Our team',
-					'title'              => 'Meet the team',
-					'subtitle'           => wptpl_lorem_len( 155 ),
-					'alignment'          => 'center',
-					'backgroundImageUrl' => get_template_directory_uri() . '/assets/placeholders/hero.jpg',
-					'overlayOpacity'     => 0.6,
-					'className'          => 'wptpl-hero-dark',
-					'ctaText'            => 'Primary CTA',
-					'ctaUrl'             => '/contact/',
-				)
-			),
-
-			// 2. The roster. Six cards in one grid, not two rows of three. Same
-			// shape as the home service grid, and for the same reason: two column
-			// rows size themselves independently, so the second bank's cards came
-			// out taller than the first's.
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'eyebrow'  => 'Counseling team',
-							'headline' => wptpl_lorem_len( 40 ),
-							'intro'    => wptpl_lorem_len( 150 ),
-						)
-					),
-					wptpl_columns(
-						array(
-							array( $clinician( 1 ) ),
-							array( $clinician( 2 ) ),
-							array( $clinician( 3 ) ),
-							array( $clinician( 4 ) ),
-							array( $clinician( 5 ) ),
-							array( $clinician( 6 ) ),
-						),
-						array(),
-						'wptpl-services-carousel wptpl-card-grid',
-						// A section-header's own bottom margin is sized for a
-						// paragraph, not for a grid of cards.
-						'3rem'
-					),
-				)
-			),
-
-			// 3. Clinical director — a portrait beside the copy, on a dark band.
-			// Two card grids stacked read as one long list; an editorial row
-			// between them breaks the rhythm and puts a face on the practice
-			// itself, which is the second question a visitor asks.
-			wptpl_section(
-				array(
-					wptpl_columns(
-						array(
-							array( wptpl_image( 'portrait', 'is-style-rounded-square wptpl-portrait-fill', '380px' ) ),
-							array(
-								wptpl_block(
-									'section-header',
-									array(
-										'eyebrow'   => 'Clinical director',
-										'headline'  => 'Director name',
-										'alignment' => 'left',
-										'textColor' => 'base',
-									)
-								),
-								wptpl_heading( 'Role line, credentials', 3, '', '', 'h3' ),
-								wptpl_paragraph( wptpl_lorem_len( 235 ) ),
-								wptpl_paragraph( wptpl_lorem_len( 180 ) ),
-								wptpl_html( '<div style="margin-top:1.5rem"><a class="wptpl-btn-accent" href="/about-us/">Read the full story</a></div>' ),
-							),
-						),
-						array( '380px', '' ),
-						'',
-						'',
-						true,
-						array( '', 'wptpl-bio-copy' ),
-						'split'
-					),
-				),
-				'primary',
-				'container-md',
-				'',
-				'base'
-			),
-
-			// 4. Leadership and support, on a tinted band so the cards — which are
-			// white here rather than the default surface — still read as cards.
-			wptpl_section(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'eyebrow'  => 'Leadership &amp; support',
-							'headline' => wptpl_lorem_len( 36 ),
-							'intro'    => wptpl_lorem_len( 130 ),
-						)
-					),
-					wptpl_columns(
-						array(
-							array( $support( 1 ) ),
-							array( $support( 2 ) ),
-							array( $support( 3 ) ),
-						),
-						array(),
-						'wptpl-card-grid',
-						'3rem'
-					),
-				),
-				'surface'
-			),
-
-			// 5. How a match is made. Six faces is a choice, and a choice with no
-			// stated process is where a visitor stalls — this band is the answer
-			// to "I do not know which one to pick".
-			wptpl_block(
-				'steps',
-				array(
-					'heading'   => wptpl_lorem_len( 32 ),
-					'intro'     => wptpl_lorem_len( 118 ),
-					'items'     => array(
-						array(
-							'title' => wptpl_lorem_len( 22 ),
-							'text'  => wptpl_lorem_len( 62 ),
-						),
-						array(
-							'title' => wptpl_lorem_len( 18 ),
-							'text'  => wptpl_lorem_len( 55 ),
-						),
-						array(
-							'title' => wptpl_lorem_len( 25 ),
-							'text'  => wptpl_lorem_len( 68 ),
-						),
-					),
-					'showCta'   => true,
-					'ctaText'   => 'Primary CTA',
-					'ctaUrl'    => '/contact/',
-					'microcopy' => wptpl_lorem_len( 48 ),
-				)
-			),
-
-			// 6. Careers. A team page is read by clinicians looking for work as
-			// well as by clients looking for care, and the closing CTA below
-			// speaks only to the second. Its own band on photography, so the two
-			// invitations are not two banners in a row.
-			wptpl_cover(
-				array(
-					wptpl_block(
-						'section-header',
-						array(
-							'eyebrow'   => 'Join our team',
-							'headline'  => wptpl_lorem_len( 38 ),
-							'intro'     => wptpl_lorem_len( 125 ),
-							'textColor' => 'base',
-						)
-					),
-					wptpl_html( '<div style="margin-top:2rem;text-align:center"><a class="wptpl-btn-photo" href="/contact/">Primary CTA</a></div>' ),
-				),
-				'cta-bg',
-				'secondary',
-				55,
-				'base',
-				'var(--wptpl-container-narrow)'
-			),
-
-			// 7. Closing CTA.
-			wptpl_block(
-				'cta-banner',
-				array(
-					'headline' => wptpl_lorem_len( 52 ),
-					'text'     => wptpl_lorem_len( 96 ),
-					'ctaText'  => 'Primary CTA',
-					'ctaUrl'   => '/contact/',
-					'theme'    => 'dark',
-				)
-			),
+			'headline' => wptpl_lorem_len( 52 ),
+			'text'     => wptpl_lorem_len( 96 ),
+			'ctaText'  => 'Primary CTA',
+			'ctaUrl'   => '/contact/',
+			'theme'    => 'dark',
 		)
 	);
+
+	return implode( "\n\n", $bands );
 }
 
 // ---------------------------------------------------------------------------
