@@ -1108,6 +1108,102 @@ body.error404 .wptpl-main {
   margin-top: 1.75rem;
 }
 
+/* ---------------------------------------------------------------
+   Team bios as dialogs.
+
+   The bios are ordinary sections in the page — that is the whole layout with
+   JavaScript off, and it is what keeps them in the HTML for crawlers.
+   assets/js/bio-modal.js promotes each one into a native <dialog>; these rules
+   are what make that read as a modal rather than as a stray box.
+
+   Hiding is gated on `wptpl-modal-ready`, set on <html> before first paint by
+   the bootstrap in inc/enqueue.php, so the page never paints six full bios and
+   then collapses. The second rule is what lets the open dialog show its own
+   section back — without it the blanket hide would win inside the dialog too.
+
+   Unlayered on purpose: these class names appear only in WP markup and in the
+   JS, never in a file Tailwind scans, so inside @layer they would be purged.
+   Being unlayered also puts them above `.wptpl-section`'s own band padding,
+   which is measured for a full-width band and is far too tall inside a dialog.
+   --------------------------------------------------------------- */
+.wptpl-modal-ready .wptpl-bio-modal {
+  display: none;
+}
+.wptpl-bio-dialog[open] .wptpl-bio-modal {
+  display: block;
+}
+
+.wptpl-bio-dialog {
+  width: 100%;
+  max-width: min(64rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 4rem);
+  padding: 0;
+  overflow-y: auto;
+  border: 0;
+  border-radius: 14px;
+  /* Literal fallbacks on purpose. WordPress's preset custom properties do not
+     always reach the front end — the `@layer utilities` block at the foot of
+     this file exists for the same reason — and a dialog that loses its
+     background renders its bio straight over the page behind it. */
+  background-color: var(--wp--preset--color--base, #ffffff);
+  color: var(--wp--preset--color--contrast, #333333);
+}
+.wptpl-bio-dialog::backdrop {
+  background-color: rgba(34, 34, 34, 0.6);
+}
+/* The band rhythm inside a dialog is the dialog's, not the page's. */
+.wptpl-bio-dialog .wptpl-section {
+  padding-top: 3.5rem;
+  padding-bottom: 3rem;
+}
+/* The alternating tint exists to separate stacked bands on the page. Inside a
+   dialog there is nothing to separate it from, and it would make three of the
+   six modals grey for no reason.
+
+   `!important` is not laziness here: both WordPress's preset color classes and
+   this file's own `has-*-background-color` fallback block declare the colour as
+   `!important`, so no amount of specificity reaches it. Matching the flag is
+   the only way to override one. */
+.wptpl-bio-dialog .has-surface-background-color {
+  background-color: transparent !important;
+}
+/* Sticky, so a long bio can be closed without scrolling back up. The negative
+   bottom margin pulls the section up underneath it; the section's own top
+   padding is what keeps the heading clear of the button. */
+.wptpl-bio-dialog__close {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 0 -3rem auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.wptpl-bio-dialog__close:hover {
+  opacity: 0.6;
+}
+/* The page behind a modal must not scroll with it. */
+body.wptpl-modal-open {
+  overflow: hidden;
+}
+
+@media (max-width: 781px) {
+  .wptpl-bio-dialog {
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100vh - 2rem);
+  }
+  .wptpl-bio-dialog .wptpl-section {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+}
+
 /* A column whose only job is to label the rows beside it. Centring the heading
    itself does nothing — the column is the flex item, so the column is what has
    to centre its contents. */

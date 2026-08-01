@@ -17,22 +17,28 @@
   .x { background: #f0f0f0; border: 1.5px solid #999; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #999; }
   .x svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .btn { display: inline-block; background: #333; color: #fff; padding: 8px 20px; font-size: 15px; font-weight: 600; }
-  .btn-o { display: inline-block; border: 1.5px solid #333; padding: 8px 20px; font-size: 15px; font-weight: 600; }
   h1 { font-size: 44px; font-weight: 700; line-height: 1.2; }
   h2 { font-size: 32px; font-weight: 700; }
   h3 { font-size: 20px; font-weight: 700; }
   .sub { font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1.5px; }
   .txt { font-size: 16px; color: #999; line-height: 1.5; }
 
-  /* Jump row — pills linking to each bio band. */
-  .pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-  .pill { font-size: 13px; border: 1px solid #bbb; border-radius: 999px; padding: 6px 16px; color: #777; }
+  /* Roster grid — three across, one grid so every card shares a height. */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card { border: 1.5px solid #ccc; background: #f7f7f7; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+  .card .body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .pill { font-size: 12px; border: 1px solid #bbb; border-radius: 999px; padding: 4px 12px; color: #999; }
+  .arrow { margin-top: auto; padding-top: 14px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #333; }
 
-  /* One bio band: portrait beside the copy, sides alternating. */
-  .bio { display: grid; grid-template-columns: 440px 1fr; gap: 48px; align-items: start; max-width: 1200px; margin: 0 auto; }
-  .bio.flip { grid-template-columns: 1fr 440px; }
-  .bio .credential { font-size: 18px; font-weight: 700; margin-top: 8px; }
-  .bio p.txt + p.txt { margin-top: 24px; }
+  /* The dialog state, drawn as its own band so the spec shows both views. */
+  .state-label { background: #333; color: #fff; padding: 14px 40px; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+  .backdrop { background: #6f6f6f; padding: 60px 40px; }
+  .dialog { max-width: 1024px; margin: 0 auto; background: #fff; border-radius: 14px; padding: 48px; position: relative; }
+  .dialog .close { position: absolute; top: 16px; right: 16px; font-size: 26px; line-height: 1; color: #333; }
+  .dialog-inner { display: grid; grid-template-columns: 1fr 440px; gap: 48px; align-items: start; }
+  .dialog .credential { font-size: 18px; font-weight: 700; margin-top: 8px; }
+  .dialog p.txt + p.txt { margin-top: 24px; }
 
   .n {
     position: absolute;
@@ -47,6 +53,7 @@
     line-height: 1.5;
   }
   .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
+  .n code { font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -71,111 +78,86 @@
     </div>
   </div>
 
-  <!-- 3. JUMP ROW -->
-  <div class="row" style="padding: 24px 40px;">
-    <div class="pills">
-      <span class="pill">Therapist 1</span><span class="pill">Therapist 2</span><span class="pill">Therapist 3</span><span class="pill">Therapist 4</span><span class="pill">Therapist 5</span><span class="pill">Therapist 6</span>
+  <!-- 3. ROSTER GRID -->
+  <div class="row" style="padding: 64px 40px;">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+      <div class="sub">Counseling team</div>
+      <h2 style="margin-top: 6px;">Roster headline</h2>
+      <p class="txt" style="margin-top: 12px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore.</p>
     </div>
-  </div>
 
-  <!-- 4. BIO 1 — portrait left -->
-  <div class="row" style="padding: 64px 40px;" id="therapist-1">
-    <div class="bio">
-      <div class="x" style="height: 520px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-      <div>
-        <h2>Therapist 1</h2>
-        <div class="credential">Credentials | Founder &amp; CEO</div>
-        <p class="txt" style="margin-top: 24px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.</p>
-        <p class="txt">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum curabitur pretium tincidunt lacus.</p>
-        <p class="txt">Nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
-        <p class="txt">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris.</p>
+    <div class="grid" style="margin-top: 48px;">
+      <div class="card">
+        <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
+        <div class="body">
+          <div class="sub" style="font-size: 12px;">Credentials | Founder &amp; CEO</div>
+          <h3 style="margin-top: 6px;">Therapist 1</h3>
+          <p class="txt" style="margin-top: 8px;">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
+          <div class="arrow">Read full bio &rarr;</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
+        <div class="body">
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
+          <h3 style="margin-top: 6px;">Therapist 2</h3>
+          <p class="txt" style="margin-top: 8px;">Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
+          <div class="arrow">Read full bio &rarr;</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
+        <div class="body">
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
+          <h3 style="margin-top: 6px;">Therapist 3</h3>
+          <p class="txt" style="margin-top: 8px;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+          <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
+          <div class="arrow">Read full bio &rarr;</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
+        <div class="body">
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
+          <h3 style="margin-top: 6px;">Therapist 4</h3>
+          <p class="txt" style="margin-top: 8px;">Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
+          <div class="arrow">Read full bio &rarr;</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
+        <div class="body">
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist</div>
+          <h3 style="margin-top: 6px;">Therapist 5</h3>
+          <p class="txt" style="margin-top: 8px;">Nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna.</p>
+          <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
+          <div class="arrow">Read full bio &rarr;</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding: 12px 12px 0;"><div class="x" style="height: 150px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div></div>
+        <div class="body">
+          <div class="sub" style="font-size: 12px;">Credentials | Therapist intern</div>
+          <h3 style="margin-top: 6px;">Therapist 6</h3>
+          <p class="txt" style="margin-top: 8px;">Suscipit magna in dui magna vel ornare enim lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
+          <div class="pills"><span class="pill">Specialty</span><span class="pill">Specialty</span></div>
+          <div class="arrow">Read full bio &rarr;</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- 5. BIO 2 — portrait right, tinted -->
-  <div class="row" style="padding: 64px 40px; background: #f7f7f7;" id="therapist-2">
-    <div class="bio flip">
-      <div>
-        <h2>Therapist 2</h2>
-        <div class="credential">Credentials | Therapist</div>
-        <p class="txt" style="margin-top: 24px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident.</p>
-        <p class="txt">Sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim.</p>
-        <p class="txt">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis.</p>
-        <p class="txt">Nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.</p>
-      </div>
-      <div class="x" style="height: 520px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-    </div>
-  </div>
-
-  <!-- 6. BIO 3 — portrait left -->
-  <div class="row" style="padding: 64px 40px;" id="therapist-3">
-    <div class="bio">
-      <div class="x" style="height: 520px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-      <div>
-        <h2>Therapist 3</h2>
-        <div class="credential">Credentials | Therapist</div>
-        <p class="txt" style="margin-top: 24px;">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna.</p>
-        <p class="txt">Vel ornare enim lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi.</p>
-        <p class="txt">Ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-        <p class="txt">Sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 7. BIO 4 — portrait right, tinted -->
-  <div class="row" style="padding: 64px 40px; background: #f7f7f7;" id="therapist-4">
-    <div class="bio flip">
-      <div>
-        <h2>Therapist 4</h2>
-        <div class="credential">Credentials | Therapist</div>
-        <p class="txt" style="margin-top: 24px;">Curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor.</p>
-        <p class="txt">Incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
-        <p class="txt">Dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p class="txt">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.</p>
-      </div>
-      <div class="x" style="height: 520px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-    </div>
-  </div>
-
-  <!-- 8. BIO 5 — portrait left -->
-  <div class="row" style="padding: 64px 40px;" id="therapist-5">
-    <div class="bio">
-      <div class="x" style="height: 520px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-      <div>
-        <h2>Therapist 5</h2>
-        <div class="credential">Credentials | Therapist</div>
-        <p class="txt" style="margin-top: 24px;">Nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
-        <p class="txt">Aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-        <p class="txt">Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum curabitur pretium tincidunt.</p>
-        <p class="txt">Lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 9. BIO 6 — portrait right, tinted -->
-  <div class="row" style="padding: 64px 40px; background: #f7f7f7;" id="therapist-6">
-    <div class="bio flip">
-      <div>
-        <h2>Therapist 6</h2>
-        <div class="credential">Credentials | Therapist intern</div>
-        <p class="txt" style="margin-top: 24px;">Suscipit magna in dui magna vel ornare enim lorem ipsum dolor sit amet consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris.</p>
-        <p class="txt">Nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa.</p>
-        <p class="txt">Qui officia deserunt mollit anim id est laborum curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius turpis.</p>
-        <p class="txt">Et commodo pharetra est eros suscipit magna in dui magna vel ornare enim lorem ipsum.</p>
-      </div>
-      <div class="x" style="height: 520px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
-    </div>
-  </div>
-
-  <!-- 10. CLOSING CTA -->
+  <!-- 4. CLOSING CTA -->
   <div style="background: #333; color: #fff; text-align: center; padding: 64px 40px;">
     <h2 style="color: #fff; font-size: 36px;">Closing headline</h2>
     <p class="txt" style="color: rgba(255,255,255,0.5); margin: 10px auto 20px; max-width: 600px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor.</p>
     <span class="btn" style="background: #fff; color: #333;">Primary CTA</span>
   </div>
 
-  <!-- 11. FOOTER -->
+  <!-- 5. FOOTER -->
   <div style="background: #222; padding: 32px 40px 20px; font-size: 15px; color: rgba(255,255,255,0.5);">
     <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
       <div><div style="font-weight: 700; color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 6px;">Practice name</div><div style="line-height: 1.8;">Name, credentials<br>License number<br>Hours<br>Modality &middot; Languages</div><div style="border: 1px dashed rgba(255,255,255,0.15); padding: 6px; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.4);">&#9888; Crisis disclaimer + hotline</div></div>
@@ -186,21 +168,38 @@
     <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 12px; color: rgba(255,255,255,0.3);">&copy; 2026 Practice name</div>
   </div>
 
+  <!-- 6. STATE LABEL -->
+  <div class="state-label">Dialog state &mdash; what opens when a card&rsquo;s &ldquo;Read full bio&rdquo; is clicked</div>
+
+  <!-- 7. THE DIALOG -->
+  <div class="backdrop">
+    <div class="dialog">
+      <div class="close">&times;</div>
+      <div class="dialog-inner">
+        <div>
+          <h2>Therapist 2</h2>
+          <div class="credential">Credentials | Therapist</div>
+          <p class="txt" style="margin-top: 24px;">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident.</p>
+          <p class="txt">Sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus nulla gravida orci a odio nullam varius turpis et commodo pharetra est eros suscipit magna in dui magna vel ornare enim.</p>
+          <p class="txt">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis.</p>
+          <p class="txt">Nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.</p>
+          <div style="margin-top: 32px;"><span class="btn">Book with this therapist</span></div>
+        </div>
+        <div class="x" style="height: 440px; border-radius: 14px;"><svg><line x1="0" y1="0" x2="100%" y2="100%" stroke="#bbb" stroke-width="1.5"/><line x1="100%" y1="0" x2="0" y2="100%" stroke="#bbb" stroke-width="1.5"/></svg><span style="z-index:1;">Portrait</span></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- SIDEBAR NOTES -->
 <div class="sidebar">
   <div class="n" style="top: 0;"><b>1. Header</b>Same as all pages. The nav item for this page is the current one.</div>
-  <div class="n" style="top: 94px;"><b>2. Hero</b>Photo band with a dark wash, like the Services hero. Carries the page's ONE H1 — every name below is an H2, so the outline reads as one page about a team rather than six unrelated documents.</div>
-  <div class="n" style="top: 426px;"><b>3. Jump row</b>Six full bios make a page several screens tall. These pills link to <code>#therapist-N</code> on each band, so a visitor who came for one person reaches them in a click instead of scrolling past five others. Compact band — it is a signpost, not a section.</div>
-  <div class="n" style="top: 640px;"><b>4. Bio 1 — the founder</b>The band, not the card, is the container here. A bio runs four or five paragraphs — training, approach, who they work with, what they are like outside the room — and none of that fits in a card body. Shortening it to fit would throw away exactly the material someone uses to choose.<br><br>Name is an H2. The credential line under it is a <em>paragraph</em>, not a subheading: it qualifies the name, it does not open a section. Whoever runs the practice opens the page.</div>
-  <div class="n" style="top: 1160px;"><b>5. Bio 2 — flipped</b>Portrait side alternates and every other band is tinted. Not decoration: six identical stacked bands give the eye no boundary between one person and the next, and a reader who looks away loses their place. The flip and the tint make the seam visible without adding a rule or a heading.</div>
-  <div class="n" style="top: 1810px;"><b>6. Bio 3</b>Portrait is a fixed 440px, top-aligned, natural aspect ratio — it does <em>not</em> stretch to the column height the way the Home page's single bio does. Against a bio this long that would render a portrait several times taller than the face needs to be.</div>
-  <div class="n" style="top: 2460px;"><b>7. Bio 4</b>Every band carries an <code>id</code>, so a person can be linked to from anywhere — a service page, an email, a directory listing. The page used to be linkable only from the top.</div>
-  <div class="n" style="top: 3110px;"><b>8. Bio 5</b>Portrait alt text is the person's name, not empty. These images are the content of the page; blank alt hides six people from screen readers and from image search alike.</div>
-  <div class="n" style="top: 3760px;"><b>9. Bio 6 — the intern</b>Trainees close the roster. Same treatment as everyone else — the order carries the seniority, the styling does not need to.</div>
-  <div class="n" style="top: 4400px;"><b>10. Closing CTA</b>Same closing banner as the rest of the site.</div>
-  <div class="n" style="top: 4660px;"><b>11. Footer</b>Same as all pages.</div>
+  <div class="n" style="top: 94px;"><b>2. Hero</b>Photo band with a dark wash, like the Services hero. Carries the page's ONE H1 — the bio names are H2 and the card titles H3, so the outline reads as one page about a team.</div>
+  <div class="n" style="top: 430px;"><b>3. Roster grid</b>The page's index, and the reason the bios are behind a dialog. Choosing a therapist means comparing them, and six full bios stacked down a page can only be compared from memory. Here they sit side by side.<br><br>Six cards in ONE grid, not two rows of three — two column rows size themselves independently, so the second bank came out taller than the first. Each card: portrait, credential line as the eyebrow above the name, an excerpt, specialties as pills, and its own link.</div>
+  <div class="n" style="top: 1520px;"><b>4. Closing CTA</b>Same closing banner as the rest of the site. It is no longer the only place to act — every dialog carries its own CTA.</div>
+  <div class="n" style="top: 1790px;"><b>5. Footer</b>Same as all pages.</div>
+  <div class="n" style="top: 2035px;"><b>6. &amp; 7. The dialog</b>Not a separate page — this is the same band that would otherwise sit in the page, promoted into a native <code>&lt;dialog&gt;</code> by <code>assets/js/bio-modal.js</code>.<br><br><b>What that buys.</b> The browser supplies the focus trap, Escape and the backdrop. Added on top: a close button, focus returning to the card that opened it, a background scroll lock, and the dialog named by the person's heading.<br><br><b>What it does not cost.</b> The bio is written into the page as real markup, so it is in the HTML for crawlers and it is the whole layout with JavaScript off — the card link is then just a jump down to the bio. Each bio keeps its <code>#therapist-N</code> anchor: landing on one opens it, opening one pushes the hash, so a bio stays linkable and Back closes it.<br><br>The portrait alternates side and every other band is tinted. Invisible here — a dialog shows one person — but it marks the seam between people in the no-JS layout, so the tint is dropped inside the dialog.</div>
 </div>
 
 </div>

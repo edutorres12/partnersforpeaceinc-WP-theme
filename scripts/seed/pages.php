@@ -1391,33 +1391,37 @@ function wptpl_seed_page_blog(): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Meet the Team: a hero, a jump row, one full bio per person, and the closing CTA.
+ * Meet the Team: a hero, the roster grid, one bio per person, the closing CTA.
  *
- * The bands are slots, not people. Six of them, because that is the roster this
+ * The slots are slots, not people. Six of them, because that is the roster this
  * page was built against; adding or removing one is a line in the list below.
  *
- * This page used to be a grid of cards, and the card was the wrong container.
- * A therapist bio here runs four or five paragraphs — a practitioner's training,
- * their approach, who they work with, what they are like outside the room. None
- * of that fits in a card body, and shortening it to fit would throw away the
- * material a visitor actually uses to pick someone. So each person gets a full
- * band: portrait on one side, name, credential line and the whole bio on the
- * other, sides alternating down the page.
+ * The page is built twice over, deliberately. What the markup says is: a grid of
+ * cards, then six full bio sections stacked underneath, each anchored, and the
+ * cards link down to them. That is the entire page with JavaScript off, and it
+ * is what a crawler reads — nothing is fetched and nothing is hidden from the
+ * document. assets/js/bio-modal.js then promotes each bio section into a native
+ * <dialog>, so what a visitor gets is the grid, with a bio opening on demand.
  *
- * The alternation is not decoration. Six identical stacked bands give the eye no
- * boundary between one person and the next, and a reader who looks away loses
- * their place. Flipping the portrait side and tinting every other band makes the
- * seam between people visible without adding a rule or a heading.
+ * Both halves earn their place. Choosing a therapist means comparing them, and
+ * six full bios stacked down a page can only be compared from memory — that is
+ * what the grid fixes. But a bio here runs four or five paragraphs, which is not
+ * something a card body can hold and not something worth cutting: it is the
+ * material the choice is actually made on. Grid to compare, dialog to read.
+ *
+ * The bios keep their alternating portrait side and tint. Invisible inside a
+ * dialog, which shows one person at a time, but the no-JS layout stacks them and
+ * there the alternation is what marks the seam between one person and the next.
  *
  * Heading order matters here and is easy to get wrong: the page carries exactly
- * one H1 (the hero) and each name is an H2. The credential line under a name is
- * a styled paragraph, NOT a subheading — it qualifies the name, it does not open
- * a new section, and marking it up as a heading corrupts the document outline
- * that screen readers and search engines both read.
+ * one H1 (the hero), the bio names are H2 and the card titles H3. The credential
+ * line under a name is a styled paragraph, NOT a subheading — it qualifies the
+ * name, it does not open a new section, and marking it up as a heading corrupts
+ * the document outline that screen readers and search engines both read.
  *
- * Every band is anchored (`#therapist-N`) so a person can be linked to directly,
- * and the jump row under the hero is what makes a page this tall navigable —
- * without it, reaching the sixth person means scrolling past the other five.
+ * Every bio is anchored (`#therapist-N`). With the dialogs live that anchor is
+ * still the address: bio-modal.js opens the matching dialog on load and pushes
+ * the hash when one is opened, so a bio stays linkable and Back still closes it.
  */
 function wptpl_seed_page_therapists(): string {
 	// The roster. Order is the hierarchy the page presents: whoever runs the
@@ -1430,6 +1434,36 @@ function wptpl_seed_page_therapists(): string {
 		'Credentials | Therapist',
 		'Credentials | Therapist intern',
 	);
+
+	// A roster card. This is the index: the thing a visitor scans and compares
+	// before committing to reading anybody. It carries an excerpt, not the bio —
+	// the bio is behind the link, in the dialog.
+	$card = static function ( int $n, string $role ): string {
+		return wptpl_block(
+			'feature-card',
+			array(
+				'eyebrow'  => $role,
+				'title'    => 'Therapist ' . $n,
+				'text'     => wptpl_lorem_len( 150 ),
+				'imageUrl' => get_template_directory_uri() . '/assets/placeholders/portrait.jpg',
+				'imageAlt' => 'Therapist ' . $n,
+				// Specialties as pills, so the roster can be scanned by need
+				// ("who treats this?") rather than only by name. The trailing
+				// period goes: wptpl_lorem_len() always closes a sentence, and a
+				// pill is a label, not one.
+				'tags'     => array(
+					rtrim( wptpl_lorem_len( 12 ), '.' ),
+					rtrim( wptpl_lorem_len( 16 ), '.' ),
+				),
+				// An in-page anchor, not a URL to nowhere. bio-modal.js turns it
+				// into the dialog opener; with JS off it stays what it looks
+				// like — a jump to that person's bio further down the page.
+				'ctaText'  => 'Read full bio',
+				'ctaUrl'   => '#therapist-' . $n,
+				'ctaStyle' => 'arrow',
+			)
+		);
+	};
 
 	// One person: a portrait beside the name, the credential line and the bio.
 	//
@@ -1464,6 +1498,10 @@ function wptpl_seed_page_therapists(): string {
 			wptpl_paragraph( wptpl_lorem_len( 430 ) ),
 			wptpl_paragraph( wptpl_lorem_len( 350 ) ),
 			wptpl_paragraph( wptpl_lorem_len( 300 ) ),
+			// The action belongs with the person, not only at the foot of the
+			// page. Someone who has just finished reading one bio has decided;
+			// making them scroll back out to act is where that decision is lost.
+			wptpl_html( '<div style="margin-top:2rem"><a class="wptpl-btn-primary" href="/contact/">Book with this therapist</a></div>' ),
 		);
 
 		$columns     = $image_left ? array( array( $portrait ), $copy ) : array( $copy, array( $portrait ) );
@@ -1491,10 +1529,15 @@ function wptpl_seed_page_therapists(): string {
 					)
 				),
 			),
-			// Every other band tinted — the seam between one person and the next.
+			// Every other band tinted — the seam between one person and the next
+			// when these are stacked in the page, which is the no-JS layout. The
+			// dialog stylesheet drops the tint, since inside a modal there is
+			// nothing to separate the band from.
 			0 === $n % 2 ? 'surface' : '',
 			'container-md',
-			'',
+			// The hook bio-modal.js looks for. Everything else about the band is
+			// unchanged — it is a real section that happens to get promoted.
+			'wptpl-bio-modal',
 			'',
 			'therapist-' . $n
 		);
@@ -1518,30 +1561,40 @@ function wptpl_seed_page_therapists(): string {
 			)
 		),
 
-		// 2. Jump row. Six full bios make a page several screens tall; this is how
-		// a visitor who came for one person reaches them. It is a compact band on
-		// purpose — it is a signpost, not a section.
+		// 2. The roster grid. Six cards in one grid, not two rows of three — two
+		// column rows size themselves independently, so the second bank's cards
+		// came out taller than the first's.
+		//
+		// This is the page's index and the reason the bios moved into dialogs:
+		// choosing a therapist means comparing them, and six full bios stacked
+		// down a page can only be compared from memory. Here they sit side by
+		// side, and the bio opens on demand.
 		wptpl_section(
 			array(
 				wptpl_block(
-					'tag-list',
+					'section-header',
 					array(
-						'items'     => array_map(
-							static function ( $n ) {
-								return array(
-									'label' => 'Therapist ' . $n,
-									'url'   => '#therapist-' . $n,
-								);
-							},
-							range( 1, count( $roster ) )
-						),
-						'alignment' => 'center',
+						'eyebrow'  => 'Counseling team',
+						'headline' => wptpl_lorem_len( 40 ),
+						'intro'    => wptpl_lorem_len( 150 ),
 					)
 				),
-			),
-			'',
-			'container-md',
-			'wptpl-section-sm'
+				wptpl_columns(
+					array(
+						array( $card( 1, $roster[0] ) ),
+						array( $card( 2, $roster[1] ) ),
+						array( $card( 3, $roster[2] ) ),
+						array( $card( 4, $roster[3] ) ),
+						array( $card( 5, $roster[4] ) ),
+						array( $card( 6, $roster[5] ) ),
+					),
+					array(),
+					'wptpl-services-carousel wptpl-card-grid',
+					// A section-header's own bottom margin is sized for a
+					// paragraph, not for a grid of cards.
+					'3rem'
+				),
+			)
 		),
 	);
 
