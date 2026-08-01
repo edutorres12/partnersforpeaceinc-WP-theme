@@ -3263,18 +3263,26 @@ body.wptpl-modal-open {
    variant so the plain keyword pill rows are untouched. */
 @media (max-width: 767px) {
   .wptpl-tags-lg .flex {
+    flex-direction: column;
+    align-items: center;
+  }
+  /* Two per row — opt in with `wptpl-tags-2up`. Short, uniform labels (a topic
+     list) waste half the band stacked one per row and run six rows deep. Long
+     ones (a service name) do not: two across, each label wraps to three lines
+     and the row reads worse than the stack. So this is a per-band decision, not
+     a breakpoint one. A half-track basis fixes the count regardless of label
+     length, and the pill fills its half so the two line up. */
+  .wptpl-tags-2up .flex {
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
   }
-  /* Two per row. Stacking one per row left a column of lone pills down the
-     middle of a band with room for two, and made a six-topic list six rows
-     tall. A half-track basis fixes the count regardless of label length, and
-     the pill fills its half so long and short labels line up. */
-  .wptpl-tags-lg .flex > li:not(.basis-full) {
+  .wptpl-tags-2up .flex > li:not(.basis-full) {
     flex: 0 0 calc(50% - 0.25rem);
     display: flex;
     justify-content: center;
   }
-  .wptpl-tags-lg .flex > li:not(.basis-full) > :is(a, span) {
+  .wptpl-tags-2up .flex > li:not(.basis-full) > :is(a, span) {
     width: 100%;
   }
 }

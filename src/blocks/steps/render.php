@@ -79,6 +79,19 @@ if ( $wptpl_has_image ) {
 	$wptpl_wrapper_class .= ' relative overflow-hidden text-white';
 }
 
+// The number circles overhang the cards by 40px, so a band that opens straight
+// onto the cards starts 40px into its own top padding and reads as though it
+// begins too high. A heading absorbs that — the header's own bottom margin is
+// the clearance — so the taller top belongs only to the headerless variant.
+//
+// This used to be a class the seeder set by hand, which meant it was set on
+// bands that already had a heading (doubling the gap) and missing from ones
+// that did not. The block knows which variant it is rendering; let it decide.
+$wptpl_has_header = '' !== $wptpl_heading || '' !== $wptpl_intro;
+if ( ! $wptpl_has_header ) {
+	$wptpl_wrapper_class .= ' wptpl-steps-pad-top';
+}
+
 $wptpl_wrapper = get_block_wrapper_attributes(
 	array( 'class' => $wptpl_wrapper_class )
 );
@@ -129,7 +142,7 @@ $wptpl_header_mb = 'mb-20';
 		<div class="absolute inset-0 <?php echo esc_attr( $wptpl_overlay_bg ); ?>" style="opacity:<?php echo esc_attr( (string) $wptpl_overlay ); ?>" aria-hidden="true"></div>
 	<?php endif; ?>
 	<div class="wptpl-container-md <?php echo $wptpl_has_image ? 'relative z-10' : ''; ?>">
-		<?php if ( '' !== $wptpl_heading || '' !== $wptpl_intro ) : ?>
+		<?php if ( $wptpl_has_header ) : ?>
 			<div class="<?php echo esc_attr( $wptpl_header_mb ); ?>">
 				<?php if ( '' !== $wptpl_heading ) : ?>
 					<h2 class="<?php echo esc_attr( $wptpl_heading_class ); ?>"><?php echo $wptpl_heading; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></h2>

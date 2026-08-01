@@ -735,7 +735,6 @@ function wptpl_seed_page_about(): string {
 					// straight into the band's top padding and the row reads as
 					// though it starts too high. This is the same tall-top the
 					// contact band uses, and for the same reason.
-					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 
@@ -1017,7 +1016,10 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 								},
 								range( 1, 6 )
 							),
-							'className' => 'wptpl-tags-light wptpl-tags-lg',
+							// Short, uniform labels, so they read well two across on
+							// a phone. The related-services band below keeps the
+							// stack: its labels are full service names.
+							'className' => 'wptpl-tags-light wptpl-tags-lg wptpl-tags-2up',
 						)
 					),
 				),
@@ -1112,7 +1114,6 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 					'ctaUrl'         => '/contact/',
 					'overlayOpacity' => 0.7,
 					'usePlaceholder' => true,
-					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 		)
@@ -1277,7 +1278,6 @@ function wptpl_seed_page_contact(): string {
 					// edge — see $wptpl_card_class in the block's render.php.
 					// Without it the band is bare columns.
 					'usePlaceholder' => true,
-					'className'      => 'wptpl-steps-pad-top',
 				)
 			),
 		)
