@@ -731,10 +731,14 @@ function wptpl_seed_page_about(): string {
 							'text'  => wptpl_lorem_len( 73 ),
 						),
 					),
-					// No heading above the cards, so the number circles overhang
-					// straight into the band's top padding and the row reads as
-					// though it starts too high. This is the same tall-top the
-					// contact band uses, and for the same reason.
+					// The photo band, like every other steps section on the site.
+					// Dropping it left About as the one page whose steps sat on
+					// the page background with hairline cards — a different
+					// section from the one the other pages were approved with.
+					// It stays headerless, so the block gives it the taller top
+					// on its own.
+					'overlayOpacity' => 0.65,
+					'usePlaceholder' => true,
 				)
 			),
 
