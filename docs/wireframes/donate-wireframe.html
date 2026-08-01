@@ -61,6 +61,10 @@
   .n b { font-weight: 700; color: #665a00; display: block; margin-bottom: 2px; }
   .n.cut { background: #f2f2f2; border-color: #ccc; color: #777; }
   .n.cut b { color: #555; }
+  /* Block mapping — the note that binds each band to an existing block. */
+  .n.map { background: #eaf4f7; border-color: #a8ccd8; color: #2c6d80; }
+  .n.map b { color: #1f4d5a; }
+  .n code { font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -189,9 +193,9 @@
 <div class="sidebar">
   <div class="n" id="n1" style="top: 0;"><b>1. Header</b>Same as all pages. Donate stays out of the primary nav: it is reached from the footer and from every closing CTA, and the header already carries one action.</div>
 
-  <div class="n" id="n2" style="top: 136px;"><b>2. Hero + give block</b>The ask IS the hero. The reference page opens on three screens of prose and puts its first amount button below the fold; here the widget sits beside the headline, so a donor who arrived ready to give never scrolls to find the form.<br><br>Four decisions, all of them anchors: monthly preselected, $100 tagged &ldquo;most common&rdquo;, custom amount as a field rather than a fifth tier, trust microcopy under the button where the hesitation actually happens.<br><br><b style="display:inline; color:#665a00;">The impact line is the whole point.</b> It is bound to the selection &mdash; pick $250 and it says what $250 does. That is where per-amount framing belongs. A separate grid of amount cards further down says the same thing twice and splits the action across two places.</div>
+  <div class="n" id="n2" style="top: 136px;"><b>2. Hero + give block</b>The ask IS the hero. The reference page opens on three screens of prose and puts its first amount button below the fold; here the widget sits beside the headline, so a donor who arrived ready to give never scrolls to find the form.<br><br>Four decisions, all of them anchors: monthly preselected, $100 tagged &ldquo;most common&rdquo;, custom amount as a field rather than a fifth tier, trust microcopy under the button where the hesitation actually happens.<br><br><b style="display:inline; color:#665a00;">The impact line is the whole point.</b> It is bound to the selection &mdash; pick $250 and it says what $250 does. That is where per-amount framing belongs. A separate grid of amount cards further down says the same thing twice and splits the action across two places.<br><br><b style="display:inline; color:#665a00;">Not the hero block.</b> <code>wptpl/hero</code> with a background image renders full-bleed with a single column of text and cannot hold a card beside it. This band is the Contact page&rsquo;s form-beside-card pattern instead &mdash; see the block mapping at the bottom of this column. The three trust lines are <code>wptpl/checklist</code>, not hand-written rows.</div>
 
-  <div class="n" id="n3" style="top: 710px;"><b>3. Where your gift goes</b>The one persuasion section that survives. Answers &ldquo;what is actually funded&rdquo;, which is the objection that follows &ldquo;how much&rdquo;. Three priorities, not four: the fourth was a variation on the third, and a list that runs past three stops being read.<br><br>Image beside the copy, so the page has one photographic beat between the widget and the fine print.</div>
+  <div class="n" id="n3" style="top: 759px;"><b>3. Where your gift goes</b>The one persuasion section that survives. Answers &ldquo;what is actually funded&rdquo;, which is the objection that follows &ldquo;how much&rdquo;. Three priorities, not four: the fourth was a variation on the third, and a list that runs past three stops being read.<br><br>Image beside the copy, so the page has one photographic beat between the widget and the fine print.</div>
 
   <div class="n" id="n4" style="top: 1243px;"><b>4. Giving questions</b>Four, using the site&rsquo;s existing FAQ accordion. Tax-deductibility, destination, cancelling a recurring gift, payment security &mdash; the four that stop a donation. A fifth about receipts was cut: the answer is on the confirmation screen anyway.</div>
 
@@ -201,7 +205,18 @@
 
   <div class="n" id="n7" style="top: 2374px;"><b>7. Footer</b>Same as all pages.</div>
 
-  <div class="n cut" id="n8" style="top: 2470px;"><b>Cut from the first draft</b>Four bands were removed. Recording why, so they do not get re-added:<br><br><b style="display:inline; color:#555;">Impact stat strip.</b> Four metrics a practice this size has not measured. Invented numbers on a donation page are a trust risk, not proof.<br><br><b style="display:inline; color:#555;">&ldquo;What your gift does&rdquo; tier grid.</b> The same four amounts as the widget, with buttons to the same destination. Folded into the widget&rsquo;s impact line.<br><br><b style="display:inline; color:#555;">Monthly giving band.</b> A second ask for what the widget&rsquo;s toggle already offers. Monthly is preselected instead &mdash; a default converts better than a band.<br><br><b style="display:inline; color:#555;">Standalone scripture band.</b> Merged into the closing CTA.<br><br>Net: 11 bands to 7, one donation action instead of nine, and roughly 40% less scroll (4,235px to 2,637px at 1400px wide).</div>
+  <div class="n map" id="n9" style="top: 2461px;"><b>Block mapping</b>Every band below is built from blocks that already exist. Nothing here needs a new one except the widget internals.<br><br>
+    <b style="display:inline; color:#1f4d5a;">1.</b> <code>header.php</code><br>
+    <b style="display:inline; color:#1f4d5a;">2.</b> <code>wptpl_cover</code> + <code>wptpl_columns</code> holding [copy | a <code>wptpl-form</code> group], the same shape Contact uses for its form beside the practice-info card. Trust lines: <code>wptpl/checklist</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">3.</b> <code>wptpl_columns</code> + <code>wptpl_image</code> + <code>wptpl/section-header</code> &mdash; the image-beside-copy split from About.<br>
+    <b style="display:inline; color:#1f4d5a;">4.</b> <code>wptpl/faq</code>, exact fit, one <code>items</code> array.<br>
+    <b style="display:inline; color:#1f4d5a;">5.</b> <code>wptpl/feature-card</code> set <code>transparent</code> and unbordered, in a <code>wptpl-card-grid</code>; fine print is a <code>wptpl_paragraph</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">6.</b> <code>wptpl/cta-banner</code>, <code>theme: dark</code> &mdash; quote in <code>headline</code>, attribution in <code>eyebrow</code>.<br>
+    <b style="display:inline; color:#1f4d5a;">7.</b> <code>footer.php</code><br><br>
+    <b style="display:inline; color:#1f4d5a;">The one new surface</b> is the widget itself: frequency toggle, amount tiles, impact line. Nothing in the theme draws those. Follow the Contact convention &mdash; the donation platform&rsquo;s embed goes inside a <code>wptpl-form</code> wrapper the theme already styles &mdash; and only build a <code>wptpl/donate-form</code> block if the amounts have to be editor-managed.<br><br>
+    <b style="display:inline; color:#1f4d5a;">Porting note:</b> this wireframe draws cards at 14px radius and 20px gaps, the house style of the other wireframes. The shipped values come from the CSS tokens: <code>--wptpl-card-radius</code> (20px), <code>--wptpl-gap-cards</code> (1.5rem). Do not type the wireframe&rsquo;s numbers into the seeder.</div>
+
+  <div class="n cut" id="n8" style="top: 3309px;"><b>Cut from the first draft</b>Four bands were removed. Recording why, so they do not get re-added:<br><br><b style="display:inline; color:#555;">Impact stat strip.</b> Four metrics a practice this size has not measured. Invented numbers on a donation page are a trust risk, not proof.<br><br><b style="display:inline; color:#555;">&ldquo;What your gift does&rdquo; tier grid.</b> The same four amounts as the widget, with buttons to the same destination. Folded into the widget&rsquo;s impact line.<br><br><b style="display:inline; color:#555;">Monthly giving band.</b> A second ask for what the widget&rsquo;s toggle already offers. Monthly is preselected instead &mdash; a default converts better than a band.<br><br><b style="display:inline; color:#555;">Standalone scripture band.</b> Merged into the closing CTA.<br><br>Net: 11 bands to 7, one donation action instead of nine, and roughly 40% less scroll (4,235px to 2,637px at 1400px wide).</div>
 </div>
 
 </div>
