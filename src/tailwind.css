@@ -3387,11 +3387,11 @@ body.wptpl-modal-open {
    pills wrap). Canvas on the primary-green band via color-mix so it stays on the
    palette. */
 .wptpl-cat-scrollbar {
-  /* The reference runs 0.1rem under the bar, which leaves it flush against the
-     band's bottom edge — and on a phone that edge is often right above the
-     browser's own navigation bar, so the two read as one stripe. A little air
-     separates them. */
-  padding: 0.55rem var(--wptpl-gutter) 0.75rem;
+  /* The reference's exact spacing: 0.55rem between the pill row and the bar,
+     0.1rem under it. All of it lives on the bar, which the script injects and
+     hides whenever the row does not overflow — so on a wide viewport there is
+     no bar and no space, rather than a gap under the pills with nothing in it. */
+  padding: 0.55rem var(--wptpl-gutter) 0.1rem;
 }
 .wptpl-cat-scrollbar__track {
   position: relative;

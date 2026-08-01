@@ -737,7 +737,7 @@ function wptpl_seed_page_about(): string {
 					// section from the one the other pages were approved with.
 					// It stays headerless, so the block gives it the taller top
 					// on its own.
-					'overlayOpacity' => 0.65,
+					'overlayOpacity' => 0.7,
 					'usePlaceholder' => true,
 				)
 			),
@@ -1716,11 +1716,12 @@ function wptpl_seed_page_conversion( string $title, string $body_head, string $c
 							'text'  => wptpl_lorem_len( 56 ),
 						),
 					),
-					// Same as everywhere else the block appears: the background
-					// image is what gives the band its rhythm and its bordered
-					// cards. Without it the section renders flush against its
-					// neighbours with bare columns inside.
-					'overlayOpacity'  => 0.65,
+					// 0.7, the reference's value on every steps band but the home
+					// page's. The wash is what keeps the background from competing
+					// with the copy — and with a wireframe placeholder standing in
+					// for the photo, a lighter wash lets its lettering read
+					// straight through the cards.
+					'overlayOpacity'  => 0.7,
 					'usePlaceholder'  => true,
 				)
 			),
