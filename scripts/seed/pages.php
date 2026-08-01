@@ -1098,7 +1098,10 @@ function wptpl_seed_page_service( array $service, array $siblings ): string {
 			wptpl_block(
 				'steps',
 				array(
-					'heading'        => 'How to get started',
+					// No heading: the reference's service pages open this band straight
+					// on the numbered cards. It also earns the taller top that way — the
+					// block derives that from the absence of a header, so the two stay
+					// in step without anything being set by hand.
 					'items'          => array(
 						array(
 							'title' => 'Step one',
